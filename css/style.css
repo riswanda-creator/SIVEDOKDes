@@ -18,12 +18,20 @@ body{
 
 }
 
+/* ===========================
+   HALAMAN VERIFIKASI
+=========================== */
+
 .logo{
     width:110px;
     display:block;
     margin:0 auto 20px;
 }
 
+.card{
+    max-width:650px;
+    margin:40px auto;
+}
 
 h1{
     text-align:center;
@@ -31,94 +39,13 @@ h1{
 }
 
 .subtitle{
-    text-align:left;
+    text-align:center;
     color:#666;
     margin-bottom:25px;
 }
 
-label{
-
-    display:block;
-    margin-top:20px;
-    margin-bottom:8px;
-    font-weight:bold;
-
-}
-
-select,
-input{
-
-    width:100%;
-    padding:14px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    font-size:15px;
-
-}
-
-button{
-
-    width:100%;
-    margin-top:25px;
-    padding:15px;
-    border:none;
-    border-radius:8px;
-    background:#0b57d0;
-    color:white;
-    cursor:pointer;
-    font-size:16px;
-
-}
-
-button:hover{
-
-    background:#003ea8;
-
-}
-
 .hasil{
-
-    margin-top:30px;
-    padding:20px;
-    background:#f7f7f7;
-    border-radius:12px;
     text-align:left;
-
-}
-
-#hasil{
-
-    color:#0b57d0;
-    margin-top:10px;
-
-    table{
-
-width:100%;
-
-border-collapse:collapse;
-
-margin-top:20px;
-
-}
-
-table td{
-
-padding:10px;
-
-border-bottom:1px solid #e5e7eb;
-
-font-size:15px;
-
-}
-
-table td:first-child{
-
-font-weight:bold;
-
-width:40%;
-
-color:#444;
-
 }
 
 #status{
@@ -130,7 +57,8 @@ color:#444;
 #detail{
     text-align:left;
 }
-    #detail table{
+
+#detail table{
     width:100%;
     border-collapse:collapse;
 }
@@ -150,7 +78,8 @@ color:#444;
 #detail td:last-child{
     color:#111827;
 }
-    .info{
+
+.info{
     margin-top:25px;
     padding:18px;
     background:#f8fafc;
@@ -168,17 +97,4 @@ color:#444;
     font-size:12px;
     color:#777;
     line-height:1.7;
-}
-
-
-hr{
-
-border:none;
-
-border-top:1px solid #ddd;
-
-margin:25px 0;
-
-}
-
 }
