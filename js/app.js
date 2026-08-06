@@ -43,27 +43,22 @@ tombol.addEventListener("click", async () => {
     `GT-${tahun}-${jenis}-${String(nomor).padStart(6,"0")}`;
 
 await setDoc(doc(db, "dokumen", id), {
-
-    id: id,
-
+    id,
     nomorUrut: nomor,
-
-    jenis: jenis,
-
+    jenis,
     tahun: Number(tahun),
 
     status: "VALID",
+    aktif: true,
+    versi: 1,
 
     penandatangan: "IDRIS",
-
     jabatan: "Kepala Desa Guntung",
 
     dibuatPada: serverTimestamp(),
+    diperbaruiPada: serverTimestamp(),
 
-    aktif: true,
-
-    versi: 1
-
+    dibuatOleh: "ADMIN"
 });
 
 hasil.textContent = id;
