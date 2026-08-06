@@ -23,13 +23,13 @@ body{
 =========================== */
 
 .logo{
-    width:110px;
+    width:80px;
     display:block;
-    margin:0 auto 20px;
+    margin:0 auto 30px;
 }
 
 .card{
-    max-width:650px;
+    max-width:550px;
     margin:40px auto;
 }
 
