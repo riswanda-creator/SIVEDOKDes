@@ -30,10 +30,10 @@ export {
     doc,
     setDoc,
     getDoc,
-    getDocs,
+    serverTimestamp,
     collection,
+    getDocs,
     query,
     orderBy,
-    limit,
-    serverTimestamp
+    limit
 };
