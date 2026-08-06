@@ -15,7 +15,6 @@ async function cekDokumen() {
     if (!id) {
 
         status.textContent = "❌ Document ID tidak ditemukan";
-
         return;
 
     }
@@ -23,23 +22,41 @@ async function cekDokumen() {
     try {
 
         const ref = doc(db, "dokumen", id);
-
         const snap = await getDoc(ref);
 
         if (!snap.exists()) {
 
             status.textContent = "❌ DOKUMEN TIDAK TERDAFTAR";
-
+            detail.innerHTML = "";
             return;
 
         }
 
         const data = snap.data();
 
+        // Nama jenis dokumen
+        const namaJenis = {
+            DOMISILI: "Surat Keterangan Domisili",
+            SKU: "Surat Keterangan Usaha",
+            SKTM: "Surat Keterangan Tidak Mampu",
+            APBDES: "APBDes"
+        };
+
+        const jenisTampil = namaJenis[data.jenis] || data.jenis;
+
+        // Format tanggal Indonesia
+        const tanggalIndonesia = new Date(data.tanggalTerbit)
+            .toLocaleDateString("id-ID", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            });
+
         status.textContent = "🟢 DOKUMEN TERVERIFIKASI";
 
         detail.innerHTML = `
             <table>
+
                 <tr>
                     <td><b>Document ID</b></td>
                     <td>${data.id}</td>
@@ -51,13 +68,15 @@ async function cekDokumen() {
                 </tr>
 
                 <tr>
-                    <td><b>Jenis</b></td>
-                    <td>${data.jenis}</td>
+                    <td><b>Jenis Dokumen</b></td>
+                    <td>${jenisTampil}</td>
                 </tr>
 
                 <tr>
                     <td><b>Status</b></td>
-                    <td>${data.status}</td>
+                    <td style="color:green;font-weight:bold;">
+                        ${data.status}
+                    </td>
                 </tr>
 
                 <tr>
@@ -72,10 +91,17 @@ async function cekDokumen() {
 
                 <tr>
                     <td><b>Tanggal Terbit</b></td>
-                    <td>${data.tanggalTerbit}</td>
+                    <td>${tanggalIndonesia}</td>
                 </tr>
 
             </table>
+
+            <br>
+
+            <p style="text-align:center;color:#555;line-height:1.6;">
+                Dokumen ini telah berhasil diverifikasi melalui
+                <strong>SIVEDOKDes (Sistem Verifikasi Dokumen Elektronik Desa)</strong>.
+            </p>
         `;
 
     } catch (err) {
@@ -83,25 +109,10 @@ async function cekDokumen() {
         console.error(err);
 
         status.textContent = "⚠️ Gagal menghubungi server.";
+        detail.innerHTML = "";
 
     }
 
 }
-const namaJenis = {
-    DOMISILI: "Surat Keterangan Domisili",
-    SKU: "Surat Keterangan Usaha",
-    SKTM: "Surat Keterangan Tidak Mampu",
-    APBDES: "APBDes"
-};
-
-const jenisTampil = namaJenis[data.jenis] || data.jenis;
 
 cekDokumen();
-const namaJenis = {
-    DOMISILI: "Surat Keterangan Domisili",
-    SKU: "Surat Keterangan Usaha",
-    SKTM: "Surat Keterangan Tidak Mampu",
-    APBDES: "APBDes"
-};
-
-const jenisTampil = namaJenis[data.jenis] || data.jenis;
