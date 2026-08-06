@@ -87,5 +87,21 @@ async function cekDokumen() {
     }
 
 }
+const namaJenis = {
+    DOMISILI: "Surat Keterangan Domisili",
+    SKU: "Surat Keterangan Usaha",
+    SKTM: "Surat Keterangan Tidak Mampu",
+    APBDES: "APBDes"
+};
+
+const jenisTampil = namaJenis[data.jenis] || data.jenis;
 
 cekDokumen();
+const namaJenis = {
+    DOMISILI: "Surat Keterangan Domisili",
+    SKU: "Surat Keterangan Usaha",
+    SKTM: "Surat Keterangan Tidak Mampu",
+    APBDES: "APBDes"
+};
+
+const jenisTampil = namaJenis[data.jenis] || data.jenis;
