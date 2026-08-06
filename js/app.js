@@ -1,5 +1,8 @@
 import {
     db,
+    doc,
+    setDoc,
+    serverTimestamp,
     collection,
     getDocs,
     query,
@@ -36,11 +39,34 @@ tombol.addEventListener("click", async () => {
 
         const nomor = await getNomorTerakhir();
 
-        const id =
-            `GT-${tahun}-${jenis}-${String(nomor).padStart(6,"0")}`;
+       const id =
+    `GT-${tahun}-${jenis}-${String(nomor).padStart(6,"0")}`;
 
-        hasil.textContent = id;
+await setDoc(doc(db, "dokumen", id), {
 
+    id: id,
+
+    nomorUrut: nomor,
+
+    jenis: jenis,
+
+    tahun: Number(tahun),
+
+    status: "VALID",
+
+    penandatangan: "IDRIS",
+
+    jabatan: "Kepala Desa Guntung",
+
+    dibuatPada: serverTimestamp(),
+
+    aktif: true,
+
+    versi: 1
+
+});
+
+hasil.textContent = id;
     } catch (err) {
 
         console.error(err);
