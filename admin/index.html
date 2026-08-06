@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Admin - SIVEDOKDes</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <img src="../img/logo.png" class="logo" alt="Logo Desa">
+
+    <h1>SIVEDOKDes</h1>
+
+    <p class="subtitle">
+
+        Dashboard Administrator
+
+    </p>
+
+    <hr>
+
+    <label>Jenis Dokumen</label>
+
+    <select id="jenis">
+
+        <option value="APBDES">APBDES</option>
+
+        <option value="DOMISILI">Surat Domisili</option>
+
+        <option value="SKU">Surat Keterangan Usaha</option>
+
+        <option value="SKTM">Surat Tidak Mampu</option>
+
+    </select>
+
+    <label>Nomor Surat</label>
+
+    <input
+        id="nomorSurat"
+        type="text">
+
+    <label>Tanggal Terbit</label>
+
+    <input
+        id="tanggal"
+        type="date">
+
+    <label>Penandatangan</label>
+
+    <input
+        id="penandatangan"
+        type="text"
+        value="IDRIS">
+
+    <label>Jabatan</label>
+
+    <input
+        id="jabatan"
+        type="text"
+        value="Kepala Desa Guntung">
+
+    <button id="registrasi">
+
+        Registrasikan Dokumen
+
+    </button>
+
+    <div class="hasil">
+
+        <small>Document ID</small>
+
+        <h2 id="hasil">
+
+            -
+
+        </h2>
+
+    </div>
+
+</div>
+
+<script type="module" src="app.js"></script>
+
+</body>
+
+</html>
