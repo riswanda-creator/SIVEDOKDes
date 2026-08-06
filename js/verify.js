@@ -98,11 +98,18 @@ async function cekDokumen() {
 
             <br>
 
-            <p style="text-align:center;color:#555;line-height:1.6;">
-                Dokumen ini telah berhasil diverifikasi melalui
-                <strong>SIVEDOKDes (Sistem Verifikasi Dokumen Elektronik Desa)</strong>.
-            </p>
-        `;
+           <div class="info">
+
+    Dokumen ini telah berhasil diverifikasi melalui
+    <strong>SIVEDOKDes (Sistem Verifikasi Dokumen Elektronik Desa)</strong>.
+
+    <br><br>
+
+    Apabila terdapat perbedaan informasi antara halaman ini
+    dengan dokumen fisik yang diterima, maka dokumen tersebut
+    perlu dikonfirmasi kepada Pemerintah Desa Guntung.
+
+</div>
 
     } catch (err) {
 
