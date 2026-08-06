@@ -1,12 +1,91 @@
+import {
+    db,
+    doc,
+    getDoc
+} from "./firebase.js";
+
 const status = document.getElementById("status");
 const detail = document.getElementById("detail");
 
-status.innerHTML = "🟢 HALAMAN VERIFIKASI SIAP";
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-detail.innerHTML = `
-<p>
-Halaman ini akan menampilkan
-informasi dokumen setelah
-QR Code dipindai.
-</p>
-`;
+async function cekDokumen() {
+
+    if (!id) {
+
+        status.textContent = "❌ Document ID tidak ditemukan";
+
+        return;
+
+    }
+
+    try {
+
+        const ref = doc(db, "dokumen", id);
+
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+
+            status.textContent = "❌ DOKUMEN TIDAK TERDAFTAR";
+
+            return;
+
+        }
+
+        const data = snap.data();
+
+        status.textContent = "🟢 DOKUMEN TERVERIFIKASI";
+
+        detail.innerHTML = `
+            <table>
+                <tr>
+                    <td><b>Document ID</b></td>
+                    <td>${data.id}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Nomor Surat</b></td>
+                    <td>${data.nomorSurat}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Jenis</b></td>
+                    <td>${data.jenis}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Status</b></td>
+                    <td>${data.status}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Penandatangan</b></td>
+                    <td>${data.penandatangan}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Jabatan</b></td>
+                    <td>${data.jabatan}</td>
+                </tr>
+
+                <tr>
+                    <td><b>Tanggal Terbit</b></td>
+                    <td>${data.tanggalTerbit}</td>
+                </tr>
+
+            </table>
+        `;
+
+    } catch (err) {
+
+        console.error(err);
+
+        status.textContent = "⚠️ Gagal menghubungi server.";
+
+    }
+
+}
+
+cekDokumen();
