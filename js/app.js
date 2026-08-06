@@ -7,6 +7,7 @@ import {
     limit
 } from "./firebase.js";
 
+const tombol = document.getElementById("generate");
 const hasil = document.getElementById("hasil");
 
 async function getNomorTerakhir() {
@@ -26,22 +27,26 @@ async function getNomorTerakhir() {
     return snapshot.docs[0].data().nomorUrut + 1;
 }
 
-document.getElementById("generate").onclick = async function () {
+tombol.addEventListener("click", async () => {
 
-    const jenis = document.getElementById("jenis").value;
+    try {
 
-    const tahun = document.getElementById("tahun").value;
+        const jenis = document.getElementById("jenis").value;
+        const tahun = document.getElementById("tahun").value;
 
-    const nomor = await getNomorTerakhir();
+        const nomor = await getNomorTerakhir();
 
-    const id =
-        "GT-" +
-        tahun +
-        "-" +
-        jenis +
-        "-" +
-        String(nomor).padStart(6, "0");
+        const id =
+            `GT-${tahun}-${jenis}-${String(nomor).padStart(6,"0")}`;
 
-    hasil.innerHTML = id;
+        hasil.textContent = id;
 
-};
+    } catch (err) {
+
+        console.error(err);
+
+        alert(err.message);
+
+    }
+
+});
