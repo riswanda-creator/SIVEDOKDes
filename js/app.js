@@ -1,29 +1,15 @@
-import {
-    db,
-    collection,
-    getDocs
-} from "./firebase.js";
-
-const tombol = document.getElementById("test");
 const hasil = document.getElementById("hasil");
 
-tombol.onclick = async () => {
+document.getElementById("generate").onclick = function () {
 
-    try {
+    const jenis = document.getElementById("jenis").value;
 
-        const snapshot = await getDocs(collection(db, "dokumen"));
+    const tahun = document.getElementById("tahun").value;
 
-        hasil.innerHTML =
-            "Firebase terhubung. Jumlah dokumen: " +
-            snapshot.size;
+    const nomor = "000001";
 
-    } catch (err) {
+    const id = `GT-${tahun}-${jenis}-${nomor}`;
 
-        console.error(err);
-
-        hasil.innerHTML =
-            "Gagal terhubung ke Firebase.";
-
-    }
+    hasil.innerHTML = id;
 
 };
