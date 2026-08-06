@@ -10,30 +10,52 @@ import {
     query,
     orderBy,
     limit,
-    serverTimestamp
+    serverTimestamp,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "ISI_DARI_FIREBASE",
-    authDomain: "ISI_DARI_FIREBASE",
-    projectId: "ISI_DARI_FIREBASE",
-    storageBucket: "ISI_DARI_FIREBASE",
-    messagingSenderId: "ISI_DARI_FIREBASE",
-    appId: "ISI_DARI_FIREBASE"
+
+    apiKey: "AIzaSyDQUvjOMujFz6YbwaIC048D1wtq4anHkV0",
+
+    authDomain: "sivedokdes.firebaseapp.com",
+
+    projectId: "sivedokdes",
+
+    storageBucket: "sivedokdes.firebasestorage.app",
+
+    messagingSenderId: "505099689462",
+
+    appId: "1:505099689462:web:086a511ee30169a3da7bd7"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
 export {
+
     db,
+
     doc,
+
     setDoc,
+
     getDoc,
-    collection,
+
     getDocs,
+
+    collection,
+
     query,
+
     orderBy,
+
     limit,
-    serverTimestamp
+
+    serverTimestamp,
+
+    runTransaction
+
 };
