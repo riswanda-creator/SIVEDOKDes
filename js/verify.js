@@ -36,14 +36,13 @@ async function cekDokumen() {
 
         // Nama jenis dokumen
         const namaJenis = {
-            DOMISILI: "Surat Keterangan Domisili",
-            SKU: "Surat Keterangan Usaha",
-            SKTM: "Surat Keterangan Tidak Mampu",
-            APBDES: "APBDes"
-        };
+    DOMISILI: "Surat Keterangan Domisili",
+    SKU: "Surat Keterangan Usaha",
+    SKTM: "Surat Keterangan Tidak Mampu",
+    APBDES: "APBDes"
+};
 
-        const jenisTampil = namaJenis[data.jenis] || data.jenis;
-
+const jenisTampil = namaJenis[data.jenis] || data.jenis;
         // Format tanggal Indonesia
         const tanggalIndonesia = new Date(data.tanggalTerbit)
             .toLocaleDateString("id-ID", {
