@@ -4,6 +4,8 @@ import {
     getDoc
 } from "./firebase.js";
 
+import { DESA } from "./config.js";
+
 const status = document.getElementById("status");
 const detail = document.getElementById("detail");
 
@@ -15,8 +17,9 @@ async function cekDokumen() {
     if (!id) {
 
         status.textContent = "❌ Document ID tidak ditemukan";
-        return;
+        detail.innerHTML = "";
 
+        return;
     }
 
     try {
@@ -28,32 +31,61 @@ async function cekDokumen() {
 
             status.textContent = "❌ DOKUMEN TIDAK TERDAFTAR";
             detail.innerHTML = "";
-            return;
 
+            return;
         }
 
         const data = snap.data();
 
-        // Nama jenis dokumen
+        // ==========================================
+        // NAMA JENIS DOKUMEN
+        // ==========================================
+
         const namaJenis = {
-    DOMISILI: "Surat Keterangan Domisili",
-    SKU: "Surat Keterangan Usaha",
-    SKTM: "Surat Keterangan Tidak Mampu",
-    APBDES: "APBDes"
-};
 
-const jenisTampil = namaJenis[data.jenis] || data.jenis;
-        // Format tanggal Indonesia
-        const tanggalIndonesia = new Date(data.tanggalTerbit)
-            .toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            });
+            DOMISILI: "Surat Keterangan Domisili",
 
-        status.textContent = "🟢 DOKUMEN TERVERIFIKASI";
+            SKU: "Surat Keterangan Usaha",
+
+            SKTM: "Surat Keterangan Tidak Mampu",
+
+            APBDES: "APBDes"
+
+        };
+
+        const jenisTampil =
+            namaJenis[data.jenis] || data.jenis;
+
+
+        // ==========================================
+        // FORMAT TANGGAL INDONESIA
+        // ==========================================
+
+        const tanggalIndonesia =
+            new Date(data.tanggalTerbit)
+                .toLocaleDateString("id-ID", {
+
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+
+                });
+
+
+        // ==========================================
+        // STATUS DOKUMEN
+        // ==========================================
+
+        status.textContent =
+            "🟢 DOKUMEN TERVERIFIKASI";
+
+
+        // ==========================================
+        // DETAIL DOKUMEN
+        // ==========================================
 
         detail.innerHTML = `
+
             <table>
 
                 <tr>
@@ -73,7 +105,11 @@ const jenisTampil = namaJenis[data.jenis] || data.jenis;
 
                 <tr>
                     <td><b>Status</b></td>
-                    <td style="color:green;font-weight:bold;">
+
+                    <td style="
+                        color: green;
+                        font-weight: bold;
+                    ">
                         ${data.status}
                     </td>
                 </tr>
@@ -95,28 +131,43 @@ const jenisTampil = namaJenis[data.jenis] || data.jenis;
 
             </table>
 
-            <br>
 
-           <div class="info">
+            <div class="info">
 
-    Dokumen ini telah berhasil diverifikasi melalui
-    <strong>SIVEDOKDes (Sistem Verifikasi Dokumen Elektronik Desa)</strong>.
+                Dokumen ini telah berhasil diverifikasi
+                melalui
 
-    <br><br>
-    
+                <strong>
+                    ${DESA.namaSistem}
+                </strong>
 
-    Apabila terdapat perbedaan informasi antara halaman ini
-    dengan dokumen fisik yang diterima, maka dokumen tersebut
-    perlu dikonfirmasi kepada Pemerintah Desa Guntung.
+                (${DESA.kepanjanganSistem}).
 
-</div>
-`;
+                <br><br>
+
+                Dokumen diterbitkan oleh
+                <strong>${DESA.nama}</strong>,
+                Kecamatan ${DESA.kecamatan},
+                Kabupaten ${DESA.kabupaten}.
+
+                <br><br>
+
+                Apabila terdapat perbedaan informasi antara
+                halaman ini dengan dokumen fisik yang diterima,
+                maka dokumen tersebut perlu dikonfirmasi
+                kepada ${DESA.nama}.
+
+            </div>
+
+        `;
 
     } catch (err) {
 
         console.error(err);
 
-        status.textContent = "⚠️ Gagal menghubungi server.";
+        status.textContent =
+            "⚠️ Gagal menghubungi server.";
+
         detail.innerHTML = "";
 
     }
