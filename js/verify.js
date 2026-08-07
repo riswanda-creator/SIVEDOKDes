@@ -103,12 +103,14 @@ const jenisTampil = namaJenis[data.jenis] || data.jenis;
     <strong>SIVEDOKDes (Sistem Verifikasi Dokumen Elektronik Desa)</strong>.
 
     <br><br>
+    
 
     Apabila terdapat perbedaan informasi antara halaman ini
     dengan dokumen fisik yang diterima, maka dokumen tersebut
     perlu dikonfirmasi kepada Pemerintah Desa Guntung.
 
 </div>
+`;
 
     } catch (err) {
 
