@@ -1,0 +1,336 @@
+/* =====================================================
+   SIVEDOKDes
+   VERIFY.CSS
+   Halaman Verifikasi Dokumen
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #1558a6;
+    --primary-dark: #0f4380;
+
+    --success: #15803d;
+    --success-light: #ecfdf3;
+    --success-border: #bbf7d0;
+
+    --danger: #b91c1c;
+    --danger-light: #fef2f2;
+
+    --text: #1f2937;
+    --muted: #6b7280;
+
+    --border: #dfe5ec;
+
+    --background: #f3f6fa;
+    --white: #ffffff;
+
+    --radius: 14px;
+
+    --shadow:
+        0 10px 35px rgba(15, 23, 42, 0.08);
+}
+
+body {
+    min-height: 100vh;
+
+    background: var(--background);
+
+    color: var(--text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    line-height: 1.5;
+
+    padding: 35px 18px;
+}
+
+/* =========================
+   CARD VERIFIKASI
+   ========================= */
+
+.card {
+    width: 100%;
+    max-width: 680px;
+
+    margin: 0 auto;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow);
+
+    padding: 40px;
+}
+
+/* =========================
+   LOGO
+   ========================= */
+
+.logo {
+    width: 110px;
+    height: 110px;
+
+    object-fit: contain;
+
+    display: block;
+
+    margin: 0 auto 18px;
+}
+
+/* =========================
+   IDENTITAS SISTEM
+   ========================= */
+
+h1 {
+    text-align: center;
+
+    color: var(--primary);
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    margin-bottom: 30px;
+}
+
+/* =========================
+   PEMBATAS
+   ========================= */
+
+hr {
+    border: 0;
+
+    border-top: 1px solid var(--border);
+
+    margin: 0 0 28px;
+}
+
+/* =========================
+   STATUS
+   ========================= */
+
+.hasil {
+    width: 100%;
+}
+
+#status {
+    width: 100%;
+
+    padding: 14px 16px;
+
+    margin-bottom: 25px;
+
+    background: var(--success-light);
+
+    border: 1px solid var(--success-border);
+
+    border-radius: 9px;
+
+    color: var(--success);
+
+    text-align: center;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+/* =========================
+   DETAIL DOKUMEN
+   ========================= */
+
+#detail {
+    width: 100%;
+
+    text-align: left;
+}
+
+#detail table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+#detail tr {
+    border-bottom: 1px solid #edf0f4;
+}
+
+#detail tr:last-child {
+    border-bottom: none;
+}
+
+#detail td {
+    padding: 13px 8px;
+
+    vertical-align: top;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+/* Kolom kiri */
+
+#detail td:first-child {
+    width: 36%;
+
+    color: #4b5563;
+
+    font-weight: 600;
+
+    text-align: left;
+}
+
+/* Kolom kanan */
+
+#detail td:last-child {
+    width: 64%;
+
+    color: var(--text);
+
+    font-weight: 400;
+
+    text-align: left;
+
+    overflow-wrap: anywhere;
+}
+
+/* =========================
+   INFORMASI VERIFIKASI
+   ========================= */
+
+.info {
+    margin-top: 28px;
+
+    padding: 17px 18px;
+
+    background: #f8fafc;
+
+    border-left: 4px solid var(--primary);
+
+    border-radius: 8px;
+
+    color: #4b5563;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    text-align: left;
+}
+
+.info strong {
+    color: var(--primary);
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+    margin-top: 32px;
+
+    padding-top: 22px;
+
+    border-top: 1px solid var(--border);
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.8;
+}
+
+.footer strong {
+    color: #4b5563;
+
+    font-size: 12px;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 18px 12px;
+    }
+
+    .card {
+        padding: 28px 20px;
+
+        border-radius: 12px;
+    }
+
+    .logo {
+        width: 96px;
+        height: 96px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+
+        margin-bottom: 24px;
+    }
+
+    #status {
+        font-size: 15px;
+
+        padding: 13px 10px;
+    }
+
+    #detail td {
+        padding: 11px 5px;
+
+        font-size: 13px;
+    }
+
+    #detail td:first-child {
+        width: 40%;
+    }
+
+    #detail td:last-child {
+        width: 60%;
+    }
+
+    .info {
+        font-size: 12px;
+
+        padding: 15px;
+    }
+
+    .footer {
+        font-size: 10px;
+    }
+
+}
