@@ -1,1 +1,495 @@
+/* =====================================================
+   SIVEDOKDes
+   ADMIN DASHBOARD STYLE
+   ===================================================== */
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   BODY
+   ===================================================== */
+
+body {
+    background: #f3f6fa;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   CONTAINER
+   ===================================================== */
+
+.admin-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 24px 40px;
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.admin-header {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.05);
+
+    margin-bottom: 24px;
+}
+
+
+/* =====================================================
+   BRAND
+   ===================================================== */
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.brand h1 {
+    font-size: 25px;
+    line-height: 1.2;
+    color: #111827;
+    margin-bottom: 5px;
+}
+
+.brand p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+
+/* =====================================================
+   IDENTITY
+   ===================================================== */
+
+.identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+
+    font-size: 13px;
+}
+
+.identity strong {
+    color: #1f2937;
+}
+
+.identity span {
+    color: #6b7280;
+}
+
+
+/* =====================================================
+   STATISTICS
+   ===================================================== */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.stat-card span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.stat-card strong {
+    font-size: 30px;
+    color: #111827;
+}
+
+
+/* =====================================================
+   PANEL
+   ===================================================== */
+
+.panel {
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 26px;
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.05);
+
+    margin-bottom: 24px;
+}
+
+.panel-header {
+    margin-bottom: 24px;
+}
+
+.panel-header h2 {
+    font-size: 20px;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.panel-header p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #6b7280;
+}
+
+
+/* =====================================================
+   FORM
+   ===================================================== */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+
+/* =====================================================
+   INPUT & SELECT
+   ===================================================== */
+
+input,
+select {
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #0b57d0;
+
+    box-shadow:
+        0 0 0 3px rgba(
+            11,
+            87,
+            208,
+            0.10
+        );
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+
+/* =====================================================
+   BUTTON
+   ===================================================== */
+
+button {
+    margin-top: 24px;
+
+    height: 44px;
+
+    padding: 0 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #0b57d0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
+}
+
+button:hover {
+    background: #0847ad;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   HASIL REGISTRASI
+   ===================================================== */
+
+.hasil {
+    margin-top: 24px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 10px;
+}
+
+.hasil small {
+    display: block;
+
+    color: #6b7280;
+
+    font-size: 12px;
+
+    margin-bottom: 6px;
+}
+
+.hasil h2 {
+    font-size: 20px;
+
+    color: #0b57d0;
+
+    word-break: break-all;
+}
+
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+
+.table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 13px;
+}
+
+thead {
+    background: #f8fafc;
+}
+
+th {
+    text-align: left;
+
+    padding: 13px 12px;
+
+    color: #374151;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    white-space: nowrap;
+}
+
+td {
+    padding: 14px 12px;
+
+    border-bottom:
+        1px solid #edf0f3;
+
+    color: #4b5563;
+
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background: #fafafa;
+}
+
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+footer {
+    text-align: center;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+
+    color: #9ca3af;
+
+    padding: 10px 0;
+}
+
+
+/* =====================================================
+   RESPONSIVE TABLET
+   ===================================================== */
+
+@media (max-width: 900px) {
+
+    .stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .admin-header {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE MOBILE
+   ===================================================== */
+
+@media (max-width: 650px) {
+
+    .admin-container {
+        padding: 18px 14px 30px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 18px;
+    }
+
+    .identity {
+        align-items: flex-start;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 18px;
+    }
+
+    .stat-card strong {
+        font-size: 26px;
+    }
+
+    .panel {
+        padding: 20px 16px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 16px;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .brand h1 {
+        font-size: 22px;
+    }
+
+    .logo {
+        width: 58px;
+        height: 58px;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 11px 10px;
+    }
+
+}
