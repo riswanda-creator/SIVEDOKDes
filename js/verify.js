@@ -76,13 +76,52 @@ async function cekDokumen() {
         // STATUS DOKUMEN
         // ==========================================
 
-        status.textContent =
-            "🟢 DOKUMEN TERVERIFIKASI";
+        const statusDokumen =
+            String(data.status || "").toUpperCase();
+
+
+        if (statusDokumen === "VALID") {
+
+            status.textContent =
+                "🟢 DOKUMEN TERVERIFIKASI";
+
+        } else if (statusDokumen === "DICABUT") {
+
+            status.textContent =
+                "🔴 DOKUMEN DICABUT";
+
+        } else if (statusDokumen === "DIBATALKAN") {
+
+            status.textContent =
+                "🔴 DOKUMEN DIBATALKAN";
+
+        } else {
+
+            status.textContent =
+                "⚠️ STATUS DOKUMEN TIDAK DIKENALI";
+
+        }
 
 
         // ==========================================
         // DETAIL DOKUMEN
         // ==========================================
+
+        let warnaStatus = "#6b7280";
+
+        if (statusDokumen === "VALID") {
+
+            warnaStatus = "#16a34a";
+
+        } else if (
+            statusDokumen === "DICABUT" ||
+            statusDokumen === "DIBATALKAN"
+        ) {
+
+            warnaStatus = "#dc2626";
+
+        }
+
 
         detail.innerHTML = `
 
@@ -107,7 +146,7 @@ async function cekDokumen() {
                     <td><b>Status</b></td>
 
                     <td style="
-                        color: green;
+                        color: ${warnaStatus};
                         font-weight: bold;
                     ">
                         ${data.status}
