@@ -3,92 +3,350 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Dashboard Admin - SIVEDOKDes</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<link rel="stylesheet" href="../css/admin.css">
-    
+    <title>Dashboard Admin - SIVEDOKDes</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
 
 <body>
 
-<div class="card">
+<div class="admin-container">
 
-    <img src="../img/logo.png" class="logo" alt="Logo Desa">
+    <!-- HEADER -->
 
-    <h1>SIVEDOKDes</h1>
+    <header class="admin-header">
 
-    <p class="subtitle">
+        <div class="brand">
 
-        Dashboard Administrator
+            <img
+                src="../img/logo.png"
+                class="logo"
+                alt="Logo Desa"
+            >
 
-    </p>
+            <div>
 
-    <hr>
+                <h1>SIVEDOKDes</h1>
 
-    <label>Jenis Dokumen</label>
+                <p>
+                    Dashboard Administrator
+                </p>
 
-    <select id="jenis">
+            </div>
 
-        <option value="APBDES">APBDES</option>
+        </div>
 
-        <option value="DOMISILI">Surat Domisili</option>
+        <div class="identity">
 
-        <option value="SKU">Surat Keterangan Usaha</option>
+            <strong>Desa Guntung</strong>
 
-        <option value="SKTM">Surat Tidak Mampu</option>
+            <span>
+                Kecamatan Tanjung Tiram
+            </span>
 
-    </select>
+        </div>
 
-    <label>Nomor Surat</label>
+    </header>
 
-    <input
-        id="nomorSurat"
-        type="text">
 
-    <label>Tanggal Terbit</label>
+    <!-- STATISTIK -->
 
-    <input
-        id="tanggal"
-        type="date">
+    <section class="stats">
 
-    <label>Penandatangan</label>
+        <div class="stat-card">
 
-    <input
-        id="penandatangan"
-        type="text"
-        value="IDRIS">
+            <span>Total Dokumen</span>
 
-    <label>Jabatan</label>
+            <strong id="totalDokumen">
+                -
+            </strong>
 
-    <input
-        id="jabatan"
-        type="text"
-        value="Kepala Desa Guntung">
+        </div>
 
-    <button id="registrasi">
 
-        Registrasikan Dokumen
+        <div class="stat-card">
 
-    </button>
+            <span>Dokumen Valid</span>
 
-    <div class="hasil">
+            <strong id="dokumenValid">
+                -
+            </strong>
 
-        <small>Document ID</small>
+        </div>
 
-        <h2 id="hasil">
 
-            -
+        <div class="stat-card">
 
-        </h2>
+            <span>Dokumen Dicabut</span>
 
-    </div>
+            <strong id="dokumenDicabut">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>Dibatalkan</span>
+
+            <strong id="dokumenDibatalkan">
+                -
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- REGISTRASI -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Registrasi Dokumen
+                </h2>
+
+                <p>
+                    Daftarkan dokumen elektronik
+                    ke dalam SIVEDOKDes.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label for="jenis">
+                    Jenis Dokumen
+                </label>
+
+                <select id="jenis">
+
+                    <option value="APBDES">
+                        APBDes
+                    </option>
+
+                    <option value="DOMISILI">
+                        Surat Keterangan Domisili
+                    </option>
+
+                    <option value="SKU">
+                        Surat Keterangan Usaha
+                    </option>
+
+                    <option value="SKTM">
+                        Surat Keterangan Tidak Mampu
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="nomorSurat">
+                    Nomor Surat
+                </label>
+
+                <input
+                    id="nomorSurat"
+                    type="text"
+                    placeholder="Contoh: 140/005/GT-VIII/2026"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="tanggal">
+                    Tanggal Terbit
+                </label>
+
+                <input
+                    id="tanggal"
+                    type="date"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="penandatangan">
+                    Penandatangan
+                </label>
+
+                <input
+                    id="penandatangan"
+                    type="text"
+                    value="IDRIS"
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label for="jabatan">
+                    Jabatan
+                </label>
+
+                <input
+                    id="jabatan"
+                    type="text"
+                    value="Kepala Desa Guntung"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="registrasi"
+            type="button"
+        >
+            Registrasikan Dokumen
+        </button>
+
+
+        <!-- HASIL REGISTRASI -->
+
+        <div
+            class="hasil"
+            id="hasilBox"
+        >
+
+            <small>
+                Document ID
+            </small>
+
+            <h2 id="hasil">
+                -
+            </h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- DOKUMEN TERBARU -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Dokumen Terbaru
+                </h2>
+
+                <p>
+                    Daftar dokumen yang terakhir
+                    terdaftar di SIVEDOKDes.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Document ID
+                        </th>
+
+                        <th>
+                            Nomor Surat
+                        </th>
+
+                        <th>
+                            Jenis
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Tanggal
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="daftarDokumen">
+
+                    <tr>
+
+                        <td colspan="5">
+                            Memuat data...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        Pemerintah Desa Guntung<br>
+
+        Kecamatan Tanjung Tiram · Kabupaten Batu Bara
+
+        <br><br>
+
+        © 2026 SIVEDOKDes v1.0
+
+    </footer>
 
 </div>
 
-<script type="module" src="app.js"></script>
+
+<script
+    type="module"
+    src="app.js"
+></script>
 
 </body>
 
