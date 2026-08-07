@@ -1,7 +1,6 @@
 import {
     db,
     doc,
-    getDoc,
     setDoc,
     getDocs,
     collection,
@@ -14,35 +13,16 @@ import {
 // ELEMENT
 // =====================================================
 
-const tombol =
-    document.getElementById("registrasi");
+const tombol = document.getElementById("registrasi");
+const hasil = document.getElementById("hasil");
 
-const hasil =
-    document.getElementById("hasil");
-
-const jenis =
-    document.getElementById("jenis");
-
-const indeks =
-    document.getElementById("indeks");
-
-const nomorUrut =
-    document.getElementById("nomorUrut");
-
-const bulan =
-    document.getElementById("bulan");
-
-const tahun =
-    document.getElementById("tahun");
-
-const nomorSurat =
-    document.getElementById("nomorSurat");
-
-const tanggal =
-    document.getElementById("tanggal");
-
-
-// Dashboard
+const jenis = document.getElementById("jenis");
+const indeks = document.getElementById("indeks");
+const nomorUrut = document.getElementById("nomorUrut");
+const bulan = document.getElementById("bulan");
+const tahun = document.getElementById("tahun");
+const nomorSurat = document.getElementById("nomorSurat");
+const tanggal = document.getElementById("tanggal");
 
 const totalDokumen =
     document.getElementById("totalDokumen");
@@ -72,7 +52,6 @@ const KODE_DESA = "GT";
 // =====================================================
 
 const bulanRomawi = {
-
     1: "I",
     2: "II",
     3: "III",
@@ -85,6 +64,38 @@ const bulanRomawi = {
     10: "X",
     11: "XI",
     12: "XII"
+};
+
+
+// =====================================================
+// NAMA JENIS DOKUMEN
+// =====================================================
+
+const namaJenis = {
+
+    DOMISILI:
+        "Surat Keterangan Domisili",
+
+    MENIKAH:
+        "Surat Keterangan Menikah",
+
+    PINDAH:
+        "Surat Keterangan Pindah",
+
+    SKU:
+        "Surat Keterangan Usaha",
+
+    SKTM:
+        "Surat Keterangan Tidak Mampu",
+
+    PENGHASILAN:
+        "Surat Keterangan Penghasilan",
+
+    UNDANGAN:
+        "Surat Undangan",
+
+    MANUAL:
+        "Lainnya / Manual"
 
 };
 
@@ -110,19 +121,14 @@ function isiPilihanTahun() {
             document.createElement("option");
 
         option.value = i;
-
         option.textContent = i;
 
         if (i === tahunSekarang) {
-
             option.selected = true;
-
         }
 
         tahun.appendChild(option);
-
     }
-
 }
 
 isiPilihanTahun();
@@ -137,7 +143,15 @@ tanggal.value =
 
 
 // =====================================================
-// JENIS DOKUMEN → INDEKS
+// PETUNJUK INDEKS
+// =====================================================
+
+const petunjukIndeks =
+    document.getElementById("petunjukIndeks");
+
+
+// =====================================================
+// JENIS DOKUMEN
 // =====================================================
 
 jenis.addEventListener(
@@ -156,6 +170,10 @@ jenis.addEventListener(
             jenis.value === "MANUAL";
 
 
+        // =============================================
+        // JIKA MANUAL
+        // =============================================
+
         if (manual) {
 
             indeks.readOnly = false;
@@ -165,24 +183,36 @@ jenis.addEventListener(
 
             indeks.value = "";
 
-            document.getElementById(
-                "petunjukIndeks"
-            ).textContent =
-                "Isi indeks sesuai ketentuan surat.";
+            if (petunjukIndeks) {
 
-        } else {
+                petunjukIndeks.textContent =
+                    "Isi indeks sesuai ketentuan surat.";
+
+            }
+
+        }
+
+
+        // =============================================
+        // JIKA JENIS TERDAFTAR
+        // =============================================
+
+        else {
 
             indeks.readOnly = true;
 
             indeks.placeholder =
                 "Otomatis";
 
-            indeks.value = kode;
+            indeks.value =
+                kode;
 
-            document.getElementById(
-                "petunjukIndeks"
-            ).textContent =
-                "Indeks diambil dari master SIVEDOKDes.";
+            if (petunjukIndeks) {
+
+                petunjukIndeks.textContent =
+                    "Indeks diambil dari master SIVEDOKDes.";
+
+            }
 
         }
 
@@ -190,6 +220,16 @@ jenis.addEventListener(
         buatNomorSurat();
 
     }
+);
+
+
+// =====================================================
+// INDEKS MANUAL
+// =====================================================
+
+indeks.addEventListener(
+    "input",
+    buatNomorSurat
 );
 
 
@@ -252,7 +292,6 @@ function buatNomorSurat() {
 
     nomorSurat.value =
         `${kodeIndeks}/${nomor}/${KODE_DESA}/${romawi}/${tahunDipilih}`;
-
 }
 
 
@@ -265,7 +304,6 @@ tombol.addEventListener(
     async () => {
 
         try {
-
 
             // =========================================
             // AMBIL DATA
@@ -306,7 +344,7 @@ tombol.addEventListener(
 
 
             // =========================================
-            // VALIDASI
+            // VALIDASI JENIS
             // =========================================
 
             if (!jenisValue) {
@@ -320,16 +358,34 @@ tombol.addEventListener(
             }
 
 
+            // =========================================
+            // VALIDASI INDEKS
+            // =========================================
+
             if (!kodeIndeks) {
 
-                alert(
-                    "Indeks dokumen belum tersedia."
-                );
+                if (jenisValue === "MANUAL") {
+
+                    alert(
+                        "Silakan masukkan indeks dokumen secara manual."
+                    );
+
+                } else {
+
+                    alert(
+                        "Indeks dokumen belum tersedia."
+                    );
+
+                }
 
                 return;
 
             }
 
+
+            // =========================================
+            // VALIDASI NOMOR URUT
+            // =========================================
 
             if (!nomor) {
 
@@ -353,6 +409,10 @@ tombol.addEventListener(
             }
 
 
+            // =========================================
+            // VALIDASI BULAN
+            // =========================================
+
             if (!bulanValue) {
 
                 alert(
@@ -363,6 +423,10 @@ tombol.addEventListener(
 
             }
 
+
+            // =========================================
+            // VALIDASI TAHUN
+            // =========================================
 
             if (!tahunValue) {
 
@@ -375,6 +439,10 @@ tombol.addEventListener(
             }
 
 
+            // =========================================
+            // VALIDASI TANGGAL
+            // =========================================
+
             if (!tanggalTerbit) {
 
                 alert(
@@ -386,6 +454,10 @@ tombol.addEventListener(
             }
 
 
+            // =========================================
+            // VALIDASI PENANDATANGAN
+            // =========================================
+
             if (!penandatangan) {
 
                 alert(
@@ -396,6 +468,10 @@ tombol.addEventListener(
 
             }
 
+
+            // =========================================
+            // VALIDASI JABATAN
+            // =========================================
 
             if (!jabatan) {
 
@@ -409,7 +485,7 @@ tombol.addEventListener(
 
 
             // =========================================
-            // PASTIKAN NOMOR SURAT TERBENTUK
+            // BENTUK NOMOR SURAT
             // =========================================
 
             buatNomorSurat();
@@ -452,7 +528,6 @@ tombol.addEventListener(
                     db,
                     async (transaction) => {
 
-
                         const snap =
                             await transaction.get(
                                 counterRef
@@ -479,10 +554,8 @@ tombol.addEventListener(
                         transaction.update(
                             counterRef,
                             {
-
                                 lastNumber:
                                     nomorBaru
-
                             }
                         );
 
@@ -500,37 +573,7 @@ tombol.addEventListener(
 
 
             // =========================================
-            // NAMA JENIS DOKUMEN
-            // =========================================
-
-            const namaJenis = {
-
-                DOMISILI:
-                    "Surat Keterangan Domisili",
-
-                MENIKAH:
-                    "Surat Keterangan Menikah",
-
-                PINDAH:
-                    "Surat Keterangan Pindah",
-
-                SKU:
-                    "Surat Keterangan Usaha",
-
-                SKTM:
-                    "Surat Keterangan Tidak Mampu",
-
-                PENGHASILAN:
-                    "Surat Keterangan Penghasilan",
-
-                UNDANGAN:
-                    "Surat Undangan"
-
-            };
-
-
-            // =========================================
-            // SIMPAN FIRESTORE
+            // SIMPAN KE FIRESTORE
             // =========================================
 
             await setDoc(
@@ -598,7 +641,7 @@ tombol.addEventListener(
 
 
             // =========================================
-            // TAMPILKAN HASIL
+            // HASIL
             // =========================================
 
             hasil.textContent =
@@ -621,11 +664,23 @@ tombol.addEventListener(
             // RESET FORM
             // =========================================
 
-            nomorUrut.value = "";
-
             jenis.value = "";
 
             indeks.value = "";
+
+            indeks.readOnly = true;
+
+            indeks.placeholder =
+                "Otomatis";
+
+            if (petunjukIndeks) {
+
+                petunjukIndeks.textContent =
+                    "Pilih jenis dokumen";
+
+            }
+
+            nomorUrut.value = "";
 
             bulan.value = "";
 
@@ -654,7 +709,6 @@ tombol.addEventListener(
 async function muatDashboard() {
 
     try {
-
 
         const snapshot =
             await getDocs(
@@ -762,7 +816,7 @@ async function muatDashboard() {
 
 
         // =============================================
-        // URUTKAN
+        // URUTKAN DOCUMENT ID
         // =============================================
 
         dokumen.sort(
@@ -807,11 +861,14 @@ async function muatDashboard() {
         }
 
 
+        // =============================================
+        // TABEL
+        // =============================================
+
         daftarDokumen.innerHTML =
             terbaru
                 .map(
                     (data) => {
-
 
                         let warnaStatus =
                             "#6b7280";
@@ -932,7 +989,7 @@ async function muatDashboard() {
 
 
 // =====================================================
-// JALANKAN
+// JALANKAN DASHBOARD
 // =====================================================
 
 muatDashboard();
