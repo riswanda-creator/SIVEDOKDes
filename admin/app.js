@@ -152,7 +152,40 @@ jenis.addEventListener(
         const kode =
             option.dataset.indeks || "";
 
-        indeks.value = kode;
+        const manual =
+            jenis.value === "MANUAL";
+
+
+        if (manual) {
+
+            indeks.readOnly = false;
+
+            indeks.placeholder =
+                "Masukkan indeks secara manual";
+
+            indeks.value = "";
+
+            document.getElementById(
+                "petunjukIndeks"
+            ).textContent =
+                "Isi indeks sesuai ketentuan surat.";
+
+        } else {
+
+            indeks.readOnly = true;
+
+            indeks.placeholder =
+                "Otomatis";
+
+            indeks.value = kode;
+
+            document.getElementById(
+                "petunjukIndeks"
+            ).textContent =
+                "Indeks diambil dari master SIVEDOKDes.";
+
+        }
+
 
         buatNomorSurat();
 
