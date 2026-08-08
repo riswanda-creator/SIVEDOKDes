@@ -4,213 +4,396 @@ import {
     getDoc
 } from "./firebase.js";
 
-import { DESA } from "./config.js";
 
-const status = document.getElementById("status");
-const detail = document.getElementById("detail");
+// =====================================================
+// ELEMENT
+// =====================================================
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const loading =
+    document.getElementById("loading");
+
+const hasil =
+    document.getElementById("hasil");
+
+const error =
+    document.getElementById("error");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const statusBadge =
+    document.getElementById("statusBadge");
+
+const documentIdElement =
+    document.getElementById("documentId");
+
+const nomorSurat =
+    document.getElementById("nomorSurat");
+
+const jenisDokumen =
+    document.getElementById("jenisDokumen");
+
+const indeks =
+    document.getElementById("indeks");
+
+const tanggalTerbit =
+    document.getElementById("tanggalTerbit");
+
+const penandatangan =
+    document.getElementById("penandatangan");
+
+const jabatan =
+    document.getElementById("jabatan");
+
+const pdfContainer =
+    document.getElementById("pdfContainer");
+
+const pdfLink =
+    document.getElementById("pdfLink");
+
+
+// =====================================================
+// DOCUMENT ID DARI URL
+// =====================================================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const id =
+    params.get("id");
+
+
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+// =====================================================
+// FORMAT TANGGAL
+// =====================================================
+
+function formatTanggal(tanggal) {
+
+    if (!tanggal) {
+        return "-";
+    }
+
+    const date =
+        new Date(tanggal);
+
+    if (Number.isNaN(date.getTime())) {
+        return tanggal;
+    }
+
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// =====================================================
+// NAMA JENIS DOKUMEN
+// =====================================================
+
+const namaJenis = {
+
+    DOMISILI:
+        "Surat Keterangan Domisili",
+
+    MENIKAH:
+        "Surat Keterangan Menikah",
+
+    PINDAH:
+        "Surat Keterangan Pindah",
+
+    SKU:
+        "Surat Keterangan Usaha",
+
+    SKTM:
+        "Surat Keterangan Tidak Mampu",
+
+    PENGHASILAN:
+        "Surat Keterangan Penghasilan",
+
+    UNDANGAN:
+        "Surat Undangan",
+
+    APBDES:
+        "APBDes",
+
+    MANUAL:
+        "Lainnya / Manual"
+
+};
+
+
+// =====================================================
+// CEK DOKUMEN
+// =====================================================
 
 async function cekDokumen() {
 
+    // ================================================
+    // VALIDASI ID
+    // ================================================
+
     if (!id) {
 
-        status.textContent = "❌ Document ID tidak ditemukan";
-        detail.innerHTML = "";
+        loading.hidden = true;
+
+        errorMessage.textContent =
+            "Document ID tidak ditemukan pada alamat verifikasi.";
+
+        error.hidden = false;
 
         return;
     }
 
+
     try {
 
-        const ref = doc(db, "dokumen", id);
-        const snap = await getDoc(ref);
+        // ============================================
+        // AMBIL DOKUMEN FIRESTORE
+        // ============================================
+
+        const documentRef =
+            doc(
+                db,
+                "dokumen",
+                id
+            );
+
+
+        const snap =
+            await getDoc(
+                documentRef
+            );
+
+
+        // ============================================
+        // DOKUMEN TIDAK ADA
+        // ============================================
 
         if (!snap.exists()) {
 
-            status.textContent = "❌ DOKUMEN TIDAK TERDAFTAR";
-            detail.innerHTML = "";
+            loading.hidden = true;
+
+            errorMessage.textContent =
+                `Document ID ${id} tidak terdaftar dalam sistem SIVEDOKDes.`;
+
+            error.hidden = false;
 
             return;
         }
 
-        const data = snap.data();
 
-        // ==========================================
-        // NAMA JENIS DOKUMEN
-        // ==========================================
+        // ============================================
+        // DATA
+        // ============================================
 
-        const namaJenis = {
-
-            DOMISILI: "Surat Keterangan Domisili",
-
-            SKU: "Surat Keterangan Usaha",
-
-            SKTM: "Surat Keterangan Tidak Mampu",
-
-            APBDES: "APBDes"
-
-        };
-
-        const jenisTampil =
-            namaJenis[data.jenis] || data.jenis;
+        const data =
+            snap.data();
 
 
-        // ==========================================
-        // FORMAT TANGGAL INDONESIA
-        // ==========================================
+        const documentId =
+            data.id || id;
 
-        const tanggalIndonesia =
-            new Date(data.tanggalTerbit)
-                .toLocaleDateString("id-ID", {
-
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric"
-
-                });
-
-
-        // ==========================================
-        // STATUS DOKUMEN
-        // ==========================================
 
         const statusDokumen =
-            String(data.status || "").toUpperCase();
+            String(
+                data.status || ""
+            ).toUpperCase();
 
 
-        if (statusDokumen === "VALID") {
-
-            status.textContent =
-                "🟢 DOKUMEN TERVERIFIKASI";
-
-        } else if (statusDokumen === "DICABUT") {
-
-            status.textContent =
-                "🔴 DOKUMEN DICABUT";
-
-        } else if (statusDokumen === "DIBATALKAN") {
-
-            status.textContent =
-                "🔴 DOKUMEN DIBATALKAN";
-
-        } else {
-
-            status.textContent =
-                "⚠️ STATUS DOKUMEN TIDAK DIKENALI";
-
-        }
+        const jenis =
+            data.namaJenis
+            ||
+            namaJenis[data.jenis]
+            ||
+            data.jenis
+            ||
+            "-";
 
 
-        // ==========================================
-        // DETAIL DOKUMEN
-        // ==========================================
+        // ============================================
+        // STATUS
+        // ============================================
 
-        let warnaStatus = "#6b7280";
+        statusBadge.className =
+            "status-badge";
 
-        if (statusDokumen === "VALID") {
 
-            warnaStatus = "#16a34a";
-
-        } else if (
-            statusDokumen === "DICABUT" ||
-            statusDokumen === "DIBATALKAN"
+        if (
+            statusDokumen ===
+            "VALID"
         ) {
 
-            warnaStatus = "#dc2626";
+            statusBadge.textContent =
+                "DOKUMEN VALID";
+
+            statusBadge.classList.add(
+                "status-valid"
+            );
+
+        }
+
+        else if (
+            statusDokumen ===
+            "DICABUT"
+        ) {
+
+            statusBadge.textContent =
+                "DOKUMEN DICABUT";
+
+            statusBadge.classList.add(
+                "status-dicabut"
+            );
+
+        }
+
+        else if (
+            statusDokumen ===
+            "DIBATALKAN"
+        ) {
+
+            statusBadge.textContent =
+                "DOKUMEN DIBATALKAN";
+
+            statusBadge.classList.add(
+                "status-dibatalkan"
+            );
+
+        }
+
+        else {
+
+            statusBadge.textContent =
+                statusDokumen
+                || "STATUS TIDAK DIKETAHUI";
+
+            statusBadge.classList.add(
+                "status-lain"
+            );
 
         }
 
 
-        detail.innerHTML = `
+        // ============================================
+        // ISI DATA
+        // ============================================
 
-            <table>
+        documentIdElement.textContent =
+            documentId;
 
-                <tr>
-                    <td><b>Document ID</b></td>
-                    <td>${data.id}</td>
-                </tr>
+        nomorSurat.textContent =
+            data.nomorSurat || "-";
 
-                <tr>
-                    <td><b>Nomor Surat</b></td>
-                    <td>${data.nomorSurat}</td>
-                </tr>
+        jenisDokumen.textContent =
+            jenis;
 
-                <tr>
-                    <td><b>Jenis Dokumen</b></td>
-                    <td>${jenisTampil}</td>
-                </tr>
+        indeks.textContent =
+            data.indeks || "-";
 
-                <tr>
-                    <td><b>Status</b></td>
+        tanggalTerbit.textContent =
+            formatTanggal(
+                data.tanggalTerbit
+            );
 
-                    <td style="
-                        color: ${warnaStatus};
-                        font-weight: bold;
-                    ">
-                        ${data.status}
-                    </td>
-                </tr>
+        penandatangan.textContent =
+            data.penandatangan || "-";
 
-                <tr>
-                    <td><b>Penandatangan</b></td>
-                    <td>${data.penandatangan}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Jabatan</b></td>
-                    <td>${data.jabatan}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Tanggal Terbit</b></td>
-                    <td>${tanggalIndonesia}</td>
-                </tr>
-
-            </table>
+        jabatan.textContent =
+            data.jabatan || "-";
 
 
-            <div class="info">
+        // ============================================
+        // PDF
+        // ============================================
 
-                Dokumen ini telah berhasil diverifikasi
-                melalui
+        const pdfURL =
+            data.pdfURL;
 
-                <strong>
-                    ${DESA.namaSistem}
-                </strong>
 
-                (${DESA.kepanjanganSistem}).
+        if (
+            pdfURL
+            &&
+            typeof pdfURL === "string"
+        ) {
 
-                <br><br>
+            pdfLink.href =
+                pdfURL;
 
-                Dokumen diterbitkan oleh
-                <strong>${DESA.nama}</strong>,
-                Kecamatan ${DESA.kecamatan},
-                Kabupaten ${DESA.kabupaten}.
+            pdfContainer.hidden =
+                false;
 
-                <br><br>
+        }
 
-                Apabila terdapat perbedaan informasi antara
-                halaman ini dengan dokumen fisik yang diterima,
-                maka dokumen tersebut perlu dikonfirmasi
-                kepada ${DESA.nama}.
+        else {
 
-            </div>
+            pdfContainer.hidden =
+                true;
 
-        `;
+        }
 
-    } catch (err) {
 
-        console.error(err);
+        // ============================================
+        // TAMPILKAN HASIL
+        // ============================================
 
-        status.textContent =
-            "⚠️ Gagal menghubungi server.";
+        loading.hidden =
+            true;
 
-        detail.innerHTML = "";
+        hasil.hidden =
+            false;
+
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "Verifikasi dokumen gagal:",
+            err
+        );
+
+
+        loading.hidden =
+            true;
+
+
+        errorMessage.textContent =
+            "Terjadi kesalahan saat menghubungi sistem verifikasi. Silakan coba kembali.";
+
+
+        error.hidden =
+            false;
 
     }
 
 }
+
+
+// =====================================================
+// JALANKAN
+// =====================================================
 
 cekDokumen();
