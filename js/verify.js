@@ -47,9 +47,6 @@ const jabatan =
 const tanggalTerbit =
     document.getElementById("tanggalTerbit");
 
-const pdfLink =
-    document.getElementById("pdfLink");
-
 
 // =====================================================
 // DOCUMENT ID
@@ -128,14 +125,21 @@ function formatTanggal(tanggal) {
 
     }
 
+
     const date =
         new Date(tanggal);
 
-    if (Number.isNaN(date.getTime())) {
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
 
         return tanggal;
 
     }
+
 
     return date.toLocaleDateString(
         "id-ID",
@@ -161,11 +165,20 @@ function tampilkanStatus(statusDokumen) {
         ).toUpperCase();
 
 
+    if (!statusBadge) {
+
+        return;
+
+    }
+
+
     statusBadge.className =
         "status-badge";
 
 
-    if (status === "VALID") {
+    if (
+        status === "VALID"
+    ) {
 
         statusBadge.textContent =
             "DOKUMEN TERVERIFIKASI";
@@ -179,7 +192,9 @@ function tampilkanStatus(statusDokumen) {
     }
 
 
-    if (status === "DICABUT") {
+    if (
+        status === "DICABUT"
+    ) {
 
         statusBadge.textContent =
             "DOKUMEN DICABUT";
@@ -193,7 +208,9 @@ function tampilkanStatus(statusDokumen) {
     }
 
 
-    if (status === "DIBATALKAN") {
+    if (
+        status === "DIBATALKAN"
+    ) {
 
         statusBadge.textContent =
             "DOKUMEN DIBATALKAN";
@@ -218,6 +235,138 @@ function tampilkanStatus(statusDokumen) {
 
 
 // =====================================================
+// PDF
+// =====================================================
+
+function tampilkanPDF(data) {
+
+    /*
+     * Kita sengaja tidak mengasumsikan bahwa
+     * verify.html hanya memiliki satu bentuk
+     * tombol PDF.
+     */
+
+
+    const pdfURL =
+        data.pdfURL;
+
+
+    // =============================================
+    // TIDAK ADA PDF
+    // =============================================
+
+    if (
+        !pdfURL ||
+        typeof pdfURL !== "string"
+    ) {
+
+        return;
+
+    }
+
+
+    // =============================================
+    // CARI LINK PDF YANG SUDAH ADA
+    // =============================================
+
+    let pdfLink =
+        document.getElementById(
+            "pdfLink"
+        );
+
+
+    // =============================================
+    // KALAU LINK TIDAK ADA,
+    // CARI ELEMEN LAIN YANG MUNGKIN DIPAKAI
+    // =============================================
+
+    if (!pdfLink) {
+
+        pdfLink =
+            document.querySelector(
+                'a[data-pdf], a[href*=".pdf"]'
+            );
+
+    }
+
+
+    // =============================================
+    // KALAU TIDAK ADA JUGA,
+    // BUAT TOMBOL PDF
+    // =============================================
+
+    if (!pdfLink) {
+
+        pdfLink =
+            document.createElement("a");
+
+        pdfLink.id =
+            "pdfLink";
+
+        pdfLink.className =
+            "pdf-link";
+
+        pdfLink.textContent =
+            "Buka Dokumen PDF";
+
+
+        /*
+         * Masukkan ke dalam hasil
+         * tanpa mengubah struktur utama.
+         */
+
+        if (hasil) {
+
+            hasil.appendChild(
+                pdfLink
+            );
+
+        }
+
+    }
+
+
+    // =============================================
+    // PASANG URL
+    // =============================================
+
+    pdfLink.href =
+        pdfURL;
+
+
+    pdfLink.target =
+        "_blank";
+
+
+    pdfLink.rel =
+        "noopener noreferrer";
+
+
+    pdfLink.hidden =
+        false;
+
+
+    pdfLink.style.display =
+        "inline-block";
+
+
+    // =============================================
+    // JIKA LINK TIDAK PUNYA TEKS
+    // =============================================
+
+    if (
+        !pdfLink.textContent.trim()
+    ) {
+
+        pdfLink.textContent =
+            "Buka Dokumen PDF";
+
+    }
+
+}
+
+
+// =====================================================
 // CEK DOKUMEN
 // =====================================================
 
@@ -226,19 +375,42 @@ async function cekDokumen() {
     try {
 
         // =============================================
-        // VALIDASI ID
+        // VALIDASI DOCUMENT ID
         // =============================================
 
         if (!id) {
 
-            loading.hidden = true;
+            if (loading) {
 
-            hasil.hidden = true;
+                loading.hidden =
+                    true;
 
-            error.hidden = false;
+            }
 
-            errorMessage.textContent =
-                "Document ID tidak ditemukan.";
+
+            if (hasil) {
+
+                hasil.hidden =
+                    true;
+
+            }
+
+
+            if (error) {
+
+                error.hidden =
+                    false;
+
+            }
+
+
+            if (errorMessage) {
+
+                errorMessage.textContent =
+                    "Document ID tidak ditemukan.";
+
+            }
+
 
             return;
 
@@ -264,19 +436,42 @@ async function cekDokumen() {
 
 
         // =============================================
-        // DOKUMEN TIDAK ADA
+        // DOKUMEN TIDAK DITEMUKAN
         // =============================================
 
         if (!snap.exists()) {
 
-            loading.hidden = true;
+            if (loading) {
 
-            hasil.hidden = true;
+                loading.hidden =
+                    true;
 
-            error.hidden = false;
+            }
 
-            errorMessage.textContent =
-                "Dokumen dengan Document ID tersebut tidak terdaftar.";
+
+            if (hasil) {
+
+                hasil.hidden =
+                    true;
+
+            }
+
+
+            if (error) {
+
+                error.hidden =
+                    false;
+
+            }
+
+
+            if (errorMessage) {
+
+                errorMessage.textContent =
+                    "Dokumen dengan Document ID tersebut tidak terdaftar.";
+
+            }
+
 
             return;
 
@@ -284,11 +479,17 @@ async function cekDokumen() {
 
 
         // =============================================
-        // DATA
+        // DATA DOKUMEN
         // =============================================
 
         const data =
             snap.data();
+
+
+        console.log(
+            "Data dokumen:",
+            data
+        );
 
 
         // =============================================
@@ -312,76 +513,84 @@ async function cekDokumen() {
 
 
         // =============================================
-        // ISI DETAIL
+        // DETAIL
         // =============================================
 
-        documentIdElement.textContent =
-            data.id || id;
+        if (documentIdElement) {
+
+            documentIdElement.textContent =
+                data.id || id;
+
+        }
 
 
-        nomorSurat.textContent =
-            data.nomorSurat || "-";
+        if (nomorSurat) {
+
+            nomorSurat.textContent =
+                data.nomorSurat || "-";
+
+        }
 
 
-        jenisDokumen.textContent =
-            jenis;
+        if (jenisDokumen) {
+
+            jenisDokumen.textContent =
+                jenis;
+
+        }
 
 
-        indeks.textContent =
-            data.indeks || "-";
+        if (indeks) {
+
+            indeks.textContent =
+                data.indeks || "-";
+
+        }
 
 
-        penandatangan.textContent =
-            data.penandatangan || "-";
+        if (penandatangan) {
+
+            penandatangan.textContent =
+                data.penandatangan || "-";
+
+        }
 
 
-        jabatan.textContent =
-            data.jabatan || "-";
+        if (jabatan) {
+
+            jabatan.textContent =
+                data.jabatan || "-";
+
+        }
 
 
-        tanggalTerbit.textContent =
-            formatTanggal(
-                data.tanggalTerbit
-            );
+        if (tanggalTerbit) {
+
+            tanggalTerbit.textContent =
+                formatTanggal(
+                    data.tanggalTerbit
+                );
+
+        }
 
 
         // =============================================
         // PDF
         // =============================================
 
-        if (
-            data.pdfURL &&
-            typeof data.pdfURL === "string"
-        ) {
-
-            pdfLink.href =
-                data.pdfURL;
-
-            pdfLink.target =
-                "_blank";
-
-            pdfLink.rel =
-                "noopener noreferrer";
-
-            pdfLink.hidden =
-                false;
-
-        }
-
-        else {
-
-            pdfLink.hidden =
-                true;
-
-        }
+        tampilkanPDF(
+            data
+        );
 
 
         // =============================================
-        // INFO
+        // INFO DOKUMEN
         // =============================================
 
         const info =
-            document.getElementById("infoDokumen");
+            document.getElementById(
+                "infoDokumen"
+            );
 
 
         if (info) {
@@ -440,12 +649,28 @@ async function cekDokumen() {
         // TAMPILKAN HASIL
         // =============================================
 
-        loading.hidden = true;
+        if (loading) {
 
-        error.hidden = true;
+            loading.hidden =
+                true;
 
-        hasil.hidden = false;
+        }
 
+
+        if (error) {
+
+            error.hidden =
+                true;
+
+        }
+
+
+        if (hasil) {
+
+            hasil.hidden =
+                false;
+
+        }
 
     }
 
@@ -457,15 +682,36 @@ async function cekDokumen() {
         );
 
 
-        loading.hidden = true;
+        if (loading) {
 
-        hasil.hidden = true;
+            loading.hidden =
+                true;
 
-        error.hidden = false;
+        }
 
 
-        errorMessage.textContent =
-            "Gagal menghubungi server. Silakan coba kembali.";
+        if (hasil) {
+
+            hasil.hidden =
+                true;
+
+        }
+
+
+        if (error) {
+
+            error.hidden =
+                false;
+
+        }
+
+
+        if (errorMessage) {
+
+            errorMessage.textContent =
+                "Gagal menghubungi server. Silakan coba kembali.";
+
+        }
 
     }
 
