@@ -46,6 +46,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
 
     box-shadow:
@@ -94,7 +95,6 @@ body {
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-
     font-size: 13px;
 }
 
@@ -113,20 +113,14 @@ body {
 
 .stats {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
+    grid-template-columns: repeat(4, 1fr);
     gap: 18px;
-
     margin-bottom: 24px;
 }
 
 .stat-card {
     background: #ffffff;
-
     border-radius: 14px;
-
     padding: 22px;
 
     box-shadow:
@@ -134,7 +128,6 @@ body {
 
     display: flex;
     flex-direction: column;
-
     gap: 10px;
 }
 
@@ -155,9 +148,7 @@ body {
 
 .panel {
     background: #ffffff;
-
     border-radius: 14px;
-
     padding: 26px;
 
     box-shadow:
@@ -189,10 +180,7 @@ body {
 
 .form-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
 
@@ -212,21 +200,24 @@ body {
     color: #374151;
 }
 
+.form-group small {
+    color: #6b7280;
+    font-size: 11px;
+}
+
 
 /* =====================================================
-   INPUT & SELECT
+   INPUT SELECT
    ===================================================== */
 
 input,
 select {
     width: 100%;
-
     height: 44px;
 
     padding: 0 13px;
 
     border: 1px solid #d1d5db;
-
     border-radius: 8px;
 
     background: #ffffff;
@@ -247,16 +238,17 @@ select:focus {
     border-color: #0b57d0;
 
     box-shadow:
-        0 0 0 3px rgba(
-            11,
-            87,
-            208,
-            0.10
-        );
+        0 0 0 3px rgba(11, 87, 208, 0.10);
 }
 
 input::placeholder {
     color: #9ca3af;
+}
+
+input:disabled,
+select:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
 }
 
 
@@ -287,15 +279,22 @@ button {
 
     transition:
         background 0.2s ease,
-        transform 0.1s ease;
+        transform 0.1s ease,
+        opacity 0.2s ease;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background: #0847ad;
 }
 
-button:active {
+button:active:not(:disabled) {
     transform: scale(0.98);
+}
+
+button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 
@@ -335,20 +334,106 @@ button:active {
 
 
 /* =====================================================
+   UPLOAD
+   ===================================================== */
+
+.upload-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fafbfc;
+}
+
+.upload-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    margin-bottom: 20px;
+
+    padding: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 8px;
+}
+
+.upload-info strong {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.upload-info span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+
+    word-break: break-all;
+}
+
+.status-upload {
+    margin-top: 14px;
+
+    padding: 12px 14px;
+
+    border-radius: 8px;
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.hasil-upload {
+    margin-top: 14px;
+
+    padding: 14px;
+
+    border-radius: 8px;
+
+    background: #ecfdf5;
+
+    border: 1px solid #bbf7d0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hasil-upload strong {
+    color: #166534;
+    font-size: 13px;
+}
+
+.hasil-upload a {
+    color: #0b57d0;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.hasil-upload a:hover {
+    text-decoration: underline;
+}
+
+
+/* =====================================================
    TABLE
    ===================================================== */
 
 .table-wrapper {
     width: 100%;
-
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-
     border-collapse: collapse;
-
     font-size: 13px;
 }
 
@@ -388,6 +473,16 @@ tbody tr:hover {
     background: #fafafa;
 }
 
+.pdf-link {
+    color: #0b57d0;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.pdf-link:hover {
+    text-decoration: underline;
+}
+
 
 /* =====================================================
    FOOTER
@@ -413,8 +508,7 @@ footer {
 @media (max-width: 900px) {
 
     .stats {
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .admin-header {
@@ -436,9 +530,7 @@ footer {
 
     .admin-header {
         flex-direction: column;
-
         align-items: flex-start;
-
         padding: 18px;
     }
 
@@ -448,7 +540,6 @@ footer {
 
     .stats {
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
 
@@ -466,7 +557,6 @@ footer {
 
     .form-grid {
         grid-template-columns: 1fr;
-
         gap: 16px;
     }
 
