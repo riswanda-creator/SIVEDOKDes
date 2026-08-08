@@ -1,6 +1,4 @@
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
     getFirestore,
@@ -17,32 +15,23 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
+    getStorage
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 
 
 const firebaseConfig = {
 
-    apiKey:
-        "AIzaSyDQUvjOMujFz6YbwaIC048D1wtq4anHkV0",
+    apiKey: "AIzaSyDQUvjOMujFz6YbwaIC048D1wtq4anHkV0",
 
-    authDomain:
-        "sivedokdes.firebaseapp.com",
+    authDomain: "sivedokdes.firebaseapp.com",
 
-    projectId:
-        "sivedokdes",
+    projectId: "sivedokdes",
 
-    storageBucket:
-        "sivedokdes.firebasestorage.app",
+    storageBucket: "sivedokdes.firebasestorage.app",
 
-    messagingSenderId:
-        "505099689462",
+    messagingSenderId: "505099689462",
 
-    appId:
-        "1:505099689462:web:086a511ee30169a3da7bd7"
+    appId: "1:505099689462:web:086a511ee30169a3da7bd7"
 
 };
 
@@ -83,12 +72,6 @@ export {
 
     serverTimestamp,
 
-    runTransaction,
-
-    ref,
-
-    uploadBytes,
-
-    getDownloadURL
+    runTransaction
 
 };
