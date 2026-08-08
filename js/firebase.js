@@ -1,63 +1,33 @@
+// =====================================================
+// SUPABASE CLIENT
+// SIVEDOKDes
+// =====================================================
+
 import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
-
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc,
-    getDocs,
-    collection,
-    query,
-    orderBy,
-    limit,
-    serverTimestamp,
-    runTransaction
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+    createClient
+} from "https://esm.sh/@supabase/supabase-js@2";
 
 
 // =====================================================
-// FIREBASE CONFIG
+// SUPABASE CONFIG
 // =====================================================
 
-const firebaseConfig = {
+const SUPABASE_URL =
+    "https://ittfhjzkejhsbowwqlrq.supabase.co";
 
-    apiKey:
-        "AIzaSyDQUvjOMujFz6YbwaIC048D1wtq4anHkV0",
-
-    authDomain:
-        "sivedokdes.firebaseapp.com",
-
-    projectId:
-        "sivedokdes",
-
-    storageBucket:
-        "sivedokdes.firebasestorage.app",
-
-    messagingSenderId:
-        "505099689462",
-
-    appId:
-        "1:505099689462:web:086a511ee30169a3da7bd7"
-
-};
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_javi5F477-dw8o3LD4YjHg_QejbW_cz";
 
 
 // =====================================================
-// INITIALIZE FIREBASE
+// INITIALIZE SUPABASE
 // =====================================================
 
-const app =
-    initializeApp(firebaseConfig);
-
-
-// =====================================================
-// FIRESTORE
-// =====================================================
-
-const db =
-    getFirestore(app);
+const supabase =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
 
 // =====================================================
@@ -65,18 +35,5 @@ const db =
 // =====================================================
 
 export {
-
-    db,
-
-    doc,
-    setDoc,
-    getDoc,
-    getDocs,
-    collection,
-    query,
-    orderBy,
-    limit,
-    serverTimestamp,
-    runTransaction
-
+    supabase
 };
