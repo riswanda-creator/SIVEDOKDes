@@ -23,638 +23,636 @@
 <body>
 
 
-<!-- =================================================
-     HEADER
-     ================================================= -->
+<div class="admin-container">
 
-<header class="admin-header">
 
-    <div class="brand">
+    <!-- =================================================
+         HEADER
+         ================================================= -->
 
-        <img
-            src="../img/logo.png"
-            class="logo"
-            alt="Logo Desa Guntung">
+    <header class="admin-header">
 
-        <div>
+        <div class="brand">
 
-            <h1>
-                SIVEDOKDes
-            </h1>
+            <img
+                src="../img/logo.png"
+                class="logo"
+                alt="Logo Desa Guntung">
+
+            <div>
+
+                <h1>SIVEDOKDes</h1>
+
+                <p>
+                    Sistem Verifikasi Dokumen Elektronik Desa
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="identity">
+
+            <strong>
+                Dashboard Administrator
+            </strong>
+
+            <span>
+                Pemerintah Desa Guntung
+            </span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         STATISTIK
+         ================================================= -->
+
+    <section class="stats">
+
+
+        <div class="stat-card">
+
+            <span>
+                Total Dokumen
+            </span>
+
+            <strong id="totalDokumen">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                Dokumen Valid
+            </span>
+
+            <strong id="dokumenValid">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                Dokumen Dicabut
+            </span>
+
+            <strong id="dokumenDicabut">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                Dokumen Dibatalkan
+            </span>
+
+            <strong id="dokumenDibatalkan">
+                -
+            </strong>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         REGISTRASI DOKUMEN
+         ================================================= -->
+
+    <section class="panel">
+
+
+        <div class="panel-header">
+
+            <h2>
+                Registrasi Dokumen
+            </h2>
 
             <p>
-                Sistem Verifikasi Dokumen Elektronik Desa
+                Masukkan data surat untuk mendaftarkan
+                dokumen ke dalam SIVEDOKDes.
             </p>
 
         </div>
 
-    </div>
 
 
-    <div class="identity">
-
-        <strong>
-            Dashboard Administrator
-        </strong>
-
-        <span>
-            Pemerintah Desa Guntung
-        </span>
-
-    </div>
-
-</header>
+        <div class="form-grid">
 
 
+            <!-- JENIS -->
 
-<!-- =================================================
-     STATISTIK
-     ================================================= -->
+            <div class="form-group">
 
-<section class="stats">
+                <label for="jenis">
+                    Jenis Dokumen
+                </label>
 
+                <select id="jenis">
 
-    <div class="stat-card">
+                    <option value="">
+                        Pilih jenis dokumen
+                    </option>
 
-        <span>
-            Total Dokumen
-        </span>
+                    <option
+                        value="DOMISILI"
+                        data-indeks="470">
 
-        <strong id="totalDokumen">
-            -
-        </strong>
+                        Surat Keterangan Domisili
 
-    </div>
+                    </option>
 
+                    <option
+                        value="MENIKAH"
+                        data-indeks="472.2">
 
-    <div class="stat-card">
+                        Surat Keterangan Menikah
 
-        <span>
-            Dokumen Valid
-        </span>
+                    </option>
 
-        <strong id="dokumenValid">
-            -
-        </strong>
+                    <option
+                        value="PINDAH"
+                        data-indeks="471.2">
 
-    </div>
+                        Surat Keterangan Pindah
 
+                    </option>
 
-    <div class="stat-card">
+                    <option
+                        value="SKU"
+                        data-indeks="500">
 
-        <span>
-            Dokumen Dicabut
-        </span>
+                        Surat Keterangan Usaha
 
-        <strong id="dokumenDicabut">
-            -
-        </strong>
+                    </option>
 
-    </div>
+                    <option
+                        value="SKTM"
+                        data-indeks="401">
 
+                        Surat Keterangan Tidak Mampu
 
-    <div class="stat-card">
+                    </option>
 
-        <span>
-            Dokumen Dibatalkan
-        </span>
+                    <option
+                        value="PENGHASILAN"
+                        data-indeks="500">
 
-        <strong id="dokumenDibatalkan">
-            -
-        </strong>
+                        Surat Keterangan Penghasilan
 
-    </div>
+                    </option>
 
+                    <option
+                        value="UNDANGAN"
+                        data-indeks="005">
 
-</section>
+                        Surat Undangan
 
+                    </option>
 
+                    <option
+                        value="MANUAL"
+                        data-indeks="">
 
-<!-- =================================================
-     REGISTRASI DOKUMEN
-     ================================================= -->
+                        Lainnya / Manual
 
-<section class="panel">
+                    </option>
 
+                </select>
 
-    <div class="panel-header">
-
-        <h2>
-            Registrasi Dokumen
-        </h2>
-
-        <p>
-            Masukkan data surat untuk mendaftarkan
-            dokumen ke dalam SIVEDOKDes.
-        </p>
-
-    </div>
+            </div>
 
 
 
-    <div class="form-grid">
+            <!-- INDEKS -->
 
+            <div class="form-group">
 
-        <!-- JENIS -->
+                <label for="indeks">
+                    Indeks / Kode Klasifikasi
+                </label>
 
-        <div class="form-group">
+                <input
+                    id="indeks"
+                    type="text"
+                    readonly
+                    placeholder="Otomatis">
 
-            <label for="jenis">
-                Jenis Dokumen
-            </label>
-
-            <select id="jenis">
-
-                <option value="">
+                <small id="petunjukIndeks">
                     Pilih jenis dokumen
-                </option>
+                </small>
+
+            </div>
 
 
-                <option
-                    value="DOMISILI"
-                    data-indeks="470">
 
-                    Surat Keterangan Domisili
+            <!-- NOMOR URUT -->
 
-                </option>
+            <div class="form-group">
 
+                <label for="nomorUrut">
+                    Nomor Urut Surat
+                </label>
 
-                <option
-                    value="MENIKAH"
-                    data-indeks="472.2">
+                <input
+                    id="nomorUrut"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="Contoh: 005">
 
-                    Surat Keterangan Menikah
-
-                </option>
-
-
-                <option
-                    value="PINDAH"
-                    data-indeks="471.2">
-
-                    Surat Keterangan Pindah
-
-                </option>
+            </div>
 
 
-                <option
-                    value="SKU"
-                    data-indeks="500">
 
-                    Surat Keterangan Usaha
+            <!-- KODE DESA -->
 
-                </option>
+            <div class="form-group">
 
+                <label for="kodeKomponen">
+                    Kode Komponen
+                </label>
 
-                <option
-                    value="SKTM"
-                    data-indeks="401">
+                <input
+                    id="kodeKomponen"
+                    type="text"
+                    value="GT"
+                    readonly>
 
-                    Surat Keterangan Tidak Mampu
-
-                </option>
-
-
-                <option
-                    value="PENGHASILAN"
-                    data-indeks="500">
-
-                    Surat Keterangan Penghasilan
-
-                </option>
+            </div>
 
 
-                <option
-                    value="UNDANGAN"
-                    data-indeks="005">
 
-                    Surat Undangan
+            <!-- BULAN -->
 
-                </option>
+            <div class="form-group">
+
+                <label for="bulan">
+                    Bulan
+                </label>
+
+                <select id="bulan">
+
+                    <option value="">
+                        Pilih bulan
+                    </option>
+
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+
+                </select>
+
+            </div>
 
 
-                <option
-                    value="MANUAL"
-                    data-indeks="">
 
-                    Lainnya / Manual
+            <!-- TAHUN -->
 
-                </option>
+            <div class="form-group">
+
+                <label for="tahun">
+                    Tahun
+                </label>
+
+                <select id="tahun"></select>
+
+            </div>
 
 
-            </select>
+
+            <!-- NOMOR SURAT -->
+
+            <div class="form-group full">
+
+                <label for="nomorSurat">
+                    Nomor Surat
+                </label>
+
+                <input
+                    id="nomorSurat"
+                    type="text"
+                    readonly
+                    placeholder="Nomor surat akan terbentuk otomatis">
+
+            </div>
+
+
+
+            <!-- TANGGAL -->
+
+            <div class="form-group">
+
+                <label for="tanggal">
+                    Tanggal Terbit
+                </label>
+
+                <input
+                    id="tanggal"
+                    type="date">
+
+            </div>
+
+
+
+            <!-- PENANDATANGAN -->
+
+            <div class="form-group">
+
+                <label for="penandatangan">
+                    Penandatangan
+                </label>
+
+                <input
+                    id="penandatangan"
+                    type="text"
+                    value="IDRIS">
+
+            </div>
+
+
+
+            <!-- JABATAN -->
+
+            <div class="form-group full">
+
+                <label for="jabatan">
+                    Jabatan
+                </label>
+
+                <input
+                    id="jabatan"
+                    type="text"
+                    value="Kepala Desa Guntung">
+
+            </div>
+
 
         </div>
 
-
-
-        <!-- INDEKS -->
-
-        <div class="form-group">
-
-            <label for="indeks">
-                Indeks / Kode Klasifikasi
-            </label>
-
-            <input
-                id="indeks"
-                type="text"
-                readonly
-                placeholder="Otomatis">
-
-            <small id="petunjukIndeks">
-                Pilih jenis dokumen
-            </small>
-
-        </div>
-
-
-
-        <!-- NOMOR URUT -->
-
-        <div class="form-group">
-
-            <label for="nomorUrut">
-                Nomor Urut Surat
-            </label>
-
-            <input
-                id="nomorUrut"
-                type="text"
-                inputmode="numeric"
-                placeholder="Contoh: 005">
-
-        </div>
-
-
-
-        <!-- KODE KOMPONEN -->
-
-        <div class="form-group">
-
-            <label for="kodeKomponen">
-                Kode Komponen
-            </label>
-
-            <input
-                id="kodeKomponen"
-                type="text"
-                value="GT"
-                readonly>
-
-        </div>
-
-
-
-        <!-- BULAN -->
-
-        <div class="form-group">
-
-            <label for="bulan">
-                Bulan
-            </label>
-
-            <select id="bulan">
-
-                <option value="">
-                    Pilih bulan
-                </option>
-
-                <option value="1">
-                    Januari
-                </option>
-
-                <option value="2">
-                    Februari
-                </option>
-
-                <option value="3">
-                    Maret
-                </option>
-
-                <option value="4">
-                    April
-                </option>
-
-                <option value="5">
-                    Mei
-                </option>
-
-                <option value="6">
-                    Juni
-                </option>
-
-                <option value="7">
-                    Juli
-                </option>
-
-                <option value="8">
-                    Agustus
-                </option>
-
-                <option value="9">
-                    September
-                </option>
-
-                <option value="10">
-                    Oktober
-                </option>
-
-                <option value="11">
-                    November
-                </option>
-
-                <option value="12">
-                    Desember
-                </option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- TAHUN -->
-
-        <div class="form-group">
-
-            <label for="tahun">
-                Tahun
-            </label>
-
-            <select id="tahun">
-
-            </select>
-
-        </div>
-
-
-
-        <!-- NOMOR SURAT -->
-
-        <div class="form-group full">
-
-            <label for="nomorSurat">
-                Nomor Surat
-            </label>
-
-            <input
-                id="nomorSurat"
-                type="text"
-                readonly
-                placeholder="Nomor surat akan terbentuk otomatis">
-
-        </div>
-
-
-
-        <!-- TANGGAL -->
-
-        <div class="form-group">
-
-            <label for="tanggal">
-                Tanggal Terbit
-            </label>
-
-            <input
-                id="tanggal"
-                type="date">
-
-        </div>
-
-
-
-        <!-- PENANDATANGAN -->
-
-        <div class="form-group">
-
-            <label for="penandatangan">
-                Penandatangan
-            </label>
-
-            <input
-                id="penandatangan"
-                type="text"
-                value="IDRIS">
-
-        </div>
-
-
-
-        <!-- JABATAN -->
-
-        <div class="form-group full">
-
-            <label for="jabatan">
-                Jabatan
-            </label>
-
-            <input
-                id="jabatan"
-                type="text"
-                value="Kepala Desa Guntung">
-
-        </div>
-
-
-    </div>
-
-
-
-    <button
-        id="registrasi"
-        type="button">
-
-        Registrasikan Dokumen
-
-    </button>
-
-
-
-    <!-- HASIL -->
-
-    <div class="hasil">
-
-        <small>
-            Document ID
-        </small>
-
-        <h2 id="hasil">
-            -
-        </h2>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =================================================
-     UPLOAD DOKUMEN PDF
-     ================================================= -->
-
-<section class="panel">
-
-
-    <div class="panel-header">
-
-        <h2>
-            Upload Dokumen PDF
-        </h2>
-
-        <p>
-            Upload file PDF surat untuk diproses
-            oleh SIVEDOKDes.
-        </p>
-
-    </div>
-
-
-    <div class="upload-box">
-
-
-        <div class="form-group">
-
-            <label for="filePDF">
-                Pilih Dokumen PDF
-            </label>
-
-            <input
-                id="filePDF"
-                type="file"
-                accept="application/pdf">
-
-        </div>
 
 
         <button
-            id="uploadPDF"
+            id="registrasi"
             type="button">
 
-            Upload PDF
+            Registrasikan Dokumen
 
         </button>
 
 
-        <div
-            id="statusUpload"
-            class="status-upload">
 
-            Belum ada file dipilih.
+        <!-- HASIL -->
+
+        <div class="hasil">
+
+            <small>
+                Document ID
+            </small>
+
+            <h2 id="hasil">
+                -
+            </h2>
 
         </div>
 
 
-    </div>
-
-
-</section>
+    </section>
 
 
 
-<!-- =================================================
-     DOKUMEN TERBARU
-     ================================================= -->
+    <!-- =================================================
+         UPLOAD PDF
+         ================================================= -->
 
-<section class="panel">
-
-
-    <div class="panel-header">
-
-        <h2>
-            Dokumen Terbaru
-        </h2>
-
-        <p>
-            Sepuluh dokumen terakhir yang terdaftar
-            dalam SIVEDOKDes.
-        </p>
-
-    </div>
+    <section class="panel">
 
 
-    <div class="table-wrapper">
+        <div class="panel-header">
 
-        <table>
+            <h2>
+                Upload Dokumen PDF
+            </h2>
 
-            <thead>
+            <p>
+                Upload PDF yang akan diproses oleh
+                SIVEDOKDes.
+            </p>
 
-                <tr>
-
-                    <th>
-                        Document ID
-                    </th>
-
-                    <th>
-                        Nomor Surat
-                    </th>
-
-                    <th>
-                        Jenis
-                    </th>
-
-                    <th>
-                        Status
-                    </th>
-
-                    <th>
-                        Tanggal Terbit
-                    </th>
-
-                </tr>
-
-            </thead>
+        </div>
 
 
-            <tbody id="daftarDokumen">
-
-                <tr>
-
-                    <td
-                        colspan="5"
-                        style="text-align:center;">
-
-                        Memuat data...
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
+        <div class="upload-box">
 
 
-</section>
+            <div class="upload-info">
+
+                <strong>
+                    Dokumen tujuan
+                </strong>
+
+                <span id="uploadDocumentId">
+                    Belum ada Document ID.
+                </span>
+
+            </div>
 
 
 
-<!-- =================================================
-     FOOTER
-     ================================================= -->
+            <div class="form-group">
 
-<footer>
+                <label for="filePDF">
+                    Pilih Dokumen PDF
+                </label>
 
-    Pemerintah Desa Guntung<br>
+                <input
+                    id="filePDF"
+                    type="file"
+                    accept=".pdf,application/pdf">
 
-    Kecamatan Tanjung Tiram<br>
-
-    Kabupaten Batu Bara
-
-    <br><br>
-
-    © 2026 SIVEDOKDes v1.0
-
-</footer>
+            </div>
 
 
 
-<!-- =================================================
-     JAVASCRIPT
-     ================================================= -->
+            <button
+                id="uploadPDF"
+                type="button"
+                disabled>
+
+                Upload PDF
+
+            </button>
+
+
+
+            <div
+                id="statusUpload"
+                class="status-upload">
+
+                Registrasikan dokumen terlebih dahulu.
+
+            </div>
+
+
+
+            <div
+                id="hasilUpload"
+                class="hasil-upload"
+                hidden>
+
+                <strong>
+                    PDF berhasil disimpan.
+                </strong>
+
+                <a
+                    id="linkPDF"
+                    href="#"
+                    target="_blank"
+                    rel="noopener">
+
+                    Buka PDF
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         DOKUMEN TERBARU
+         ================================================= -->
+
+    <section class="panel">
+
+
+        <div class="panel-header">
+
+            <h2>
+                Dokumen Terbaru
+            </h2>
+
+            <p>
+                Sepuluh dokumen terakhir yang terdaftar
+                dalam SIVEDOKDes.
+            </p>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Document ID
+                        </th>
+
+                        <th>
+                            Nomor Surat
+                        </th>
+
+                        <th>
+                            Jenis
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            PDF
+                        </th>
+
+                        <th>
+                            Tanggal Terbit
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="daftarDokumen">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            style="text-align:center;">
+
+                            Memuat data...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         FOOTER
+         ================================================= -->
+
+    <footer>
+
+        Pemerintah Desa Guntung<br>
+
+        Kecamatan Tanjung Tiram<br>
+
+        Kabupaten Batu Bara
+
+        <br><br>
+
+        © 2026 SIVEDOKDes v1.0
+
+    </footer>
+
+
+</div>
+
+
 
 <script
     type="module"
