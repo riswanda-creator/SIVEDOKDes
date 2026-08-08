@@ -17,11 +17,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 
 // =====================================================
@@ -68,11 +65,33 @@ const db =
 
 
 // =====================================================
-// STORAGE
+// SUPABASE
 // =====================================================
 
-const storage =
-    getStorage(app);
+// GANTI DUA NILAI DI BAWAH INI
+// dengan Project URL dan Publishable Key
+// dari Supabase kamu.
+
+const SUPABASE_URL =
+    "https://PROJECT-ID-KAMU.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "PUBLISHABLE-KEY-KAMU";
+
+
+const supabase =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+// =====================================================
+// SUPABASE STORAGE
+// =====================================================
+
+const SUPABASE_BUCKET =
+    "sivedokdes-pdf";
 
 
 // =====================================================
@@ -81,23 +100,39 @@ const storage =
 
 export {
 
-    // Firestore
+    // =========================================
+    // FIRESTORE
+    // =========================================
+
     db,
+
     doc,
+
     setDoc,
+
     getDoc,
+
     getDocs,
+
     collection,
+
     query,
+
     orderBy,
+
     limit,
+
     serverTimestamp,
+
     runTransaction,
 
-    // Storage
-    storage,
-    ref,
-    uploadBytes,
-    getDownloadURL
+
+    // =========================================
+    // SUPABASE
+    // =========================================
+
+    supabase,
+
+    SUPABASE_BUCKET
 
 };
