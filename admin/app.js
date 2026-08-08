@@ -1,17 +1,19 @@
 import {
-
     db,
-    storage,
     doc,
     setDoc,
-    updateDoc,
+    getDoc,
     getDocs,
     collection,
     serverTimestamp,
-    runTransaction
+    runTransaction,
+
+    storage,
+    ref,
+    uploadBytes,
+    getDownloadURL
 
 } from "../js/firebase.js";
-
 
 import {
 
@@ -69,6 +71,250 @@ const uploadPDF =
 const statusUpload =
     document.getElementById("statusUpload");
 
+// =====================================================
+// UPLOAD DOKUMEN PDF
+// =====================================================
+
+uploadPDF.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            // =========================================
+            // CEK FILE
+            // =========================================
+
+            const file =
+                filePDF.files[0];
+
+
+            if (!file) {
+
+                alert(
+                    "Silakan pilih file PDF terlebih dahulu."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // CEK FORMAT
+            // =========================================
+
+            if (
+                file.type !==
+                "application/pdf"
+            ) {
+
+                alert(
+                    "File harus berupa PDF."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // AMBIL DOCUMENT ID
+            // =========================================
+
+            const documentId =
+                hasil.textContent.trim();
+
+
+            if (
+                !documentId ||
+                documentId === "-"
+            ) {
+
+                alert(
+                    "Registrasikan dokumen terlebih dahulu sebelum mengupload PDF."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // STATUS
+            // =========================================
+
+            statusUpload.textContent =
+                "Mengupload PDF...";
+
+            uploadPDF.disabled =
+                true;
+
+
+            // =========================================
+            // NAMA FILE
+            // =========================================
+
+            const namaFile =
+                "original.pdf";
+
+
+            // =========================================
+            // PATH FIREBASE STORAGE
+            // =========================================
+
+            const storagePath =
+                `dokumen/${documentId}/${namaFile}`;
+
+
+            const storageRef =
+                ref(
+                    storage,
+                    storagePath
+                );
+
+
+            // =========================================
+            // UPLOAD
+            // =========================================
+
+            const snapshot =
+                await uploadBytes(
+                    storageRef,
+                    file,
+                    {
+                        contentType:
+                            "application/pdf"
+                    }
+                );
+
+
+            console.log(
+                "Upload berhasil:",
+                snapshot
+            );
+
+
+            // =========================================
+            // URL DOWNLOAD
+            // =========================================
+
+            const downloadURL =
+                await getDownloadURL(
+                    storageRef
+                );
+
+
+            // =========================================
+            // SIMPAN INFORMASI KE FIRESTORE
+            // =========================================
+
+            await setDoc(
+
+                doc(
+                    db,
+                    "dokumen",
+                    documentId
+                ),
+
+                {
+
+                    pdfUploaded:
+                        true,
+
+                    pdfOriginalName:
+                        file.name,
+
+                    pdfStoragePath:
+                        storagePath,
+
+                    pdfURL:
+                        downloadURL,
+
+                    pdfUploadedAt:
+                        serverTimestamp()
+
+                },
+
+                {
+                    merge:
+                        true
+                }
+
+            );
+
+
+            // =========================================
+            // BERHASIL
+            // =========================================
+
+            statusUpload.innerHTML = `
+
+                <strong>
+                    PDF berhasil diupload.
+                </strong>
+
+                <br>
+
+                File:
+                ${file.name}
+
+                <br><br>
+
+                <a
+                    href="${downloadURL}"
+                    target="_blank"
+                    rel="noopener">
+
+                    Buka PDF
+
+                </a>
+
+            `;
+
+
+            alert(
+                "PDF berhasil disimpan ke Firebase Storage."
+            );
+
+
+        } catch (err) {
+
+            console.error(
+                "Gagal upload PDF:",
+                err
+            );
+
+
+            statusUpload.textContent =
+                "Upload gagal: " +
+                (
+                    err.message
+                    ||
+                    "Terjadi kesalahan."
+                );
+
+
+            alert(
+                "Upload PDF gagal:\n\n" +
+                (
+                    err.message
+                    ||
+                    "Terjadi kesalahan."
+                )
+            );
+
+
+        } finally {
+
+            uploadPDF.disabled =
+                false;
+
+        }
+
+    }
+);
+
 
 // =====================================================
 // DASHBOARD
@@ -88,6 +334,15 @@ const dokumenDibatalkan =
 
 const daftarDokumen =
     document.getElementById("daftarDokumen");
+
+const filePDF =
+document.getElementById("filePDF");
+
+const uploadPDF =
+document.getElementById("uploadPDF");
+
+const statusUpload =
+document.getElementById("statusUpload");
 
 
 // =====================================================
