@@ -1,5 +1,6 @@
 import {
     db,
+    storage,
     doc,
     setDoc,
     getDocs,
@@ -7,6 +8,12 @@ import {
     serverTimestamp,
     runTransaction
 } from "../js/firebase.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
 
 
 // =====================================================
@@ -23,6 +30,18 @@ const bulan = document.getElementById("bulan");
 const tahun = document.getElementById("tahun");
 const nomorSurat = document.getElementById("nomorSurat");
 const tanggal = document.getElementById("tanggal");
+// =====================================================
+// UPLOAD PDF
+// =====================================================
+
+const pdfFile =
+    document.getElementById("pdfFile");
+
+const uploadPdf =
+    document.getElementById("uploadPdf");
+
+const statusUploadPdf =
+    document.getElementById("statusUploadPdf");
 
 const totalDokumen =
     document.getElementById("totalDokumen");
@@ -993,3 +1012,258 @@ async function muatDashboard() {
 // =====================================================
 
 muatDashboard();
+// =====================================================
+// UPLOAD DOKUMEN PDF
+// =====================================================
+
+uploadPdf.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            // =========================================
+            // CEK FILE
+            // =========================================
+
+            if (!pdfFile.files.length) {
+
+                alert(
+                    "Silakan pilih dokumen PDF terlebih dahulu."
+                );
+
+                return;
+
+            }
+
+
+            const file =
+                pdfFile.files[0];
+
+
+            // =========================================
+            // CEK FORMAT
+            // =========================================
+
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                alert(
+                    "File yang diperbolehkan hanya PDF."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // BATAS UKURAN
+            // =========================================
+
+            const batasUkuran =
+                10 * 1024 * 1024;
+
+
+            if (
+                file.size > batasUkuran
+            ) {
+
+                alert(
+                    "Ukuran PDF maksimal 10 MB."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // DOCUMENT ID
+            // =========================================
+
+            const documentId =
+                hasil.textContent.trim();
+
+
+            if (
+                !documentId ||
+                documentId === "-"
+            ) {
+
+                alert(
+                    "Registrasikan dokumen terlebih dahulu sebelum mengupload PDF."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // STATUS
+            // =========================================
+
+            if (statusUploadPdf) {
+
+                statusUploadPdf.textContent =
+                    "Sedang mengupload PDF...";
+
+                statusUploadPdf.style.color =
+                    "#2563eb";
+
+            }
+
+
+            uploadPdf.disabled = true;
+
+
+            // =========================================
+            // NAMA FILE
+            // =========================================
+
+            const namaFile =
+                `${documentId}.pdf`;
+
+
+            // =========================================
+            // LOKASI FIREBASE STORAGE
+            // =========================================
+
+            const lokasi =
+                `dokumen/${documentId}/${namaFile}`;
+
+
+            const storageRef =
+                ref(
+                    storage,
+                    lokasi
+                );
+
+
+            // =========================================
+            // UPLOAD
+            // =========================================
+
+            const uploadSnapshot =
+                await uploadBytes(
+                    storageRef,
+                    file,
+                    {
+                        contentType:
+                            "application/pdf"
+                    }
+                );
+
+
+            // =========================================
+            // URL FILE
+            // =========================================
+
+            const downloadURL =
+                await getDownloadURL(
+                    uploadSnapshot.ref
+                );
+
+
+            // =========================================
+            // SIMPAN INFORMASI KE FIRESTORE
+            // =========================================
+
+            await setDoc(
+                doc(
+                    db,
+                    "dokumen",
+                    documentId
+                ),
+                {
+
+                    pdf: {
+
+                        namaFile:
+                            namaFile,
+
+                        path:
+                            lokasi,
+
+                        url:
+                            downloadURL,
+
+                        ukuran:
+                            file.size,
+
+                        tipe:
+                            file.type,
+
+                        diuploadPada:
+                            serverTimestamp()
+
+                    },
+
+                    tahapDokumen:
+                        "PDF_DIUPLOAD"
+
+                },
+                {
+                    merge: true
+                }
+            );
+
+
+            // =========================================
+            // BERHASIL
+            // =========================================
+
+            if (statusUploadPdf) {
+
+                statusUploadPdf.textContent =
+                    "✓ PDF berhasil disimpan.";
+
+                statusUploadPdf.style.color =
+                    "#16a34a";
+
+            }
+
+
+            alert(
+                "PDF berhasil diupload dan disimpan di Firebase Storage."
+            );
+
+
+        } catch (err) {
+
+            console.error(
+                "Gagal upload PDF:",
+                err
+            );
+
+
+            if (statusUploadPdf) {
+
+                statusUploadPdf.textContent =
+                    "✕ Upload PDF gagal.";
+
+                statusUploadPdf.style.color =
+                    "#dc2626";
+
+            }
+
+
+            alert(
+                "Upload PDF gagal: " +
+                (
+                    err.message ||
+                    "Terjadi kesalahan."
+                )
+            );
+
+
+        } finally {
+
+            uploadPdf.disabled = false;
+
+        }
+
+    }
+);
