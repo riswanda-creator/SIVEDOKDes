@@ -1,8 +1,8 @@
 import {
+
     db,
     doc,
     setDoc,
-    getDoc,
     getDocs,
     collection,
     serverTimestamp,
@@ -15,15 +15,6 @@ import {
 
 } from "../js/firebase.js";
 
-import {
-
-    ref,
-    uploadBytes,
-    getDownloadURL
-
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-storage.js";
-
-
 
 // =====================================================
 // ELEMENT
@@ -34,7 +25,6 @@ const tombol =
 
 const hasil =
     document.getElementById("hasil");
-
 
 const jenis =
     document.getElementById("jenis");
@@ -57,268 +47,17 @@ const nomorSurat =
 const tanggal =
     document.getElementById("tanggal");
 
+const penandatangan =
+    document.getElementById("penandatangan");
 
-// =====================================================
-// ELEMENT UPLOAD PDF
-// =====================================================
+const jabatan =
+    document.getElementById("jabatan");
 
-const filePDF =
-    document.getElementById("filePDF");
+const petunjukIndeks =
+    document.getElementById("petunjukIndeks");
 
-const uploadPDF =
-    document.getElementById("uploadPDF");
 
-const statusUpload =
-    document.getElementById("statusUpload");
-
-// =====================================================
-// UPLOAD DOKUMEN PDF
-// =====================================================
-
-uploadPDF.addEventListener(
-    "click",
-    async () => {
-
-        try {
-
-            // =========================================
-            // CEK FILE
-            // =========================================
-
-            const file =
-                filePDF.files[0];
-
-
-            if (!file) {
-
-                alert(
-                    "Silakan pilih file PDF terlebih dahulu."
-                );
-
-                return;
-
-            }
-
-
-            // =========================================
-            // CEK FORMAT
-            // =========================================
-
-            if (
-                file.type !==
-                "application/pdf"
-            ) {
-
-                alert(
-                    "File harus berupa PDF."
-                );
-
-                return;
-
-            }
-
-
-            // =========================================
-            // AMBIL DOCUMENT ID
-            // =========================================
-
-            const documentId =
-                hasil.textContent.trim();
-
-
-            if (
-                !documentId ||
-                documentId === "-"
-            ) {
-
-                alert(
-                    "Registrasikan dokumen terlebih dahulu sebelum mengupload PDF."
-                );
-
-                return;
-
-            }
-
-
-            // =========================================
-            // STATUS
-            // =========================================
-
-            statusUpload.textContent =
-                "Mengupload PDF...";
-
-            uploadPDF.disabled =
-                true;
-
-
-            // =========================================
-            // NAMA FILE
-            // =========================================
-
-            const namaFile =
-                "original.pdf";
-
-
-            // =========================================
-            // PATH FIREBASE STORAGE
-            // =========================================
-
-            const storagePath =
-                `dokumen/${documentId}/${namaFile}`;
-
-
-            const storageRef =
-                ref(
-                    storage,
-                    storagePath
-                );
-
-
-            // =========================================
-            // UPLOAD
-            // =========================================
-
-            const snapshot =
-                await uploadBytes(
-                    storageRef,
-                    file,
-                    {
-                        contentType:
-                            "application/pdf"
-                    }
-                );
-
-
-            console.log(
-                "Upload berhasil:",
-                snapshot
-            );
-
-
-            // =========================================
-            // URL DOWNLOAD
-            // =========================================
-
-            const downloadURL =
-                await getDownloadURL(
-                    storageRef
-                );
-
-
-            // =========================================
-            // SIMPAN INFORMASI KE FIRESTORE
-            // =========================================
-
-            await setDoc(
-
-                doc(
-                    db,
-                    "dokumen",
-                    documentId
-                ),
-
-                {
-
-                    pdfUploaded:
-                        true,
-
-                    pdfOriginalName:
-                        file.name,
-
-                    pdfStoragePath:
-                        storagePath,
-
-                    pdfURL:
-                        downloadURL,
-
-                    pdfUploadedAt:
-                        serverTimestamp()
-
-                },
-
-                {
-                    merge:
-                        true
-                }
-
-            );
-
-
-            // =========================================
-            // BERHASIL
-            // =========================================
-
-            statusUpload.innerHTML = `
-
-                <strong>
-                    PDF berhasil diupload.
-                </strong>
-
-                <br>
-
-                File:
-                ${file.name}
-
-                <br><br>
-
-                <a
-                    href="${downloadURL}"
-                    target="_blank"
-                    rel="noopener">
-
-                    Buka PDF
-
-                </a>
-
-            `;
-
-
-            alert(
-                "PDF berhasil disimpan ke Firebase Storage."
-            );
-
-
-        } catch (err) {
-
-            console.error(
-                "Gagal upload PDF:",
-                err
-            );
-
-
-            statusUpload.textContent =
-                "Upload gagal: " +
-                (
-                    err.message
-                    ||
-                    "Terjadi kesalahan."
-                );
-
-
-            alert(
-                "Upload PDF gagal:\n\n" +
-                (
-                    err.message
-                    ||
-                    "Terjadi kesalahan."
-                )
-            );
-
-
-        } finally {
-
-            uploadPDF.disabled =
-                false;
-
-        }
-
-    }
-);
-
-
-// =====================================================
-// DASHBOARD
-// =====================================================
+// Statistik
 
 const totalDokumen =
     document.getElementById("totalDokumen");
@@ -335,21 +74,35 @@ const dokumenDibatalkan =
 const daftarDokumen =
     document.getElementById("daftarDokumen");
 
+
+// Upload
+
 const filePDF =
-document.getElementById("filePDF");
+    document.getElementById("filePDF");
 
 const uploadPDF =
-document.getElementById("uploadPDF");
+    document.getElementById("uploadPDF");
 
 const statusUpload =
-document.getElementById("statusUpload");
+    document.getElementById("statusUpload");
+
+const uploadDocumentId =
+    document.getElementById("uploadDocumentId");
+
+const hasilUpload =
+    document.getElementById("hasilUpload");
+
+const linkPDF =
+    document.getElementById("linkPDF");
 
 
 // =====================================================
-// KODE DESA
+// KONSTANTA
 // =====================================================
 
 const KODE_DESA = "GT";
+
+let documentIdAktif = null;
 
 
 // =====================================================
@@ -375,7 +128,7 @@ const bulanRomawi = {
 
 
 // =====================================================
-// NAMA JENIS DOKUMEN
+// NAMA JENIS
 // =====================================================
 
 const namaJenis = {
@@ -444,25 +197,16 @@ function isiPilihanTahun() {
 }
 
 
+// =====================================================
+// DEFAULT
+// =====================================================
+
 isiPilihanTahun();
-
-
-// =====================================================
-// TANGGAL DEFAULT
-// =====================================================
 
 tanggal.value =
     new Date()
         .toISOString()
         .split("T")[0];
-
-
-// =====================================================
-// PETUNJUK INDEKS
-// =====================================================
-
-const petunjukIndeks =
-    document.getElementById("petunjukIndeks");
 
 
 // =====================================================
@@ -494,12 +238,8 @@ jenis.addEventListener(
 
             indeks.value = "";
 
-            if (petunjukIndeks) {
-
-                petunjukIndeks.textContent =
-                    "Isi indeks sesuai ketentuan surat.";
-
-            }
+            petunjukIndeks.textContent =
+                "Isi indeks sesuai ketentuan surat.";
 
         }
 
@@ -513,12 +253,8 @@ jenis.addEventListener(
             indeks.value =
                 kode;
 
-            if (petunjukIndeks) {
-
-                petunjukIndeks.textContent =
-                    "Indeks diambil dari master SIVEDOKDes.";
-
-            }
+            petunjukIndeks.textContent =
+                "Indeks diambil dari master SIVEDOKDes.";
 
         }
 
@@ -530,7 +266,7 @@ jenis.addEventListener(
 
 
 // =====================================================
-// INDEKS MANUAL
+// EVENT NOMOR SURAT
 // =====================================================
 
 indeks.addEventListener(
@@ -538,22 +274,15 @@ indeks.addEventListener(
     buatNomorSurat
 );
 
-
-// =====================================================
-// PERUBAHAN NOMOR
-// =====================================================
-
 nomorUrut.addEventListener(
     "input",
     buatNomorSurat
 );
 
-
 bulan.addEventListener(
     "change",
     buatNomorSurat
 );
-
 
 tahun.addEventListener(
     "change",
@@ -605,7 +334,7 @@ function buatNomorSurat() {
 
 
 // =====================================================
-// REGISTRASI DOKUMEN
+// REGISTRASI
 // =====================================================
 
 tombol.addEventListener(
@@ -632,17 +361,11 @@ tombol.addEventListener(
             const tanggalTerbit =
                 tanggal.value;
 
-            const penandatangan =
-                document
-                    .getElementById("penandatangan")
-                    .value
-                    .trim();
+            const penandatanganValue =
+                penandatangan.value.trim();
 
-            const jabatan =
-                document
-                    .getElementById("jabatan")
-                    .value
-                    .trim();
+            const jabatanValue =
+                jabatan.value.trim();
 
 
             // =========================================
@@ -662,23 +385,9 @@ tombol.addEventListener(
 
             if (!kodeIndeks) {
 
-                if (
-                    jenisValue === "MANUAL"
-                ) {
-
-                    alert(
-                        "Silakan masukkan indeks dokumen secara manual."
-                    );
-
-                }
-
-                else {
-
-                    alert(
-                        "Indeks dokumen belum tersedia."
-                    );
-
-                }
+                alert(
+                    "Indeks dokumen wajib diisi."
+                );
 
                 return;
 
@@ -740,7 +449,7 @@ tombol.addEventListener(
             }
 
 
-            if (!penandatangan) {
+            if (!penandatanganValue) {
 
                 alert(
                     "Penandatangan wajib diisi."
@@ -751,7 +460,7 @@ tombol.addEventListener(
             }
 
 
-            if (!jabatan) {
+            if (!jabatanValue) {
 
                 alert(
                     "Jabatan wajib diisi."
@@ -769,11 +478,11 @@ tombol.addEventListener(
             buatNomorSurat();
 
 
-            const nomorFinal =
+            const nomorSuratValue =
                 nomorSurat.value.trim();
 
 
-            if (!nomorFinal) {
+            if (!nomorSuratValue) {
 
                 alert(
                     "Nomor surat belum berhasil dibuat."
@@ -785,7 +494,17 @@ tombol.addEventListener(
 
 
             // =========================================
-            // DOCUMENT ID
+            // DISABLE
+            // =========================================
+
+            tombol.disabled = true;
+
+            tombol.textContent =
+                "Memproses...";
+
+
+            // =========================================
+            // COUNTER
             // =========================================
 
             const tahunSekarang =
@@ -816,7 +535,7 @@ tombol.addEventListener(
                         if (!snap.exists()) {
 
                             throw new Error(
-                                "Counter tahun belum tersedia."
+                                `Counter tahun ${tahunSekarang} belum tersedia di Firestore.`
                             );
 
                         }
@@ -826,17 +545,21 @@ tombol.addEventListener(
                             snap.data();
 
 
+                        const nomorTerakhir =
+                            Number(
+                                data.lastNumber || 0
+                            );
+
+
                         const nomorBaru =
-                            data.lastNumber + 1;
+                            nomorTerakhir + 1;
 
 
                         transaction.update(
                             counterRef,
                             {
-
                                 lastNumber:
                                     nomorBaru
-
                             }
                         );
 
@@ -854,7 +577,83 @@ tombol.addEventListener(
 
 
             // =========================================
-            // SIMPAN FIRESTORE
+            // DATA DOKUMEN
+            // =========================================
+
+            const dataDokumen = {
+
+                id:
+                    documentId,
+
+                nomorSurat:
+                    nomorSuratValue,
+
+                jenis:
+                    jenisValue,
+
+                namaJenis:
+                    namaJenis[jenisValue]
+                    || jenisValue,
+
+                indeks:
+                    kodeIndeks,
+
+                nomorUrut:
+                    nomor,
+
+                kodeKomponen:
+                    KODE_DESA,
+
+                bulan:
+                    Number(bulanValue),
+
+                tahun:
+                    Number(tahunValue),
+
+                status:
+                    "VALID",
+
+                penandatangan:
+                    penandatanganValue,
+
+                jabatan:
+                    jabatanValue,
+
+                tanggalTerbit:
+                    tanggalTerbit,
+
+                dibuatPada:
+                    serverTimestamp(),
+
+                dibuatOleh:
+                    "admin",
+
+                aktif:
+                    true,
+
+                qrVersion:
+                    1,
+
+                pdfUploaded:
+                    false,
+
+                pdfOriginalName:
+                    null,
+
+                pdfStoragePath:
+                    null,
+
+                pdfURL:
+                    null,
+
+                pdfUploadedAt:
+                    null
+
+            };
+
+
+            // =========================================
+            // SIMPAN
             // =========================================
 
             await setDoc(
@@ -863,104 +662,52 @@ tombol.addEventListener(
                     "dokumen",
                     documentId
                 ),
-                {
-
-                    id:
-                        documentId,
-
-                    nomorSurat:
-                        nomorFinal,
-
-                    jenis:
-                        jenisValue,
-
-                    namaJenis:
-                        namaJenis[jenisValue]
-                        || jenisValue,
-
-                    indeks:
-                        kodeIndeks,
-
-                    nomorUrut:
-                        nomor,
-
-                    kodeKomponen:
-                        KODE_DESA,
-
-                    bulan:
-                        Number(bulanValue),
-
-                    tahun:
-                        Number(tahunValue),
-
-                    status:
-                        "VALID",
-
-                    penandatangan:
-                        penandatangan,
-
-                    jabatan:
-                        jabatan,
-
-                    tanggalTerbit:
-                        tanggalTerbit,
-
-                    dibuatPada:
-                        serverTimestamp(),
-
-                    dibuatOleh:
-                        "admin",
-
-                    aktif:
-                        true,
-
-                    qrVersion:
-                        1,
-
-                    pdfUploaded:
-                        false
-
-                }
+                dataDokumen
             );
 
 
             // =========================================
-            // TAMPILKAN HASIL
+            // DOCUMENT AKTIF
             // =========================================
+
+            documentIdAktif =
+                documentId;
+
 
             hasil.textContent =
                 documentId;
 
 
+            uploadDocumentId.textContent =
+                documentId;
+
+
+            uploadPDF.disabled =
+                false;
+
+
+            statusUpload.textContent =
+                "Dokumen terdaftar. Silakan pilih PDF untuk di-upload.";
+
+
+            hasilUpload.hidden =
+                true;
+
+
             // =========================================
-            // RESET UPLOAD
+            // REFRESH
             // =========================================
-
-            if (filePDF) {
-
-                filePDF.value = "";
-
-            }
-
-
-            if (statusUpload) {
-
-                statusUpload.textContent =
-                    "Dokumen terdaftar. Silakan pilih PDF.";
-
-            }
-
 
             await muatDashboard();
 
 
             alert(
-                "Dokumen berhasil diregistrasikan."
+                `Dokumen berhasil diregistrasikan.\n\nDocument ID:\n${documentId}\n\nSekarang pilih PDF dan klik "Upload PDF".`
             );
 
 
             // =========================================
-            // RESET FORM
+            // RESET DATA REGISTRASI
             // =========================================
 
             jenis.value = "";
@@ -972,14 +719,8 @@ tombol.addEventListener(
             indeks.placeholder =
                 "Otomatis";
 
-
-            if (petunjukIndeks) {
-
-                petunjukIndeks.textContent =
-                    "Pilih jenis dokumen";
-
-            }
-
+            petunjukIndeks.textContent =
+                "Pilih jenis dokumen";
 
             nomorUrut.value = "";
 
@@ -992,12 +733,24 @@ tombol.addEventListener(
 
         catch (err) {
 
-            console.error(err);
+            console.error(
+                "Registrasi gagal:",
+                err
+            );
 
             alert(
                 err.message
-                || "Terjadi kesalahan."
+                || "Registrasi dokumen gagal."
             );
+
+        }
+
+        finally {
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                "Registrasikan Dokumen";
 
         }
 
@@ -1006,14 +759,120 @@ tombol.addEventListener(
 
 
 // =====================================================
-// TAMPILKAN NAMA FILE SAAT DIPILIH
+// PILIH FILE
 // =====================================================
 
-if (filePDF) {
+filePDF.addEventListener(
+    "change",
+    () => {
 
-    filePDF.addEventListener(
-        "change",
-        () => {
+        hasilUpload.hidden =
+            true;
+
+
+        if (!documentIdAktif) {
+
+            statusUpload.textContent =
+                "Registrasikan dokumen terlebih dahulu.";
+
+            uploadPDF.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        const file =
+            filePDF.files[0];
+
+
+        if (!file) {
+
+            statusUpload.textContent =
+                "Belum ada file dipilih.";
+
+            uploadPDF.disabled =
+                false;
+
+            return;
+
+        }
+
+
+        if (
+            file.type !==
+            "application/pdf"
+        ) {
+
+            statusUpload.textContent =
+                "File harus berupa PDF.";
+
+            uploadPDF.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        const ukuranMB =
+            file.size /
+            (1024 * 1024);
+
+
+        if (ukuranMB > 20) {
+
+            statusUpload.textContent =
+                "Ukuran PDF maksimal 20 MB.";
+
+            uploadPDF.disabled =
+                true;
+
+            return;
+
+        }
+
+
+        statusUpload.textContent =
+            `File siap di-upload: ${file.name} (${ukuranMB.toFixed(2)} MB)`;
+
+
+        uploadPDF.disabled =
+            false;
+
+    }
+);
+
+
+// =====================================================
+// UPLOAD PDF
+// =====================================================
+
+uploadPDF.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            // =========================================
+            // VALIDASI DOCUMENT ID
+            // =========================================
+
+            if (!documentIdAktif) {
+
+                alert(
+                    "Belum ada Document ID aktif.\nRegistrasikan dokumen terlebih dahulu."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // VALIDASI FILE
+            // =========================================
 
             const file =
                 filePDF.files[0];
@@ -1021,8 +880,9 @@ if (filePDF) {
 
             if (!file) {
 
-                statusUpload.textContent =
-                    "Belum ada file dipilih.";
+                alert(
+                    "Silakan pilih file PDF terlebih dahulu."
+                );
 
                 return;
 
@@ -1034,273 +894,207 @@ if (filePDF) {
                 "application/pdf"
             ) {
 
-                statusUpload.textContent =
-                    "❌ File harus berformat PDF.";
-
-                filePDF.value = "";
+                alert(
+                    "File yang dipilih bukan PDF."
+                );
 
                 return;
 
             }
 
 
-            const ukuranMB =
-                file.size /
-                (1024 * 1024);
+            if (
+                file.size >
+                20 * 1024 * 1024
+            ) {
+
+                alert(
+                    "Ukuran PDF maksimal 20 MB."
+                );
+
+                return;
+
+            }
+
+
+            // =========================================
+            // DISABLE
+            // =========================================
+
+            uploadPDF.disabled = true;
+
+            filePDF.disabled = true;
+
+
+            statusUpload.textContent =
+                "Meng-upload PDF ke Firebase Storage...";
+
+
+            // =========================================
+            // STORAGE PATH
+            // =========================================
+
+            const storagePath =
+                `dokumen/${documentIdAktif}/original.pdf`;
+
+
+            const storageRef =
+                ref(
+                    storage,
+                    storagePath
+                );
+
+
+            // =========================================
+            // UPLOAD
+            // =========================================
+
+            const uploadResult =
+                await uploadBytes(
+                    storageRef,
+                    file,
+                    {
+                        contentType:
+                            "application/pdf"
+                    }
+                );
+
+
+            console.log(
+                "Upload berhasil:",
+                uploadResult
+            );
+
+
+            // =========================================
+            // DOWNLOAD URL
+            // =========================================
+
+            statusUpload.textContent =
+                "PDF berhasil di-upload. Mengambil URL...";
+
+
+            const downloadURL =
+                await getDownloadURL(
+                    storageRef
+                );
+
+
+            // =========================================
+            // UPDATE FIRESTORE
+            // =========================================
+
+            await setDoc(
+                doc(
+                    db,
+                    "dokumen",
+                    documentIdAktif
+                ),
+                {
+
+                    pdfUploaded:
+                        true,
+
+                    pdfOriginalName:
+                        file.name,
+
+                    pdfStoragePath:
+                        storagePath,
+
+                    pdfURL:
+                        downloadURL,
+
+                    pdfUploadedAt:
+                        serverTimestamp()
+
+                },
+                {
+                    merge: true
+                }
+            );
+
+
+            // =========================================
+            // HASIL
+            // =========================================
+
+            statusUpload.textContent =
+                "PDF berhasil disimpan di Firebase Storage.";
+
+
+            linkPDF.href =
+                downloadURL;
+
+
+            hasilUpload.hidden =
+                false;
+
+
+            await muatDashboard();
+
+
+            alert(
+                "PDF berhasil di-upload dan disimpan."
+            );
+
+
+        }
+
+        catch (err) {
+
+            console.error(
+                "Upload PDF gagal:",
+                err
+            );
+
+
+            let pesan =
+                err.message
+                || "Upload PDF gagal.";
 
 
             if (
-                ukuranMB > 20
+                err.code ===
+                "storage/unauthorized"
             ) {
 
-                statusUpload.textContent =
-                    "❌ Ukuran PDF maksimal 20 MB.";
+                pesan =
+                    "Upload ditolak oleh Firebase Storage Rules.";
 
-                filePDF.value = "";
+            }
 
-                return;
+
+            if (
+                err.code ===
+                "storage/unknown"
+            ) {
+
+                pesan =
+                    "Firebase Storage mengalami kesalahan.";
 
             }
 
 
             statusUpload.textContent =
-                `📄 ${file.name} (${ukuranMB.toFixed(2)} MB)`;
+                pesan;
+
+
+            alert(
+                pesan
+            );
 
         }
-    );
 
-}
+        finally {
 
+            uploadPDF.disabled = false;
 
-// =====================================================
-// UPLOAD PDF
-// =====================================================
-
-if (uploadPDF) {
-
-    uploadPDF.addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                // =====================================
-                // CEK DOCUMENT ID
-                // =====================================
-
-                const documentId =
-                    hasil.textContent.trim();
-
-
-                if (
-                    !documentId ||
-                    documentId === "-"
-                ) {
-
-                    alert(
-                        "Registrasikan dokumen terlebih dahulu sebelum mengupload PDF."
-                    );
-
-                    return;
-
-                }
-
-
-                // =====================================
-                // CEK FILE
-                // =====================================
-
-                if (
-                    !filePDF ||
-                    !filePDF.files ||
-                    !filePDF.files[0]
-                ) {
-
-                    alert(
-                        "Silakan pilih file PDF terlebih dahulu."
-                    );
-
-                    return;
-
-                }
-
-
-                const file =
-                    filePDF.files[0];
-
-
-                if (
-                    file.type !==
-                    "application/pdf"
-                ) {
-
-                    alert(
-                        "File harus berupa PDF."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    file.size >
-                    20 * 1024 * 1024
-                ) {
-
-                    alert(
-                        "Ukuran PDF maksimal 20 MB."
-                    );
-
-                    return;
-
-                }
-
-
-                // =====================================
-                // UI
-                // =====================================
-
-                uploadPDF.disabled =
-                    true;
-
-                uploadPDF.textContent =
-                    "Mengupload...";
-
-                statusUpload.textContent =
-                    "⏳ Mengupload PDF ke penyimpanan SIVEDOKDes...";
-
-
-                // =====================================
-                // LOKASI FIREBASE STORAGE
-                // =====================================
-
-                const storageRef =
-                    ref(
-                        storage,
-                        `dokumen/${documentId}/original.pdf`
-                    );
-
-
-                // =====================================
-                // UPLOAD
-                // =====================================
-
-                await uploadBytes(
-                    storageRef,
-                    file,
-                    {
-
-                        contentType:
-                            "application/pdf",
-
-                        customMetadata: {
-
-                            documentId:
-                                documentId
-
-                        }
-
-                    }
-                );
-
-
-                // =====================================
-                // URL FILE
-                // =====================================
-
-                const downloadURL =
-                    await getDownloadURL(
-                        storageRef
-                    );
-
-
-                // =====================================
-                // UPDATE FIRESTORE
-                // =====================================
-
-                await updateDoc(
-                    doc(
-                        db,
-                        "dokumen",
-                        documentId
-                    ),
-                    {
-
-                        pdfUploaded:
-                            true,
-
-                        pdfOriginalName:
-                            file.name,
-
-                        pdfStoragePath:
-                            `dokumen/${documentId}/original.pdf`,
-
-                        pdfURL:
-                            downloadURL,
-
-                        pdfUploadedAt:
-                            serverTimestamp()
-
-                    }
-                );
-
-
-                // =====================================
-                // BERHASIL
-                // =====================================
-
-                statusUpload.innerHTML = `
-                    <strong>
-                        ✅ PDF berhasil disimpan.
-                    </strong>
-                    <br>
-                    File:
-                    ${file.name}
-                `;
-
-
-                alert(
-                    "PDF berhasil diupload dan disimpan di Firebase Storage."
-                );
-
-
-            }
-
-            catch (err) {
-
-                console.error(
-                    "Upload PDF gagal:",
-                    err
-                );
-
-
-                statusUpload.textContent =
-                    "❌ Upload PDF gagal.";
-
-
-                alert(
-                    err.message
-                    || "Gagal mengupload PDF."
-                );
-
-            }
-
-
-            finally {
-
-                uploadPDF.disabled =
-                    false;
-
-                uploadPDF.textContent =
-                    "Upload PDF";
-
-            }
+            filePDF.disabled = false;
 
         }
-    );
 
-}
+    }
+);
 
 
 // =====================================================
@@ -1394,17 +1188,17 @@ async function muatDashboard() {
 
                     tanggal:
                         data.tanggalTerbit
-                        || "-"
+                        || "-",
+
+                    pdfURL:
+                        data.pdfURL
+                        || null
 
                 });
 
             }
         );
 
-
-        // =============================================
-        // STATISTIK
-        // =============================================
 
         totalDokumen.textContent =
             total;
@@ -1419,13 +1213,15 @@ async function muatDashboard() {
             dibatalkan;
 
 
-        // =============================================
-        // URUTKAN
-        // =============================================
+        // =========================================
+        // SORT
+        // =========================================
 
         dokumen.sort(
             (a, b) =>
-                b.id.localeCompare(a.id)
+                b.id.localeCompare(
+                    a.id
+                )
         );
 
 
@@ -1445,7 +1241,7 @@ async function muatDashboard() {
                 <tr>
 
                     <td
-                        colspan="5"
+                        colspan="6"
                         style="text-align:center;">
 
                         Belum ada dokumen.
@@ -1461,9 +1257,9 @@ async function muatDashboard() {
         }
 
 
-        // =============================================
-        // TABEL
-        // =============================================
+        // =========================================
+        // TABLE
+        // =========================================
 
         daftarDokumen.innerHTML =
             terbaru
@@ -1474,11 +1270,15 @@ async function muatDashboard() {
                             "#6b7280";
 
 
-                        if (
+                        const statusUpper =
                             String(
                                 data.status
-                            ).toUpperCase()
-                            === "VALID"
+                            ).toUpperCase();
+
+
+                        if (
+                            statusUpper ===
+                            "VALID"
                         ) {
 
                             warnaStatus =
@@ -1488,17 +1288,13 @@ async function muatDashboard() {
 
                         else if (
 
-                            String(
-                                data.status
-                            ).toUpperCase()
-                            === "DICABUT"
+                            statusUpper ===
+                                "DICABUT"
 
                             ||
 
-                            String(
-                                data.status
-                            ).toUpperCase()
-                            === "DIBATALKAN"
+                            statusUpper ===
+                                "DIBATALKAN"
 
                         ) {
 
@@ -1508,20 +1304,55 @@ async function muatDashboard() {
                         }
 
 
+                        const pdf =
+                            data.pdfURL
+
+                            ? `
+
+                                <a
+                                    class="pdf-link"
+                                    href="${data.pdfURL}"
+                                    target="_blank"
+                                    rel="noopener">
+
+                                    PDF
+
+                                </a>
+
+                              `
+
+                            : `
+
+                                <span
+                                    style="color:#9ca3af;">
+
+                                    Belum ada
+
+                                </span>
+
+                              `;
+
+
                         return `
 
                             <tr>
 
                                 <td>
-                                    ${data.id}
+                                    ${escapeHTML(
+                                        data.id
+                                    )}
                                 </td>
 
                                 <td>
-                                    ${data.nomorSurat}
+                                    ${escapeHTML(
+                                        data.nomorSurat
+                                    )}
                                 </td>
 
                                 <td>
-                                    ${data.jenis}
+                                    ${escapeHTML(
+                                        data.jenis
+                                    )}
                                 </td>
 
                                 <td
@@ -1530,11 +1361,21 @@ async function muatDashboard() {
                                         font-weight:600;
                                     "
                                 >
-                                    ${data.status}
+
+                                    ${escapeHTML(
+                                        data.status
+                                    )}
+
                                 </td>
 
                                 <td>
-                                    ${data.tanggal}
+                                    ${pdf}
+                                </td>
+
+                                <td>
+                                    ${escapeHTML(
+                                        data.tanggal
+                                    )}
                                 </td>
 
                             </tr>
@@ -1573,7 +1414,7 @@ async function muatDashboard() {
             <tr>
 
                 <td
-                    colspan="5"
+                    colspan="6"
                     style="text-align:center;">
 
                     Gagal memuat data.
@@ -1590,7 +1431,23 @@ async function muatDashboard() {
 
 
 // =====================================================
-// JALANKAN DASHBOARD
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+// =====================================================
+// JALANKAN
 // =====================================================
 
 muatDashboard();
