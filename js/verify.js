@@ -4,7 +4,9 @@ import {
     getDoc
 } from "./firebase.js";
 
-import { DESA } from "./config.js";
+import {
+    DESA
+} from "./config.js";
 
 
 // =====================================================
@@ -46,6 +48,17 @@ const jabatan =
 
 const tanggalTerbit =
     document.getElementById("tanggalTerbit");
+
+
+// =====================================================
+// PDF ELEMENT
+// =====================================================
+
+const pdfContainer =
+    document.getElementById("pdfContainer");
+
+const pdfLink =
+    document.getElementById("pdfLink");
 
 
 // =====================================================
@@ -235,20 +248,47 @@ function tampilkanStatus(statusDokumen) {
 
 
 // =====================================================
-// PDF
+// TAMPILKAN PDF
 // =====================================================
 
 function tampilkanPDF(data) {
 
-    /*
-     * Kita sengaja tidak mengasumsikan bahwa
-     * verify.html hanya memiliki satu bentuk
-     * tombol PDF.
-     */
+    // =============================================
+    // RESET
+    // =============================================
 
+    if (pdfContainer) {
+
+        pdfContainer.hidden =
+            true;
+
+    }
+
+
+    if (pdfLink) {
+
+        pdfLink.hidden =
+            true;
+
+        pdfLink.removeAttribute(
+            "href"
+        );
+
+    }
+
+
+    // =============================================
+    // AMBIL PDF URL
+    // =============================================
 
     const pdfURL =
         data.pdfURL;
+
+
+    console.log(
+        "PDF URL:",
+        pdfURL
+    );
 
 
     // =============================================
@@ -260,108 +300,72 @@ function tampilkanPDF(data) {
         typeof pdfURL !== "string"
     ) {
 
+        console.log(
+            "Dokumen belum memiliki PDF."
+        );
+
         return;
 
     }
 
 
     // =============================================
-    // CARI LINK PDF YANG SUDAH ADA
+    // ELEMENT PDF TIDAK DITEMUKAN
     // =============================================
 
-    let pdfLink =
-        document.getElementById(
-            "pdfLink"
+    if (
+        !pdfContainer ||
+        !pdfLink
+    ) {
+
+        console.error(
+            "Element PDF tidak ditemukan di verify.html."
         );
 
-
-    // =============================================
-    // KALAU LINK TIDAK ADA,
-    // CARI ELEMEN LAIN YANG MUNGKIN DIPAKAI
-    // =============================================
-
-    if (!pdfLink) {
-
-        pdfLink =
-            document.querySelector(
-                'a[data-pdf], a[href*=".pdf"]'
-            );
+        return;
 
     }
 
 
     // =============================================
-    // KALAU TIDAK ADA JUGA,
-    // BUAT TOMBOL PDF
-    // =============================================
-
-    if (!pdfLink) {
-
-        pdfLink =
-            document.createElement("a");
-
-        pdfLink.id =
-            "pdfLink";
-
-        pdfLink.className =
-            "pdf-link";
-
-        pdfLink.textContent =
-            "Buka Dokumen PDF";
-
-
-        /*
-         * Masukkan ke dalam hasil
-         * tanpa mengubah struktur utama.
-         */
-
-        if (hasil) {
-
-            hasil.appendChild(
-                pdfLink
-            );
-
-        }
-
-    }
-
-
-    // =============================================
-    // PASANG URL
+    // PASANG URL PDF
     // =============================================
 
     pdfLink.href =
         pdfURL;
 
-
     pdfLink.target =
         "_blank";
-
 
     pdfLink.rel =
         "noopener noreferrer";
 
 
+    // =============================================
+    // TAMPILKAN LINK
+    // =============================================
+
     pdfLink.hidden =
         false;
-
 
     pdfLink.style.display =
         "inline-block";
 
 
     // =============================================
-    // JIKA LINK TIDAK PUNYA TEKS
+    // TAMPILKAN CONTAINER
     // =============================================
 
-    if (
-        !pdfLink.textContent.trim()
-    ) {
+    pdfContainer.hidden =
+        false;
 
-        pdfLink.textContent =
-            "Buka Dokumen PDF";
+    pdfContainer.style.display =
+        "block";
 
-    }
+
+    console.log(
+        "Tombol PDF berhasil ditampilkan."
+    );
 
 }
 
@@ -513,7 +517,7 @@ async function cekDokumen() {
 
 
         // =============================================
-        // DETAIL
+        // DETAIL DOKUMEN
         // =============================================
 
         if (documentIdElement) {
