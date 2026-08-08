@@ -16,10 +16,6 @@ import {
     runTransaction
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
-import {
-    createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
 
 // =====================================================
 // FIREBASE CONFIG
@@ -65,74 +61,22 @@ const db =
 
 
 // =====================================================
-// SUPABASE
-// =====================================================
-
-// GANTI DUA NILAI DI BAWAH INI
-// dengan Project URL dan Publishable Key
-// dari Supabase kamu.
-
-const SUPABASE_URL =
-    "https://ittfhjzkejhsbowwqlrq.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "PUBLISHABLE-KEY-KAMU";
-
-
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-
-
-// =====================================================
-// SUPABASE STORAGE
-// =====================================================
-
-const SUPABASE_BUCKET =
-    "sivedokdes-pdf";
-
-
-// =====================================================
 // EXPORT
 // =====================================================
 
 export {
 
-    // =========================================
-    // FIRESTORE
-    // =========================================
-
     db,
 
     doc,
-
     setDoc,
-
     getDoc,
-
     getDocs,
-
     collection,
-
     query,
-
     orderBy,
-
     limit,
-
     serverTimestamp,
-
-    runTransaction,
-
-
-    // =========================================
-    // SUPABASE
-    // =========================================
-
-    supabase,
-
-    SUPABASE_BUCKET
+    runTransaction
 
 };
