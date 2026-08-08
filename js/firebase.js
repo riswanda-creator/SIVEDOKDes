@@ -1,4 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
     getFirestore,
@@ -11,7 +13,8 @@ import {
     orderBy,
     limit,
     serverTimestamp,
-    runTransaction
+    runTransaction,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 import {
@@ -57,6 +60,8 @@ export {
     doc,
 
     setDoc,
+
+    updateDoc,
 
     getDoc,
 
