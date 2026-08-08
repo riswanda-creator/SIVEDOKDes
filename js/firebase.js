@@ -73,7 +73,7 @@ const db =
 // dari Supabase kamu.
 
 const SUPABASE_URL =
-    "https://PROJECT-ID-KAMU.supabase.co";
+    "https://ittfhjzkejhsbowwqlrq.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
     "PUBLISHABLE-KEY-KAMU";
