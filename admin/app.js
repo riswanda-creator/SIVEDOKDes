@@ -1,3 +1,7 @@
+// =====================================================
+// FIREBASE FIRESTORE
+// =====================================================
+
 import {
 
     db,
@@ -6,14 +10,43 @@ import {
     getDocs,
     collection,
     serverTimestamp,
-    runTransaction,
-
-    storage,
-    ref,
-    uploadBytes,
-    getDownloadURL
+    runTransaction
 
 } from "../js/firebase.js";
+
+
+// =====================================================
+// SUPABASE
+// =====================================================
+
+import {
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+// =====================================================
+// SUPABASE CONFIG
+// =====================================================
+
+const SUPABASE_URL =
+    "https://ittfhjzkejhsbowwqlrq.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_javi5F477-dw8o3LD4YjHg_QejbW_cz";
+
+const supabase =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+// =====================================================
+// SUPABASE STORAGE
+// =====================================================
+
+const STORAGE_BUCKET =
+    "sivedokdes-pdf";
 
 
 // =====================================================
@@ -57,7 +90,9 @@ const petunjukIndeks =
     document.getElementById("petunjukIndeks");
 
 
-// Statistik
+// =====================================================
+// STATISTIK
+// =====================================================
 
 const totalDokumen =
     document.getElementById("totalDokumen");
@@ -75,7 +110,9 @@ const daftarDokumen =
     document.getElementById("daftarDokumen");
 
 
-// Upload
+// =====================================================
+// UPLOAD
+// =====================================================
 
 const filePDF =
     document.getElementById("filePDF");
@@ -100,9 +137,11 @@ const linkPDF =
 // KONSTANTA
 // =====================================================
 
-const KODE_DESA = "GT";
+const KODE_DESA =
+    "GT";
 
-let documentIdAktif = null;
+let documentIdAktif =
+    null;
 
 
 // =====================================================
@@ -180,17 +219,24 @@ function isiPilihanTahun() {
         const option =
             document.createElement("option");
 
-        option.value = i;
+        option.value =
+            i;
 
-        option.textContent = i;
+        option.textContent =
+            i;
 
-        if (i === tahunSekarang) {
+        if (
+            i === tahunSekarang
+        ) {
 
-            option.selected = true;
+            option.selected =
+                true;
 
         }
 
-        tahun.appendChild(option);
+        tahun.appendChild(
+            option
+        );
 
     }
 
@@ -231,12 +277,14 @@ jenis.addEventListener(
 
         if (manual) {
 
-            indeks.readOnly = false;
+            indeks.readOnly =
+                false;
 
             indeks.placeholder =
                 "Masukkan indeks secara manual";
 
-            indeks.value = "";
+            indeks.value =
+                "";
 
             petunjukIndeks.textContent =
                 "Isi indeks sesuai ketentuan surat.";
@@ -245,7 +293,8 @@ jenis.addEventListener(
 
         else {
 
-            indeks.readOnly = true;
+            indeks.readOnly =
+                true;
 
             indeks.placeholder =
                 "Otomatis";
@@ -316,7 +365,8 @@ function buatNomorSurat() {
         !tahunDipilih
     ) {
 
-        nomorSurat.value = "";
+        nomorSurat.value =
+            "";
 
         return;
 
@@ -324,7 +374,9 @@ function buatNomorSurat() {
 
 
     const romawi =
-        bulanRomawi[bulanDipilih];
+        bulanRomawi[
+            bulanDipilih
+        ];
 
 
     nomorSurat.value =
@@ -497,7 +549,8 @@ tombol.addEventListener(
             // DISABLE
             // =========================================
 
-            tombol.disabled = true;
+            tombol.disabled =
+                true;
 
             tombol.textContent =
                 "Memproses...";
@@ -592,7 +645,9 @@ tombol.addEventListener(
                     jenisValue,
 
                 namaJenis:
-                    namaJenis[jenisValue]
+                    namaJenis[
+                        jenisValue
+                    ]
                     || jenisValue,
 
                 indeks:
@@ -605,10 +660,14 @@ tombol.addEventListener(
                     KODE_DESA,
 
                 bulan:
-                    Number(bulanValue),
+                    Number(
+                        bulanValue
+                    ),
 
                 tahun:
-                    Number(tahunValue),
+                    Number(
+                        tahunValue
+                    ),
 
                 status:
                     "VALID",
@@ -634,6 +693,10 @@ tombol.addEventListener(
                 qrVersion:
                     1,
 
+                // =====================================
+                // PDF
+                // =====================================
+
                 pdfUploaded:
                     false,
 
@@ -653,7 +716,7 @@ tombol.addEventListener(
 
 
             // =========================================
-            // SIMPAN
+            // SIMPAN FIRESTORE
             // =========================================
 
             await setDoc(
@@ -694,8 +757,12 @@ tombol.addEventListener(
                 true;
 
 
+            filePDF.value =
+                "";
+
+
             // =========================================
-            // REFRESH
+            // REFRESH DASHBOARD
             // =========================================
 
             await muatDashboard();
@@ -707,14 +774,17 @@ tombol.addEventListener(
 
 
             // =========================================
-            // RESET DATA REGISTRASI
+            // RESET FORM
             // =========================================
 
-            jenis.value = "";
+            jenis.value =
+                "";
 
-            indeks.value = "";
+            indeks.value =
+                "";
 
-            indeks.readOnly = true;
+            indeks.readOnly =
+                true;
 
             indeks.placeholder =
                 "Otomatis";
@@ -722,12 +792,14 @@ tombol.addEventListener(
             petunjukIndeks.textContent =
                 "Pilih jenis dokumen";
 
-            nomorUrut.value = "";
+            nomorUrut.value =
+                "";
 
-            bulan.value = "";
+            bulan.value =
+                "";
 
-            nomorSurat.value = "";
-
+            nomorSurat.value =
+                "";
 
         }
 
@@ -740,14 +812,16 @@ tombol.addEventListener(
 
             alert(
                 err.message
-                || "Registrasi dokumen gagal."
+                ||
+                "Registrasi dokumen gagal."
             );
 
         }
 
         finally {
 
-            tombol.disabled = false;
+            tombol.disabled =
+                false;
 
             tombol.textContent =
                 "Registrasikan Dokumen";
@@ -821,7 +895,9 @@ filePDF.addEventListener(
             (1024 * 1024);
 
 
-        if (ukuranMB > 20) {
+        if (
+            ukuranMB > 20
+        ) {
 
             statusUpload.textContent =
                 "Ukuran PDF maksimal 20 MB.";
@@ -846,7 +922,7 @@ filePDF.addEventListener(
 
 
 // =====================================================
-// UPLOAD PDF
+// UPLOAD PDF → SUPABASE STORAGE
 // =====================================================
 
 uploadPDF.addEventListener(
@@ -921,13 +997,15 @@ uploadPDF.addEventListener(
             // DISABLE
             // =========================================
 
-            uploadPDF.disabled = true;
+            uploadPDF.disabled =
+                true;
 
-            filePDF.disabled = true;
+            filePDF.disabled =
+                true;
 
 
             statusUpload.textContent =
-                "Meng-upload PDF ke Firebase Storage...";
+                "Meng-upload PDF ke Supabase Storage...";
 
 
             // =========================================
@@ -938,46 +1016,76 @@ uploadPDF.addEventListener(
                 `dokumen/${documentIdAktif}/original.pdf`;
 
 
-            const storageRef =
-                ref(
-                    storage,
-                    storagePath
-                );
-
-
             // =========================================
-            // UPLOAD
+            // UPLOAD SUPABASE
             // =========================================
 
-            const uploadResult =
-                await uploadBytes(
-                    storageRef,
-                    file,
-                    {
-                        contentType:
-                            "application/pdf"
-                    }
-                );
+            const {
+                error: uploadError
+            } =
+                await supabase
+                    .storage
+                    .from(
+                        STORAGE_BUCKET
+                    )
+                    .upload(
+                        storagePath,
+                        file,
+                        {
+                            contentType:
+                                "application/pdf",
+
+                            upsert:
+                                true
+                        }
+                    );
+
+
+            if (uploadError) {
+
+                throw uploadError;
+
+            }
 
 
             console.log(
-                "Upload berhasil:",
-                uploadResult
+                "Upload Supabase berhasil:",
+                storagePath
             );
 
 
             // =========================================
-            // DOWNLOAD URL
+            // SIGNED URL
             // =========================================
 
             statusUpload.textContent =
-                "PDF berhasil di-upload. Mengambil URL...";
+                "PDF berhasil di-upload. Membuat link PDF...";
 
 
-            const downloadURL =
-                await getDownloadURL(
-                    storageRef
-                );
+            const {
+                data: signedData,
+                error: signedError
+            } =
+                await supabase
+                    .storage
+                    .from(
+                        STORAGE_BUCKET
+                    )
+                    .createSignedUrl(
+                        storagePath,
+                        3600
+                    );
+
+
+            if (signedError) {
+
+                throw signedError;
+
+            }
+
+
+            const signedURL =
+                signedData.signedUrl;
 
 
             // =========================================
@@ -1001,15 +1109,19 @@ uploadPDF.addEventListener(
                     pdfStoragePath:
                         storagePath,
 
+                    // Disimpan sebagai informasi,
+                    // tetapi dashboard akan membuat
+                    // signed URL baru saat diperlukan.
                     pdfURL:
-                        downloadURL,
+                        signedURL,
 
                     pdfUploadedAt:
                         serverTimestamp()
 
                 },
                 {
-                    merge: true
+                    merge:
+                        true
                 }
             );
 
@@ -1019,11 +1131,11 @@ uploadPDF.addEventListener(
             // =========================================
 
             statusUpload.textContent =
-                "PDF berhasil disimpan di Firebase Storage.";
+                "PDF berhasil disimpan di Supabase Storage.";
 
 
             linkPDF.href =
-                downloadURL;
+                signedURL;
 
 
             hasilUpload.hidden =
@@ -1034,9 +1146,8 @@ uploadPDF.addEventListener(
 
 
             alert(
-                "PDF berhasil di-upload dan disimpan."
+                "PDF berhasil di-upload dan disimpan di Supabase Storage."
             );
-
 
         }
 
@@ -1050,27 +1161,30 @@ uploadPDF.addEventListener(
 
             let pesan =
                 err.message
-                || "Upload PDF gagal.";
+                ||
+                "Upload PDF gagal.";
 
 
             if (
-                err.code ===
-                "storage/unauthorized"
+                err.message &&
+                err.message.toLowerCase()
+                    .includes("row-level security")
             ) {
 
                 pesan =
-                    "Upload ditolak oleh Firebase Storage Rules.";
+                    "Upload ditolak oleh Supabase Storage Policy.";
 
             }
 
 
             if (
-                err.code ===
-                "storage/unknown"
+                err.message &&
+                err.message.toLowerCase()
+                    .includes("bucket")
             ) {
 
                 pesan =
-                    "Firebase Storage mengalami kesalahan.";
+                    `Bucket "${STORAGE_BUCKET}" tidak ditemukan atau tidak dapat diakses.`;
 
             }
 
@@ -1087,14 +1201,78 @@ uploadPDF.addEventListener(
 
         finally {
 
-            uploadPDF.disabled = false;
+            uploadPDF.disabled =
+                false;
 
-            filePDF.disabled = false;
+            filePDF.disabled =
+                false;
 
         }
 
     }
 );
+
+
+// =====================================================
+// BUAT SIGNED URL PDF
+// =====================================================
+
+async function buatSignedURL(
+    storagePath
+) {
+
+    if (!storagePath) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabase
+                .storage
+                .from(
+                    STORAGE_BUCKET
+                )
+                .createSignedUrl(
+                    storagePath,
+                    3600
+                );
+
+
+        if (error) {
+
+            console.error(
+                "Gagal membuat signed URL:",
+                error
+            );
+
+            return null;
+
+        }
+
+
+        return data.signedUrl;
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "Signed URL error:",
+            err
+        );
+
+        return null;
+
+    }
+
+}
 
 
 // =====================================================
@@ -1114,16 +1292,21 @@ async function muatDashboard() {
             );
 
 
-        let total = 0;
+        let total =
+            0;
 
-        let valid = 0;
+        let valid =
+            0;
 
-        let dicabut = 0;
+        let dicabut =
+            0;
 
-        let dibatalkan = 0;
+        let dibatalkan =
+            0;
 
 
-        const dokumen = [];
+        const dokumen =
+            [];
 
 
         snapshot.forEach(
@@ -1143,7 +1326,8 @@ async function muatDashboard() {
 
 
                 if (
-                    status === "VALID"
+                    status ===
+                    "VALID"
                 ) {
 
                     valid++;
@@ -1151,7 +1335,8 @@ async function muatDashboard() {
                 }
 
                 else if (
-                    status === "DICABUT"
+                    status ===
+                    "DICABUT"
                 ) {
 
                     dicabut++;
@@ -1159,7 +1344,8 @@ async function muatDashboard() {
                 }
 
                 else if (
-                    status === "DIBATALKAN"
+                    status ===
+                    "DIBATALKAN"
                 ) {
 
                     dibatalkan++;
@@ -1171,34 +1357,50 @@ async function muatDashboard() {
 
                     id:
                         data.id
-                        || item.id,
+                        ||
+                        item.id,
 
                     nomorSurat:
                         data.nomorSurat
-                        || "-",
+                        ||
+                        "-",
 
                     jenis:
                         data.namaJenis
-                        || data.jenis
-                        || "-",
+                        ||
+                        data.jenis
+                        ||
+                        "-",
 
                     status:
                         data.status
-                        || "-",
+                        ||
+                        "-",
 
                     tanggal:
                         data.tanggalTerbit
-                        || "-",
+                        ||
+                        "-",
 
-                    pdfURL:
-                        data.pdfURL
-                        || null
+                    pdfStoragePath:
+                        data.pdfStoragePath
+                        ||
+                        null,
+
+                    pdfUploaded:
+                        data.pdfUploaded
+                        ||
+                        false
 
                 });
 
             }
         );
 
+
+        // =============================================
+        // STATISTIK
+        // =============================================
 
         totalDokumen.textContent =
             total;
@@ -1213,9 +1415,9 @@ async function muatDashboard() {
             dibatalkan;
 
 
-        // =========================================
+        // =============================================
         // SORT
-        // =========================================
+        // =============================================
 
         dokumen.sort(
             (a, b) =>
@@ -1233,7 +1435,8 @@ async function muatDashboard() {
 
 
         if (
-            terbaru.length === 0
+            terbaru.length ===
+            0
         ) {
 
             daftarDokumen.innerHTML = `
@@ -1257,12 +1460,49 @@ async function muatDashboard() {
         }
 
 
-        // =========================================
+        // =============================================
+        // BUAT SIGNED URL
+        // =============================================
+
+        const daftarDenganURL =
+            await Promise.all(
+
+                terbaru.map(
+                    async (data) => {
+
+                        if (
+                            data.pdfStoragePath
+                        ) {
+
+                            data.pdfURL =
+                                await buatSignedURL(
+                                    data.pdfStoragePath
+                                );
+
+                        }
+
+                        else {
+
+                            data.pdfURL =
+                                null;
+
+                        }
+
+
+                        return data;
+
+                    }
+                )
+
+            );
+
+
+        // =============================================
         // TABLE
-        // =========================================
+        // =============================================
 
         daftarDokumen.innerHTML =
-            terbaru
+            daftarDenganURL
                 .map(
                     (data) => {
 
@@ -1304,14 +1544,21 @@ async function muatDashboard() {
                         }
 
 
-                        const pdf =
-                            data.pdfURL
+                        let pdf =
+                            "";
 
-                            ? `
+
+                        if (
+                            data.pdfURL
+                        ) {
+
+                            pdf = `
 
                                 <a
                                     class="pdf-link"
-                                    href="${data.pdfURL}"
+                                    href="${escapeHTML(
+                                        data.pdfURL
+                                    )}"
                                     target="_blank"
                                     rel="noopener">
 
@@ -1319,9 +1566,30 @@ async function muatDashboard() {
 
                                 </a>
 
-                              `
+                            `;
 
-                            : `
+                        }
+
+                        else if (
+                            data.pdfStoragePath
+                        ) {
+
+                            pdf = `
+
+                                <span
+                                    style="color:#dc2626;">
+
+                                    Gagal membuat link
+
+                                </span>
+
+                            `;
+
+                        }
+
+                        else {
+
+                            pdf = `
 
                                 <span
                                     style="color:#9ca3af;">
@@ -1330,7 +1598,9 @@ async function muatDashboard() {
 
                                 </span>
 
-                              `;
+                            `;
+
+                        }
 
 
                         return `
@@ -1434,14 +1704,36 @@ async function muatDashboard() {
 // ESCAPE HTML
 // =====================================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
