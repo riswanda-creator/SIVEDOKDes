@@ -3,7 +3,6 @@
 // =====================================================
 
 import {
-
     db,
     doc,
     setDoc,
@@ -11,7 +10,6 @@ import {
     collection,
     serverTimestamp,
     runTransaction
-
 } from "../js/firebase.js";
 
 
@@ -25,6 +23,23 @@ import {
 
 
 // =====================================================
+// PDF LIBRARY
+// =====================================================
+
+import {
+    PDFDocument,
+    rgb
+} from "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/+esm";
+
+
+// =====================================================
+// QR LIBRARY
+// =====================================================
+
+import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm";
+
+
+// =====================================================
 // SUPABASE CONFIG
 // =====================================================
 
@@ -33,6 +48,7 @@ const SUPABASE_URL =
 
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_javi5F477-dw8o3LD4YjHg_QejbW_cz";
+
 
 const supabase =
     createClient(
@@ -47,6 +63,14 @@ const supabase =
 
 const STORAGE_BUCKET =
     "sivedokdes-pdf";
+
+
+// =====================================================
+// URL VERIFIKASI
+// =====================================================
+
+const VERIFY_URL =
+    "https://sivedok-des-1.vercel.app/verify.html";
 
 
 // =====================================================
@@ -219,24 +243,19 @@ function isiPilihanTahun() {
         const option =
             document.createElement("option");
 
-        option.value =
-            i;
+        option.value = i;
 
-        option.textContent =
-            i;
+        option.textContent = i;
 
         if (
             i === tahunSekarang
         ) {
 
-            option.selected =
-                true;
+            option.selected = true;
 
         }
 
-        tahun.appendChild(
-            option
-        );
+        tahun.appendChild(option);
 
     }
 
@@ -523,10 +542,6 @@ tombol.addEventListener(
             }
 
 
-            // =========================================
-            // NOMOR SURAT
-            // =========================================
-
             buatNomorSurat();
 
 
@@ -647,8 +662,7 @@ tombol.addEventListener(
                 namaJenis:
                     namaJenis[
                         jenisValue
-                    ]
-                    || jenisValue,
+                    ] || jenisValue,
 
                 indeks:
                     kodeIndeks,
@@ -692,10 +706,6 @@ tombol.addEventListener(
 
                 qrVersion:
                     1,
-
-                // =====================================
-                // PDF
-                // =====================================
 
                 pdfUploaded:
                     false,
@@ -750,7 +760,7 @@ tombol.addEventListener(
 
 
             statusUpload.textContent =
-                "Dokumen terdaftar. Silakan pilih PDF untuk di-upload.";
+                "Dokumen terdaftar. Silakan pilih PDF untuk diproses.";
 
 
             hasilUpload.hidden =
@@ -760,10 +770,6 @@ tombol.addEventListener(
             filePDF.value =
                 "";
 
-
-            // =========================================
-            // REFRESH DASHBOARD
-            // =========================================
 
             await muatDashboard();
 
@@ -811,8 +817,7 @@ tombol.addEventListener(
             );
 
             alert(
-                err.message
-                ||
+                err.message ||
                 "Registrasi dokumen gagal."
             );
 
@@ -911,7 +916,7 @@ filePDF.addEventListener(
 
 
         statusUpload.textContent =
-            `File siap di-upload: ${file.name} (${ukuranMB.toFixed(2)} MB)`;
+            `File siap diproses: ${file.name} (${ukuranMB.toFixed(2)} MB)`;
 
 
         uploadPDF.disabled =
@@ -922,7 +927,197 @@ filePDF.addEventListener(
 
 
 // =====================================================
-// UPLOAD PDF → SUPABASE STORAGE
+// BUAT PDF FINAL + QR
+// =====================================================
+
+async function buatPDFFinal(
+    file,
+    documentId
+) {
+
+    statusUpload.textContent =
+        "Membaca PDF asli...";
+
+
+    const arrayBuffer =
+        await file.arrayBuffer();
+
+
+    const pdfDoc =
+        await PDFDocument.load(
+            arrayBuffer
+        );
+
+
+    // =========================================
+    // URL QR
+    // =========================================
+
+    const verifyURL =
+        `${VERIFY_URL}?id=${encodeURIComponent(
+            documentId
+        )}`;
+
+
+    // =========================================
+    // GENERATE QR
+    // =========================================
+
+    statusUpload.textContent =
+        "Membuat QR Document ID...";
+
+
+    const qrDataURL =
+        await QRCode.toDataURL(
+            verifyURL,
+            {
+                width: 300,
+                margin: 2,
+                errorCorrectionLevel: "H"
+            }
+        );
+
+
+    const qrResponse =
+        await fetch(
+            qrDataURL
+        );
+
+
+    const qrBlob =
+        await qrResponse.blob();
+
+
+    const qrBuffer =
+        await qrBlob.arrayBuffer();
+
+
+    const qrImage =
+        await pdfDoc.embedPng(
+            qrBuffer
+        );
+
+
+    // =========================================
+    // SEMUA HALAMAN
+    // =========================================
+
+    const pages =
+        pdfDoc.getPages();
+
+
+    if (!pages.length) {
+
+        throw new Error(
+            "PDF tidak memiliki halaman."
+        );
+
+    }
+
+
+    // =========================================
+    // TEMPAT QR
+    // =========================================
+
+    const qrSize =
+        72;
+
+    const margin =
+        20;
+
+
+    const firstPage =
+        pages[0];
+
+
+    const {
+        width,
+        height
+    } =
+        firstPage.getSize();
+
+
+    // =========================================
+    // QR DI HALAMAN PERTAMA
+    // =========================================
+
+    firstPage.drawImage(
+        qrImage,
+        {
+            x:
+                width -
+                qrSize -
+                margin,
+
+            y:
+                height -
+                qrSize -
+                margin,
+
+            width:
+                qrSize,
+
+            height:
+                qrSize
+        }
+    );
+
+
+    // =========================================
+    // LABEL DOCUMENT ID
+    // =========================================
+
+    firstPage.drawText(
+        documentId,
+        {
+            x:
+                width -
+                150,
+
+            y:
+                height -
+                qrSize -
+                margin -
+                12,
+
+            size:
+                6,
+
+            color:
+                rgb(
+                    0,
+                    0,
+                    0
+                )
+        }
+    );
+
+
+    // =========================================
+    // SIMPAN PDF FINAL
+    // =========================================
+
+    statusUpload.textContent =
+        "Menyimpan PDF final dengan QR...";
+
+
+    const finalBytes =
+        await pdfDoc.save();
+
+
+    return new Blob(
+        [finalBytes],
+        {
+            type:
+                "application/pdf"
+        }
+    );
+
+}
+
+
+// =====================================================
+// UPLOAD PDF FINAL → SUPABASE
 // =====================================================
 
 uploadPDF.addEventListener(
@@ -1004,8 +1199,15 @@ uploadPDF.addEventListener(
                 true;
 
 
-            statusUpload.textContent =
-                "Meng-upload PDF ke Supabase Storage...";
+            // =========================================
+            // BUAT PDF FINAL
+            // =========================================
+
+            const pdfFinal =
+                await buatPDFFinal(
+                    file,
+                    documentIdAktif
+                );
 
 
             // =========================================
@@ -1013,12 +1215,16 @@ uploadPDF.addEventListener(
             // =========================================
 
             const storagePath =
-                `dokumen/${documentIdAktif}/original.pdf`;
+                `dokumen/${documentIdAktif}/document-final.pdf`;
 
 
             // =========================================
             // UPLOAD SUPABASE
             // =========================================
+
+            statusUpload.textContent =
+                "Meng-upload PDF final ke Supabase Storage...";
+
 
             const {
                 error: uploadError
@@ -1030,7 +1236,7 @@ uploadPDF.addEventListener(
                     )
                     .upload(
                         storagePath,
-                        file,
+                        pdfFinal,
                         {
                             contentType:
                                 "application/pdf",
@@ -1048,48 +1254,8 @@ uploadPDF.addEventListener(
             }
 
 
-            console.log(
-                "Upload Supabase berhasil:",
-                storagePath
-            );
-
-
             // =========================================
-            // SIGNED URL
-            // =========================================
-
-            statusUpload.textContent =
-                "PDF berhasil di-upload. Membuat link PDF...";
-
-
-            const {
-                data: signedData,
-                error: signedError
-            } =
-                await supabase
-                    .storage
-                    .from(
-                        STORAGE_BUCKET
-                    )
-                    .createSignedUrl(
-                        storagePath,
-                        3600
-                    );
-
-
-            if (signedError) {
-
-                throw signedError;
-
-            }
-
-
-            const signedURL =
-                signedData.signedUrl;
-
-
-            // =========================================
-            // UPDATE FIRESTORE
+            // SIMPAN FIRESTORE
             // =========================================
 
             await setDoc(
@@ -1109,14 +1275,14 @@ uploadPDF.addEventListener(
                     pdfStoragePath:
                         storagePath,
 
-                    // Disimpan sebagai informasi,
-                    // tetapi dashboard akan membuat
-                    // signed URL baru saat diperlukan.
                     pdfURL:
-                        signedURL,
+                        null,
 
                     pdfUploadedAt:
-                        serverTimestamp()
+                        serverTimestamp(),
+
+                    qrVersion:
+                        2
 
                 },
                 {
@@ -1127,26 +1293,45 @@ uploadPDF.addEventListener(
 
 
             // =========================================
+            // BUAT SIGNED URL
+            // =========================================
+
+            const signedURL =
+                await buatSignedURL(
+                    storagePath
+                );
+
+
+            // =========================================
             // HASIL
             // =========================================
 
             statusUpload.textContent =
-                "PDF berhasil disimpan di Supabase Storage.";
+                "PDF final berhasil disimpan dengan QR.";
 
 
-            linkPDF.href =
-                signedURL;
+            if (signedURL) {
 
+                linkPDF.href =
+                    signedURL;
 
-            hasilUpload.hidden =
-                false;
+                linkPDF.target =
+                    "_blank";
+
+                linkPDF.rel =
+                    "noopener noreferrer";
+
+                hasilUpload.hidden =
+                    false;
+
+            }
 
 
             await muatDashboard();
 
 
             alert(
-                "PDF berhasil di-upload dan disimpan di Supabase Storage."
+                `PDF berhasil diproses.\n\nDocument ID:\n${documentIdAktif}\n\nQR telah ditempel ke PDF final.`
             );
 
         }
@@ -1160,15 +1345,17 @@ uploadPDF.addEventListener(
 
 
             let pesan =
-                err.message
-                ||
+                err.message ||
                 "Upload PDF gagal.";
 
 
             if (
                 err.message &&
-                err.message.toLowerCase()
-                    .includes("row-level security")
+                err.message
+                    .toLowerCase()
+                    .includes(
+                        "row-level security"
+                    )
             ) {
 
                 pesan =
@@ -1179,8 +1366,11 @@ uploadPDF.addEventListener(
 
             if (
                 err.message &&
-                err.message.toLowerCase()
-                    .includes("bucket")
+                err.message
+                    .toLowerCase()
+                    .includes(
+                        "bucket"
+                    )
             ) {
 
                 pesan =
@@ -1214,7 +1404,7 @@ uploadPDF.addEventListener(
 
 
 // =====================================================
-// BUAT SIGNED URL PDF
+// SIGNED URL
 // =====================================================
 
 async function buatSignedURL(
@@ -1356,40 +1546,32 @@ async function muatDashboard() {
                 dokumen.push({
 
                     id:
-                        data.id
-                        ||
+                        data.id ||
                         item.id,
 
                     nomorSurat:
-                        data.nomorSurat
-                        ||
+                        data.nomorSurat ||
                         "-",
 
                     jenis:
-                        data.namaJenis
-                        ||
-                        data.jenis
-                        ||
+                        data.namaJenis ||
+                        data.jenis ||
                         "-",
 
                     status:
-                        data.status
-                        ||
+                        data.status ||
                         "-",
 
                     tanggal:
-                        data.tanggalTerbit
-                        ||
+                        data.tanggalTerbit ||
                         "-",
 
                     pdfStoragePath:
-                        data.pdfStoragePath
-                        ||
+                        data.pdfStoragePath ||
                         null,
 
                     pdfUploaded:
-                        data.pdfUploaded
-                        ||
+                        data.pdfUploaded ||
                         false
 
                 });
@@ -1398,9 +1580,9 @@ async function muatDashboard() {
         );
 
 
-        // =============================================
+        // =========================================
         // STATISTIK
-        // =============================================
+        // =========================================
 
         totalDokumen.textContent =
             total;
@@ -1415,9 +1597,9 @@ async function muatDashboard() {
             dibatalkan;
 
 
-        // =============================================
+        // =========================================
         // SORT
-        // =============================================
+        // =========================================
 
         dokumen.sort(
             (a, b) =>
@@ -1460,9 +1642,9 @@ async function muatDashboard() {
         }
 
 
-        // =============================================
-        // BUAT SIGNED URL
-        // =============================================
+        // =========================================
+        // SIGNED URL
+        // =========================================
 
         const daftarDenganURL =
             await Promise.all(
@@ -1497,9 +1679,9 @@ async function muatDashboard() {
             );
 
 
-        // =============================================
+        // =========================================
         // TABLE
-        // =============================================
+        // =========================================
 
         daftarDokumen.innerHTML =
             daftarDenganURL
@@ -1565,23 +1747,6 @@ async function muatDashboard() {
                                     PDF
 
                                 </a>
-
-                            `;
-
-                        }
-
-                        else if (
-                            data.pdfStoragePath
-                        ) {
-
-                            pdf = `
-
-                                <span
-                                    style="color:#dc2626;">
-
-                                    Gagal membuat link
-
-                                </span>
 
                             `;
 
@@ -1708,7 +1873,9 @@ function escapeHTML(
     value
 ) {
 
-    return String(value)
+    return String(
+        value ?? ""
+    )
 
         .replaceAll(
             "&",
