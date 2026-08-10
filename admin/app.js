@@ -1066,7 +1066,7 @@ async function muatStatistik() {
         if (dokumenDicabut) {
 
             dokumenDicabut.textContent =
-                String(dibabat = dicabut);
+                String(dicabut);
 
         }
 
