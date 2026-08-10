@@ -20,6 +20,12 @@ import {
     supabase
 } from "../js/supabase.js";
 
+import QRCode from "https://esm.sh/qrcode@1.5.4";
+
+import {
+    PDFDocument
+} from "https://esm.sh/pdf-lib@1.17.1";
+
 
 // =====================================================
 // KONFIGURASI
@@ -33,8 +39,11 @@ const DESA = {
     kabupaten: "Batu Bara"
 };
 
-const SUPABASE_BUCKET = "sivedokdes-pdf";
-const SUPABASE_FOLDER = "dokumen";
+const SUPABASE_BUCKET =
+    "sivedokdes-pdf";
+
+const SUPABASE_FOLDER =
+    "dokumen";
 
 
 // =====================================================
@@ -281,6 +290,20 @@ function statusText(status) {
 
 
 // =====================================================
+// URL VERIFIKASI
+// =====================================================
+
+function buatURLVerifikasi(documentId) {
+
+    return new URL(
+        `/verify.html?id=${encodeURIComponent(documentId)}`,
+        window.location.origin
+    ).href;
+
+}
+
+
+// =====================================================
 // TAHUN
 // =====================================================
 
@@ -348,15 +371,14 @@ function updateIndeks() {
     const data =
         DATA_JENIS[jenis];
 
-    // =============================================
-    // MANUAL
-    // =============================================
 
     if (jenis === "MANUAL") {
 
-        indeksElement.readOnly = false;
+        indeksElement.readOnly =
+            false;
 
-        indeksElement.value = "";
+        indeksElement.value =
+            "";
 
         indeksElement.placeholder =
             "Masukkan indeks / kode klasifikasi";
@@ -373,14 +395,12 @@ function updateIndeks() {
     }
 
 
-    // =============================================
-    // OTOMATIS
-    // =============================================
-
-    indeksElement.readOnly = true;
+    indeksElement.readOnly =
+        true;
 
     indeksElement.placeholder =
         "Otomatis";
+
 
     if (data) {
 
@@ -396,7 +416,8 @@ function updateIndeks() {
 
     } else {
 
-        indeksElement.value = "";
+        indeksElement.value =
+            "";
 
         if (petunjukIndeks) {
 
@@ -502,27 +523,20 @@ function buatNomorSurat() {
 }
 
 
-// =====================================================
-// UPDATE NOMOR SURAT
-// =====================================================
-
 function updateNomorSurat() {
 
     if (!nomorSuratElement) {
         return;
     }
 
-    const nomorSurat =
-        buatNomorSurat();
-
     nomorSuratElement.value =
-        nomorSurat;
+        buatNomorSurat();
 
 }
 
 
 // =====================================================
-// AMBIL DATA DOKUMEN
+// AMBIL SEMUA DOKUMEN
 // =====================================================
 
 async function ambilSemuaDokumen() {
@@ -676,8 +690,7 @@ async function muatDaftarDokumen() {
 
             daftarDokumen.innerHTML = `
                 <tr>
-                    <td
-                        colspan="6"
+                    <td colspan="6"
                         style="text-align:center;">
                         Belum ada dokumen.
                     </td>
@@ -687,7 +700,6 @@ async function muatDaftarDokumen() {
             return;
 
         }
-
 
         snapshot.forEach(
             snapshotDoc => {
@@ -705,13 +717,15 @@ async function muatDaftarDokumen() {
 
                     <td>
                         ${escapeHTML(
-                            data.id || snapshotDoc.id
+                            data.id ||
+                            snapshotDoc.id
                         )}
                     </td>
 
                     <td>
                         ${escapeHTML(
-                            data.nomorSurat || "-"
+                            data.nomorSurat ||
+                            "-"
                         )}
                     </td>
 
@@ -742,7 +756,9 @@ async function muatDaftarDokumen() {
                             pdfAda
                             ?
                             `<a
-                                href="${escapeHTML(data.pdfURL)}"
+                                href="${escapeHTML(
+                                    data.pdfURL
+                                )}"
                                 target="_blank"
                                 rel="noopener">
                                 Lihat PDF
@@ -780,8 +796,7 @@ async function muatDaftarDokumen() {
 
         daftarDokumen.innerHTML = `
             <tr>
-                <td
-                    colspan="6"
+                <td colspan="6"
                     style="text-align:center;">
                     Gagal memuat data dokumen.
                 </td>
@@ -794,7 +809,7 @@ async function muatDaftarDokumen() {
 
 
 // =====================================================
-// REFRESH DASHBOARD
+// REFRESH
 // =====================================================
 
 async function refreshDashboard() {
@@ -819,15 +834,12 @@ async function registrasikanDokumen() {
 
     try {
 
-        registrasiButton.disabled = true;
+        registrasiButton.disabled =
+            true;
 
         registrasiButton.textContent =
             "Memproses...";
 
-
-        // =============================================
-        // DATA FORM
-        // =============================================
 
         const jenis =
             jenisElement?.value || "";
@@ -853,10 +865,6 @@ async function registrasikanDokumen() {
             || "Kepala Desa Guntung";
 
 
-        // =============================================
-        // VALIDASI
-        // =============================================
-
         if (!jenis) {
 
             alert(
@@ -866,7 +874,6 @@ async function registrasikanDokumen() {
             return;
 
         }
-
 
         if (!indeks) {
 
@@ -880,7 +887,6 @@ async function registrasikanDokumen() {
 
         }
 
-
         if (!tahun) {
 
             alert(
@@ -891,7 +897,6 @@ async function registrasikanDokumen() {
 
         }
 
-
         if (!bulan) {
 
             alert(
@@ -901,7 +906,6 @@ async function registrasikanDokumen() {
             return;
 
         }
-
 
         if (!tanggal) {
 
@@ -914,19 +918,13 @@ async function registrasikanDokumen() {
         }
 
 
-        // =============================================
-        // NOMOR URUT
-        // =============================================
-
         let nomorUrut =
             Number(
                 nomorUrutElement?.value
             );
 
         if (
-            !Number.isInteger(
-                nomorUrut
-            ) ||
+            !Number.isInteger(nomorUrut) ||
             nomorUrut < 1
         ) {
 
@@ -943,10 +941,6 @@ async function registrasikanDokumen() {
         }
 
 
-        // =============================================
-        // NOMOR SURAT
-        // =============================================
-
         const nomorSurat =
             `${indeks}/${padNomor(nomorUrut)}/${DESA.kodeDesa}/${String(bulan).padStart(2, "0")}/${tahun}`;
 
@@ -959,34 +953,26 @@ async function registrasikanDokumen() {
         }
 
 
-        // =============================================
-        // DOCUMENT ID
-        // =============================================
-
         const documentId =
             `${DESA.kodeWilayah}-${tahunDuaDigit(tahun)}-${String(nomorUrut).padStart(4, "0")}`;
 
-
-        // =============================================
-        // DATA FIRESTORE
-        // =============================================
 
         const dataDokumen = {
 
             id: documentId,
 
-            nomorUrut: nomorUrut,
+            nomorUrut,
 
-            nomorSurat: nomorSurat,
+            nomorSurat,
 
-            jenis: jenis,
+            jenis,
 
             namaJenis:
                 DATA_JENIS[jenis]?.nama
                 ||
                 "Lainnya / Manual",
 
-            indeks: indeks,
+            indeks,
 
             tahun:
                 Number(tahun),
@@ -1000,17 +986,18 @@ async function registrasikanDokumen() {
             tanggalTerbit:
                 tanggal,
 
-            status: "VALID",
+            status:
+                "VALID",
 
-            aktif: true,
+            aktif:
+                true,
 
-            versi: 1,
+            versi:
+                1,
 
-            penandatangan:
-                penandatangan,
+            penandatangan,
 
-            jabatan:
-                jabatan,
+            jabatan,
 
             dibuatOleh:
                 "ADMIN",
@@ -1024,10 +1011,6 @@ async function registrasikanDokumen() {
         };
 
 
-        // =============================================
-        // SIMPAN FIRESTORE
-        // =============================================
-
         await setDoc(
             doc(
                 db,
@@ -1038,17 +1021,12 @@ async function registrasikanDokumen() {
         );
 
 
-        // =============================================
-        // HASIL
-        // =============================================
-
         if (hasilElement) {
 
             hasilElement.textContent =
                 documentId;
 
         }
-
 
         if (uploadDocumentId) {
 
@@ -1057,14 +1035,12 @@ async function registrasikanDokumen() {
 
         }
 
-
         if (uploadPDFButton) {
 
             uploadPDFButton.disabled =
                 false;
 
         }
-
 
         if (statusUpload) {
 
@@ -1079,10 +1055,6 @@ async function registrasikanDokumen() {
         );
 
 
-        // =============================================
-        // REFRESH
-        // =============================================
-
         await refreshDashboard();
 
     }
@@ -1095,11 +1067,9 @@ async function registrasikanDokumen() {
         );
 
         alert(
-            "Gagal mendaftarkan dokumen:\n\n"
-            +
+            "Gagal mendaftarkan dokumen:\n\n" +
             (
-                err?.message
-                ||
+                err?.message ||
                 "Terjadi kesalahan."
             )
         );
@@ -1120,6 +1090,204 @@ async function registrasikanDokumen() {
 
 
 // =====================================================
+// BUAT QR CODE
+// =====================================================
+
+async function buatQRCode(documentId) {
+
+    const url =
+        buatURLVerifikasi(
+            documentId
+        );
+
+    const qrDataURL =
+        await QRCode.toDataURL(
+            url,
+            {
+                errorCorrectionLevel:
+                    "H",
+
+                margin:
+                    1,
+
+                width:
+                    500
+            }
+        );
+
+    return {
+        url,
+        qrDataURL
+    };
+
+}
+
+
+// =====================================================
+// TEMPEL QR KE PDF
+// =====================================================
+
+async function buatPDFFinal(
+    file,
+    documentId
+) {
+
+    const {
+        url,
+        qrDataURL
+    } =
+        await buatQRCode(
+            documentId
+        );
+
+
+    // =============================================
+    // BACA PDF ASLI
+    // =============================================
+
+    const arrayBuffer =
+        await file.arrayBuffer();
+
+    const pdfDoc =
+        await PDFDocument.load(
+            arrayBuffer
+        );
+
+
+    const pages =
+        pdfDoc.getPages();
+
+    if (!pages.length) {
+
+        throw new Error(
+            "PDF tidak memiliki halaman."
+        );
+
+    }
+
+
+    // =============================================
+    // AMBIL HALAMAN TERAKHIR
+    // =============================================
+
+    const page =
+        pages[pages.length - 1];
+
+
+    const {
+        width,
+        height
+    } =
+        page.getSize();
+
+
+    // =============================================
+    // MASUKKAN QR
+    // =============================================
+
+    const qrBytes =
+        await fetch(
+            qrDataURL
+        )
+        .then(
+            response =>
+                response.arrayBuffer()
+        );
+
+
+    const qrImage =
+        await pdfDoc.embedPng(
+            qrBytes
+        );
+
+
+    // =============================================
+    // UKURAN QR
+    // =============================================
+
+    const qrSize =
+        Math.min(
+            95,
+            width * 0.16
+        );
+
+
+    // =============================================
+    // POSISI QR
+    //
+    // Diletakkan di kanan bawah,
+    // tetapi tidak menempel pada tepi.
+    // =============================================
+
+    const marginRight =
+        42;
+
+    const marginBottom =
+        42;
+
+
+    const qrX =
+        width -
+        qrSize -
+        marginRight;
+
+    const qrY =
+        marginBottom;
+
+
+    // =============================================
+    // GAMBAR QR
+    // =============================================
+
+    page.drawImage(
+        qrImage,
+        {
+            x:
+                qrX,
+
+            y:
+                qrY,
+
+            width:
+                qrSize,
+
+            height:
+                qrSize
+        }
+    );
+
+
+    // =============================================
+    // HASIL PDF
+    // =============================================
+
+    const pdfBytes =
+        await pdfDoc.save();
+
+
+    const finalFile =
+        new File(
+            [
+                pdfBytes
+            ],
+            `${documentId}.pdf`,
+            {
+                type:
+                    "application/pdf"
+            }
+        );
+
+
+    return {
+        finalFile,
+        verifyURL:
+            url
+    };
+
+}
+
+
+// =====================================================
 // UPLOAD PDF
 // =====================================================
 
@@ -1129,6 +1297,7 @@ async function uploadDokumenPDF() {
 
         const documentId =
             uploadDocumentId?.textContent.trim();
+
 
         if (
             !documentId ||
@@ -1147,6 +1316,7 @@ async function uploadDokumenPDF() {
 
         const file =
             filePDF?.files?.[0];
+
 
         if (!file) {
 
@@ -1179,7 +1349,7 @@ async function uploadDokumenPDF() {
                 true;
 
             uploadPDFButton.textContent =
-                "Mengunggah...";
+                "Memproses PDF...";
 
         }
 
@@ -1187,34 +1357,38 @@ async function uploadDokumenPDF() {
         if (statusUpload) {
 
             statusUpload.textContent =
-                "Mengunggah PDF ke penyimpanan...";
+                "Menyimpan PDF asli...";
 
         }
 
 
         // =============================================
-        // NAMA FILE
+        // FOLDER DOKUMEN
         // =============================================
 
-        const namaFile =
-            `${documentId}.pdf`;
-
-        const pathFile =
-            `${SUPABASE_FOLDER}/${namaFile}`;
+        const folderDokumen =
+            `${SUPABASE_FOLDER}/${documentId}`;
 
 
         // =============================================
-        // UPLOAD SUPABASE
+        // ORIGINAL PDF
         // =============================================
+
+        const originalPath =
+            `${folderDokumen}/original.pdf`;
+
 
         const {
-            error: uploadError
+            error:
+                originalUploadError
         } =
             await supabase
                 .storage
-                .from(SUPABASE_BUCKET)
+                .from(
+                    SUPABASE_BUCKET
+                )
                 .upload(
-                    pathFile,
+                    originalPath,
                     file,
                     {
                         contentType:
@@ -1226,26 +1400,94 @@ async function uploadDokumenPDF() {
                 );
 
 
-        if (uploadError) {
+        if (
+            originalUploadError
+        ) {
 
-            throw uploadError;
+            throw originalUploadError;
 
         }
 
 
         // =============================================
-        // SIGNED URL
+        // BUAT PDF FINAL + QR
         // =============================================
 
+        if (statusUpload) {
+
+            statusUpload.textContent =
+                "Membuat QR Verifikasi dan PDF final...";
+
+        }
+
+
         const {
-            data: signedData,
-            error: signedError
+            finalFile,
+            verifyURL
+        } =
+            await buatPDFFinal(
+                file,
+                documentId
+            );
+
+
+        // =============================================
+        // FINAL PDF
+        // =============================================
+
+        const finalPath =
+            `${folderDokumen}/final.pdf`;
+
+
+        const {
+            error:
+                finalUploadError
         } =
             await supabase
                 .storage
-                .from(SUPABASE_BUCKET)
+                .from(
+                    SUPABASE_BUCKET
+                )
+                .upload(
+                    finalPath,
+                    finalFile,
+                    {
+                        contentType:
+                            "application/pdf",
+
+                        upsert:
+                            true
+                    }
+                );
+
+
+        if (
+            finalUploadError
+        ) {
+
+            throw finalUploadError;
+
+        }
+
+
+        // =============================================
+        // SIGNED URL FINAL PDF
+        // =============================================
+
+        const {
+            data:
+                signedData,
+
+            error:
+                signedError
+        } =
+            await supabase
+                .storage
+                .from(
+                    SUPABASE_BUCKET
+                )
                 .createSignedUrl(
-                    pathFile,
+                    finalPath,
                     60 * 60 * 24 * 365 * 10
                 );
 
@@ -1264,14 +1506,14 @@ async function uploadDokumenPDF() {
         if (!pdfURL) {
 
             throw new Error(
-                "URL PDF tidak berhasil dibuat."
+                "URL PDF final tidak berhasil dibuat."
             );
 
         }
 
 
         // =============================================
-        // SIMPAN URL KE FIRESTORE
+        // SIMPAN DATA KE FIRESTORE
         // =============================================
 
         await setDoc(
@@ -1282,14 +1524,28 @@ async function uploadDokumenPDF() {
             ),
             {
 
-                pdfURL:
-                    pdfURL,
+                pdfURL,
 
                 pdfStoragePath:
-                    pathFile,
+                    finalPath,
+
+                pdfOriginalStoragePath:
+                    originalPath,
 
                 pdfNamaFile:
-                    namaFile,
+                    "final.pdf",
+
+                pdfOriginalNamaFile:
+                    "original.pdf",
+
+                qrURL:
+                    verifyURL,
+
+                qrDocumentId:
+                    documentId,
+
+                qrDibuat:
+                    true,
 
                 pdfDiunggahPada:
                     serverTimestamp(),
@@ -1299,7 +1555,8 @@ async function uploadDokumenPDF() {
 
             },
             {
-                merge: true
+                merge:
+                    true
             }
         );
 
@@ -1322,7 +1579,7 @@ async function uploadDokumenPDF() {
                 pdfURL;
 
             linkPDF.textContent =
-                "Buka PDF";
+                "Buka PDF Final";
 
         }
 
@@ -1330,13 +1587,17 @@ async function uploadDokumenPDF() {
         if (statusUpload) {
 
             statusUpload.textContent =
-                "PDF berhasil disimpan.";
+                "PDF final berhasil dibuat dengan QR Verifikasi.";
 
         }
 
 
         alert(
-            "PDF berhasil diunggah dan dikaitkan dengan dokumen."
+            "BERHASIL.\n\n" +
+            "PDF asli disimpan sebagai original.pdf.\n" +
+            "PDF final + QR disimpan sebagai final.pdf.\n\n" +
+            "QR mengarah ke:\n" +
+            verifyURL
         );
 
 
@@ -1354,16 +1615,14 @@ async function uploadDokumenPDF() {
         if (statusUpload) {
 
             statusUpload.textContent =
-                "Gagal mengunggah PDF.";
+                "Gagal memproses PDF.";
 
         }
 
         alert(
-            "Gagal mengunggah PDF:\n\n"
-            +
+            "Gagal memproses PDF:\n\n" +
             (
-                err?.message
-                ||
+                err?.message ||
                 "Terjadi kesalahan."
             )
         );
@@ -1388,7 +1647,7 @@ async function uploadDokumenPDF() {
 
 
 // =====================================================
-// EVENT JENIS DOKUMEN
+// EVENT JENIS
 // =====================================================
 
 if (jenisElement) {
