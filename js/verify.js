@@ -150,7 +150,9 @@ const namaJenis = {
 
 function escapeHTML(value) {
 
-    return String(value ?? "")
+    return String(
+        value ?? ""
+    )
 
         .replaceAll(
             "&",
@@ -207,14 +209,9 @@ function formatTanggal(tanggal) {
     return date.toLocaleDateString(
         "id-ID",
         {
-            day:
-                "2-digit",
-
-            month:
-                "long",
-
-            year:
-                "numeric"
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
         }
     );
 
@@ -224,9 +221,7 @@ function formatTanggal(tanggal) {
 // STATUS
 // =====================================================
 
-function tampilkanStatus(
-    statusDokumen
-) {
+function tampilkanStatus(statusDokumen) {
 
     const status =
         String(
@@ -243,8 +238,7 @@ function tampilkanStatus(
         "status-badge";
 
     if (
-        status ===
-        "VALID"
+        status === "VALID"
     ) {
 
         statusBadge.textContent =
@@ -259,8 +253,7 @@ function tampilkanStatus(
     }
 
     if (
-        status ===
-        "DICABUT"
+        status === "DICABUT"
     ) {
 
         statusBadge.textContent =
@@ -275,8 +268,7 @@ function tampilkanStatus(
     }
 
     if (
-        status ===
-        "DIBATALKAN"
+        status === "DIBATALKAN"
     ) {
 
         statusBadge.textContent =
@@ -300,31 +292,27 @@ function tampilkanStatus(
 }
 
 // =====================================================
-// BUAT SIGNED URL SUPABASE
+// SIGNED URL SUPABASE
 // =====================================================
 
 async function buatSignedURL(
     storagePath
 ) {
 
-    if (
-        !storagePath ||
-        typeof storagePath !==
-        "string"
-    ) {
+    if (!storagePath) {
 
         return null;
 
     }
 
     console.log(
-        "Membuat Signed URL Supabase:",
+        "Membuat Signed URL:",
         storagePath
     );
 
     const {
         data,
-        error
+        error: signedError
     } =
         await supabase
             .storage
@@ -336,14 +324,14 @@ async function buatSignedURL(
                 3600
             );
 
-    if (error) {
+    if (signedError) {
 
         console.error(
-            "Supabase Signed URL error:",
-            error
+            "Supabase Signed URL Error:",
+            signedError
         );
 
-        throw error;
+        throw signedError;
 
     }
 
@@ -353,7 +341,7 @@ async function buatSignedURL(
     ) {
 
         throw new Error(
-            "Supabase tidak mengembalikan Signed URL PDF."
+            "Supabase tidak mengembalikan URL PDF."
         );
 
     }
@@ -409,13 +397,11 @@ async function tampilkanPDF(
     // =============================================
 
     if (
-        !storagePath ||
-        typeof storagePath !==
-        "string"
+        !storagePath
     ) {
 
         console.log(
-            "Dokumen belum memiliki PDF final."
+            "Dokumen belum memiliki PDF."
         );
 
         return;
@@ -423,16 +409,20 @@ async function tampilkanPDF(
     }
 
     // =============================================
-    // BUAT SIGNED URL BARU
+    // BUAT SIGNED URL
     // =============================================
 
-    const signedURL =
+    const pdfURL =
         await buatSignedURL(
             storagePath
         );
 
+    console.log(
+        "PDF Signed URL berhasil dibuat."
+    );
+
     // =============================================
-    // ELEMENT TIDAK ADA
+    // ELEMENT
     // =============================================
 
     if (
@@ -440,9 +430,11 @@ async function tampilkanPDF(
         !pdfLink
     ) {
 
-        throw new Error(
+        console.error(
             "Element PDF tidak ditemukan di verify.html."
         );
+
+        return;
 
     }
 
@@ -451,7 +443,7 @@ async function tampilkanPDF(
     // =============================================
 
     pdfLink.href =
-        signedURL;
+        pdfURL;
 
     pdfLink.target =
         "_blank";
@@ -475,9 +467,44 @@ async function tampilkanPDF(
     pdfContainer.style.display =
         "block";
 
-    console.log(
-        "PDF final berhasil disiapkan."
-    );
+}
+
+// =====================================================
+// TIMEOUT HELPER
+// =====================================================
+
+function denganTimeout(
+    promise,
+    waktu = 15000
+) {
+
+    return Promise.race([
+
+        promise,
+
+        new Promise(
+            (
+                _,
+                reject
+            ) => {
+
+                setTimeout(
+                    () => {
+
+                        reject(
+                            new Error(
+                                "Koneksi ke server terlalu lama. Silakan coba kembali."
+                            )
+                        );
+
+                    },
+                    waktu
+                );
+
+            }
+        )
+
+    ]);
 
 }
 
@@ -527,8 +554,35 @@ async function cekDokumen() {
 
     try {
 
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            "VERIFIKASI DOCUMENT ID:",
+            id
+        );
+
+        console.log(
+            "===================================="
+        );
+
         // =============================================
-        // RESET AWAL
+        // VALIDASI ID
+        // =============================================
+
+        if (!id) {
+
+            tampilkanError(
+                "Document ID tidak ditemukan."
+            );
+
+            return;
+
+        }
+
+        // =============================================
+        // LOADING
         // =============================================
 
         if (loading) {
@@ -553,27 +607,12 @@ async function cekDokumen() {
         }
 
         // =============================================
-        // VALIDASI DOCUMENT ID
+        // FIRESTORE
         // =============================================
-
-        if (!id) {
-
-            tampilkanError(
-                "Document ID tidak ditemukan pada URL."
-            );
-
-            return;
-
-        }
 
         console.log(
-            "Memverifikasi Document ID:",
-            id
+            "Mengambil dokumen dari Firestore..."
         );
-
-        // =============================================
-        // FIRESTORE REFERENCE
-        // =============================================
 
         const documentRef =
             doc(
@@ -582,30 +621,26 @@ async function cekDokumen() {
                 id
             );
 
-        // =============================================
-        // AMBIL DATA FIRESTORE
-        // =============================================
-
         const snap =
-            await getDoc(
-                documentRef
+            await denganTimeout(
+                getDoc(
+                    documentRef
+                ),
+                15000
             );
 
         console.log(
-            "Firestore response:",
-            snap.exists()
+            "Firestore selesai."
         );
 
         // =============================================
         // DOKUMEN TIDAK DITEMUKAN
         // =============================================
 
-        if (
-            !snap.exists()
-        ) {
+        if (!snap.exists()) {
 
             tampilkanError(
-                `Dokumen dengan Document ID "${id}" tidak terdaftar.`
+                "Dokumen dengan Document ID tersebut tidak terdaftar."
             );
 
             return;
@@ -613,7 +648,7 @@ async function cekDokumen() {
         }
 
         // =============================================
-        // DATA DOKUMEN
+        // DATA
         // =============================================
 
         const data =
@@ -633,7 +668,7 @@ async function cekDokumen() {
         );
 
         // =============================================
-        // JENIS DOKUMEN
+        // JENIS
         // =============================================
 
         const jenis =
@@ -648,7 +683,7 @@ async function cekDokumen() {
             "-";
 
         // =============================================
-        // DETAIL
+        // DOCUMENT ID
         // =============================================
 
         if (documentIdElement) {
@@ -659,6 +694,10 @@ async function cekDokumen() {
 
         }
 
+        // =============================================
+        // NOMOR SURAT
+        // =============================================
+
         if (nomorSurat) {
 
             nomorSurat.textContent =
@@ -667,12 +706,20 @@ async function cekDokumen() {
 
         }
 
+        // =============================================
+        // JENIS DOKUMEN
+        // =============================================
+
         if (jenisDokumen) {
 
             jenisDokumen.textContent =
                 jenis;
 
         }
+
+        // =============================================
+        // INDEKS
+        // =============================================
 
         if (indeks) {
 
@@ -682,6 +729,10 @@ async function cekDokumen() {
 
         }
 
+        // =============================================
+        // PENANDATANGAN
+        // =============================================
+
         if (penandatangan) {
 
             penandatangan.textContent =
@@ -690,6 +741,10 @@ async function cekDokumen() {
 
         }
 
+        // =============================================
+        // JABATAN
+        // =============================================
+
         if (jabatan) {
 
             jabatan.textContent =
@@ -697,6 +752,10 @@ async function cekDokumen() {
                 "-";
 
         }
+
+        // =============================================
+        // TANGGAL
+        // =============================================
 
         if (tanggalTerbit) {
 
@@ -708,7 +767,7 @@ async function cekDokumen() {
         }
 
         // =============================================
-        // PDF FINAL SUPABASE
+        // PDF SUPABASE
         // =============================================
 
         try {
@@ -722,26 +781,13 @@ async function cekDokumen() {
         catch (pdfError) {
 
             console.error(
-                "PDF gagal ditampilkan:",
+                "PDF gagal dimuat:",
                 pdfError
             );
 
-            // Data dokumen tetap valid.
-            // Hanya PDF yang gagal diakses.
-
-            if (pdfContainer) {
-
-                pdfContainer.hidden =
-                    false;
-
-            }
-
-            if (pdfLink) {
-
-                pdfLink.hidden =
-                    true;
-
-            }
+            // PDF gagal tidak membuat
+            // verifikasi dokumen gagal.
+            // Data dokumen tetap ditampilkan.
 
         }
 
@@ -830,6 +876,10 @@ async function cekDokumen() {
 
         }
 
+        console.log(
+            "VERIFIKASI BERHASIL."
+        );
+
     }
 
     catch (err) {
@@ -839,39 +889,10 @@ async function cekDokumen() {
             err
         );
 
-        let pesan =
-            "Gagal memverifikasi dokumen.";
-
-        // =============================================
-        // FIREBASE
-        // =============================================
-
-        if (
-            err &&
-            err.code
-        ) {
-
-            pesan =
-                `Gagal mengakses data dokumen (${err.code}).`;
-
-        }
-
-        // =============================================
-        // PESAN ERROR
-        // =============================================
-
-        else if (
-            err &&
-            err.message
-        ) {
-
-            pesan =
-                err.message;
-
-        }
-
         tampilkanError(
-            pesan
+            err.message
+            ||
+            "Gagal menghubungi server. Silakan coba kembali."
         );
 
     }
