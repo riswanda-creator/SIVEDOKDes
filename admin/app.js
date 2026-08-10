@@ -1,18 +1,17 @@
-```javascript
 // =====================================================
 // SIVEDOKDes
 // ADMINISTRATOR APP
 // Desa Guntung
 //
-// VERSI WORKFLOW DOKUMEN
+// WORKFLOW DOKUMEN
 // - Identitas Admin
-// - Audit Trail
 // - Document ID
+// - Indeks Otomatis / Manual
 // - PDF Original
-// - PDF + QR untuk TTE
+// - PDF + QR
 // - Workflow TTE
 // - Status Administratif
-// - Persiapan PDF hasil TTE
+// - Audit Trail
 // =====================================================
 
 import {
@@ -59,7 +58,7 @@ const DESA = {
 };
 
 // =====================================================
-// KONFIGURASI PENYIMPANAN
+// SUPABASE
 // =====================================================
 
 const SUPABASE_BUCKET =
@@ -69,16 +68,11 @@ const SUPABASE_FOLDER =
     "dokumen";
 
 // =====================================================
-// IDENTITAS ADMIN
+// IDENTITAS ADMIN SEMENTARA
 // =====================================================
 //
-// Untuk sementara identitas disiapkan melalui konfigurasi
-// lokal karena sistem login/auth belum kita ubah.
-//
-// TAHAP BERIKUTNYA:
-// Identitas ini akan diambil dari akun Firebase Auth.
-//
-// Jangan gunakan "ADMIN" sebagai identitas permanen.
+// Nanti akan kita sambungkan ke Firebase Auth.
+// Untuk sekarang jangan dijadikan sistem keamanan final.
 // =====================================================
 
 const ADMIN_STORAGE_KEY =
@@ -115,7 +109,9 @@ function getAdminIdentity() {
         if (stored) {
 
             const parsed =
-                JSON.parse(stored);
+                JSON.parse(
+                    stored
+                );
 
             if (
                 parsed &&
@@ -136,11 +132,11 @@ function getAdminIdentity() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.warn(
-            "Profil admin lokal tidak dapat dibaca:",
-            err
+            "Profil admin tidak dapat dibaca:",
+            error
         );
 
     }
@@ -155,7 +151,7 @@ const ADMIN =
     getAdminIdentity();
 
 // =====================================================
-// STATUS WORKFLOW DOKUMEN
+// STATUS WORKFLOW
 // =====================================================
 
 const WORKFLOW_STATUS = {
@@ -333,6 +329,19 @@ const daftarDokumen =
 // =====================================================
 // DATA JENIS DOKUMEN
 // =====================================================
+//
+// INDEKS OTOMATIS:
+// DOMISILI     = 470
+// MENIKAH      = 472.2
+// PINDAH       = 471.2
+// SKU          = 500
+// SKTM         = 401
+// PENGHASILAN  = 500
+// UNDANGAN     = 005
+//
+// MANUAL:
+// Lainnya / Manual
+// =====================================================
 
 const DATA_JENIS = {
 
@@ -466,7 +475,9 @@ const BULAN_ROMAWI = {
 // UTILITAS
 // =====================================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(
         value ?? ""
@@ -499,7 +510,9 @@ function padNomor(
     panjang = 3
 ) {
 
-    return String(value)
+    return String(
+        value
+    )
         .replace(
             /\D/g,
             ""
@@ -515,7 +528,9 @@ function padDocumentNumber(
     value
 ) {
 
-    return String(value)
+    return String(
+        value
+    )
         .replace(
             /\D/g,
             ""
@@ -533,7 +548,9 @@ function tahunDuaDigit(
 
     return String(
         tahun
-    ).slice(-2);
+    ).slice(
+        -2
+    );
 
 }
 
@@ -541,9 +558,13 @@ function bulanRomawi(
     bulan
 ) {
 
-    return BULAN_ROMAWI[
-        Number(bulan)
-    ] || "-";
+    return (
+        BULAN_ROMAWI[
+            Number(
+                bulan
+            )
+        ] || "-"
+    );
 
 }
 
@@ -581,9 +602,13 @@ function namaBulanIndonesia(
 
     ];
 
-    return nama[
-        Number(bulan)
-    ] || "-";
+    return (
+        nama[
+            Number(
+                bulan
+            )
+        ] || "-"
+    );
 
 }
 
@@ -612,7 +637,9 @@ function formatTanggal(
     else {
 
         date =
-            new Date(value);
+            new Date(
+                value
+            );
 
     }
 
@@ -622,7 +649,9 @@ function formatTanggal(
         )
     ) {
 
-        return String(value);
+        return String(
+            value
+        );
 
     }
 
@@ -645,7 +674,7 @@ function formatTanggal(
 }
 
 // =====================================================
-// STATUS TEXT
+// STATUS
 // =====================================================
 
 function statusText(
@@ -663,20 +692,9 @@ function statusText(
 
 }
 
-// =====================================================
-// LABEL WORKFLOW
-// =====================================================
-
 function workflowText(
     status
 ) {
-
-    const value =
-        String(
-            status || ""
-        )
-            .trim()
-            .toUpperCase();
 
     const labels = {
 
@@ -706,7 +724,18 @@ function workflowText(
 
     };
 
-    return labels[value] || value || "-";
+    const value =
+        String(
+            status || ""
+        )
+            .trim()
+            .toUpperCase();
+
+    return (
+        labels[value] ||
+        value ||
+        "-"
+    );
 
 }
 
@@ -731,12 +760,7 @@ function buatURLVerifikasi(
 }
 
 // =====================================================
-// AUDIT TRAIL
-// =====================================================
-//
-// Setiap aktivitas penting dicatat dalam array audit.
-// Pada tahap berikutnya kita akan memperluas ini
-// menjadi subcollection audit yang lebih aman.
+// AUDIT
 // =====================================================
 
 function buatAuditEntry(
@@ -747,21 +771,27 @@ function buatAuditEntry(
     return {
 
         action:
+
             action,
 
         adminUid:
+
             ADMIN.uid,
 
         adminUsername:
+
             ADMIN.username,
 
         adminNama:
+
             ADMIN.nama,
 
         adminRole:
+
             ADMIN.role,
 
         waktu:
+
             new Date().toISOString(),
 
         ...tambahan
@@ -771,7 +801,7 @@ function buatAuditEntry(
 }
 
 // =====================================================
-// IDENTITAS ADMIN DI DASHBOARD
+// IDENTITAS ADMIN
 // =====================================================
 
 function tampilkanIdentitasAdmin() {
@@ -811,12 +841,8 @@ function tampilkanIdentitasAdmin() {
 
     const target =
         document.querySelector(
-            "header"
-        ) ||
-        document.querySelector(
-            ".header"
-        ) ||
-        document.body;
+            ".admin-header"
+        );
 
     if (!target) {
 
@@ -832,31 +858,18 @@ function tampilkanIdentitasAdmin() {
     identity.id =
         "sivedokdesAdminIdentity";
 
-    identity.style.cssText = `
-        position: fixed;
-        top: 16px;
-        right: 20px;
-        z-index: 9999;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 13px;
-        line-height: 1.5;
-        box-shadow: 0 4px 14px rgba(0,0,0,.08);
-    `;
+    identity.className =
+        "identity-admin";
 
     identity.innerHTML = `
 
-        <div>
-            <strong>
-                ${escapeHTML(
-                    ADMIN.nama
-                )}
-            </strong>
-        </div>
+        <strong>
+            ${escapeHTML(
+                ADMIN.nama
+            )}
+        </strong>
 
-        <div>
+        <span>
             ${escapeHTML(
                 ADMIN.role
             )}
@@ -864,13 +877,247 @@ function tampilkanIdentitasAdmin() {
             ${escapeHTML(
                 ADMIN.unit
             )}
-        </div>
+        </span>
 
     `;
 
     target.appendChild(
         identity
     );
+
+}
+
+// =====================================================
+// INDEKS DOKUMEN
+// =====================================================
+//
+// INI BAGIAN PALING PENTING.
+//
+// Ketika admin memilih jenis dokumen:
+//
+// DOMISILI
+//    ↓
+// indeks = 470
+//    ↓
+// readonly = true
+//
+// MANUAL
+//    ↓
+// indeks kosong
+//    ↓
+// readonly = false
+//    ↓
+// admin boleh mengetik
+// =====================================================
+
+function updateIndeks() {
+
+    if (
+        !jenisElement ||
+        !indeksElement
+    ) {
+
+        return;
+
+    }
+
+    const jenis =
+        jenisElement.value;
+
+    // -------------------------------------------------
+    // BELUM MEMILIH JENIS
+    // -------------------------------------------------
+
+    if (!jenis) {
+
+        indeksElement.value =
+            "";
+
+        indeksElement.readOnly =
+            true;
+
+        indeksElement.disabled =
+            false;
+
+        indeksElement.placeholder =
+            "Pilih jenis dokumen";
+
+        indeksElement.classList.remove(
+            "indeks-otomatis"
+        );
+
+        indeksElement.classList.remove(
+            "indeks-manual"
+        );
+
+        if (petunjukIndeks) {
+
+            petunjukIndeks.textContent =
+                "Pilih jenis dokumen terlebih dahulu.";
+
+        }
+
+        return;
+
+    }
+
+    // -------------------------------------------------
+    // AMBIL OPTION YANG BENAR-BENAR DIPILIH
+    // -------------------------------------------------
+
+    const selectedOption =
+        jenisElement.options[
+            jenisElement.selectedIndex
+        ];
+
+    // -------------------------------------------------
+    // AMBIL DATA-INDEKS DARI HTML
+    // -------------------------------------------------
+
+    const indeksHTML =
+        selectedOption
+            ?.getAttribute(
+                "data-indeks"
+            )
+            ?.trim() ||
+        "";
+
+    // -------------------------------------------------
+    // FALLBACK KE DATA_JENIS
+    // -------------------------------------------------
+
+    const data =
+        DATA_JENIS[
+            jenis
+        ];
+
+    const indeksJS =
+        data?.indeks ||
+        "";
+
+    // -------------------------------------------------
+    // JIKA MANUAL
+    // -------------------------------------------------
+
+    if (
+        jenis ===
+        "MANUAL"
+    ) {
+
+        indeksElement.readOnly =
+            false;
+
+        indeksElement.disabled =
+            false;
+
+        indeksElement.value =
+            "";
+
+        indeksElement.placeholder =
+            "Masukkan indeks / kode klasifikasi";
+
+        indeksElement.classList.remove(
+            "indeks-otomatis"
+        );
+
+        indeksElement.classList.add(
+            "indeks-manual"
+        );
+
+        if (petunjukIndeks) {
+
+            petunjukIndeks.textContent =
+                "Manual — silakan masukkan indeks / kode klasifikasi.";
+
+        }
+
+        indeksElement.focus();
+
+        updateNomorSurat();
+
+        return;
+
+    }
+
+    // -------------------------------------------------
+    // JENIS OTOMATIS
+    // -------------------------------------------------
+
+    const indeksOtomatis =
+        indeksHTML ||
+        indeksJS;
+
+    // -------------------------------------------------
+    // PENGAMAN
+    // -------------------------------------------------
+
+    if (!indeksOtomatis) {
+
+        indeksElement.value =
+            "";
+
+        indeksElement.readOnly =
+            true;
+
+        indeksElement.disabled =
+            false;
+
+        indeksElement.placeholder =
+            "Indeks belum tersedia";
+
+        indeksElement.classList.remove(
+            "indeks-manual"
+        );
+
+        indeksElement.classList.add(
+            "indeks-otomatis"
+        );
+
+        if (petunjukIndeks) {
+
+            petunjukIndeks.textContent =
+                "Indeks otomatis belum tersedia untuk jenis ini.";
+
+        }
+
+        updateNomorSurat();
+
+        return;
+
+    }
+
+    // -------------------------------------------------
+    // ISI INDEKS OTOMATIS
+    // -------------------------------------------------
+
+    indeksElement.value =
+        indeksOtomatis;
+
+    indeksElement.readOnly =
+        true;
+
+    indeksElement.disabled =
+        false;
+
+    indeksElement.placeholder =
+        "Indeks otomatis";
+
+    indeksElement.classList.remove(
+        "indeks-manual"
+    );
+
+    indeksElement.classList.add(
+        "indeks-otomatis"
+    );
+
+    if (petunjukIndeks) {
+
+        petunjukIndeks.textContent =
+            `Otomatis — indeks ${indeksOtomatis} dikunci berdasarkan jenis dokumen.`;
+
+    }
+
+    updateNomorSurat();
 
 }
 
@@ -909,10 +1156,14 @@ function isiTahun() {
             );
 
         option.value =
-            String(tahun);
+            String(
+                tahun
+            );
 
         option.textContent =
-            String(tahun);
+            String(
+                tahun
+            );
 
         if (
             tahun ===
@@ -927,96 +1178,6 @@ function isiTahun() {
         tahunElement.appendChild(
             option
         );
-
-    }
-
-}
-
-// =====================================================
-// INDEKS DOKUMEN
-// =====================================================
-
-function updateIndeks() {
-
-    if (
-        !jenisElement ||
-        !indeksElement
-    ) {
-
-        return;
-
-    }
-
-    const jenis =
-        jenisElement.value;
-
-    if (
-        jenis ===
-        "MANUAL"
-    ) {
-
-        indeksElement.readOnly =
-            false;
-
-        indeksElement.disabled =
-            false;
-
-        indeksElement.value =
-            "";
-
-        indeksElement.placeholder =
-            "Masukkan indeks / kode klasifikasi";
-
-        if (petunjukIndeks) {
-
-            petunjukIndeks.textContent =
-                "Indeks harus diisi secara manual.";
-
-        }
-
-        return;
-
-    }
-
-    indeksElement.readOnly =
-        true;
-
-    indeksElement.disabled =
-        false;
-
-    indeksElement.placeholder =
-        "Otomatis";
-
-    const data =
-        DATA_JENIS[
-            jenis
-        ];
-
-    if (data) {
-
-        indeksElement.value =
-            data.indeks || "";
-
-        if (petunjukIndeks) {
-
-            petunjukIndeks.textContent =
-                "Indeks diisi otomatis berdasarkan jenis dokumen.";
-
-        }
-
-    }
-
-    else {
-
-        indeksElement.value =
-            "";
-
-        if (petunjukIndeks) {
-
-            petunjukIndeks.textContent =
-                "Pilih jenis dokumen.";
-
-        }
 
     }
 
@@ -1043,7 +1204,9 @@ async function getNomorTerakhir() {
                     "desc"
                 ),
 
-                limit(1)
+                limit(
+                    1
+                )
 
             );
 
@@ -1077,15 +1240,18 @@ async function getNomorTerakhir() {
 
         }
 
-        return terakhir + 1;
+        return (
+            terakhir +
+            1
+        );
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal mengambil nomor urut terakhir:",
-            err
+            error
         );
 
         throw new Error(
@@ -1104,7 +1270,6 @@ function buatNomorSurat() {
 
     if (
         !nomorUrutElement ||
-        !jenisElement ||
         !bulanElement ||
         !tahunElement ||
         !indeksElement
@@ -1115,9 +1280,7 @@ function buatNomorSurat() {
     }
 
     const nomorUrut =
-        nomorUrutElement
-            .value
-            .trim();
+        nomorUrutElement.value.trim();
 
     const bulan =
         bulanElement.value;
@@ -1126,9 +1289,7 @@ function buatNomorSurat() {
         tahunElement.value;
 
     const indeks =
-        indeksElement
-            .value
-            .trim();
+        indeksElement.value.trim();
 
     if (
         !nomorUrut ||
@@ -1141,18 +1302,12 @@ function buatNomorSurat() {
 
     }
 
-    const nomor =
-        padNomor(
-            nomorUrut,
-            3
-        );
-
-    const romawi =
-        bulanRomawi(
-            bulan
-        );
-
-    return `${indeks}/${nomor}/${DESA.kodeDesa}/${romawi}/${tahun}`;
+    return `${indeks}/${padNomor(
+        nomorUrut,
+        3
+    )}/${DESA.kodeDesa}/${bulanRomawi(
+        bulan
+    )}/${tahun}`;
 
 }
 
@@ -1176,12 +1331,6 @@ function updateNomorSurat() {
 // FORMAT:
 //
 // 1219062002-26-0001
-//
-// 1219062002 = kode wilayah
-// 26         = tahun dua digit
-// 0001       = nomor urut internal
-//
-// TIDAK menggunakan GT.
 // =====================================================
 
 function buatDocumentId(
@@ -1201,7 +1350,9 @@ function buatDocumentId(
             nomorUrut
         )
 
-    ].join("-");
+    ].join(
+        "-"
+    );
 
 }
 
@@ -1360,40 +1511,12 @@ async function muatStatistik() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal memuat statistik:",
-            err
+            error
         );
-
-        if (totalDokumen) {
-
-            totalDokumen.textContent =
-                "!";
-
-        }
-
-        if (dokumenValid) {
-
-            dokumenValid.textContent =
-                "!";
-
-        }
-
-        if (dokumenDicabut) {
-
-            dokumenDicabut.textContent =
-                "!";
-
-        }
-
-        if (dokumenDibatalkan) {
-
-            dokumenDibatalkan.textContent =
-                "!";
-
-        }
 
     }
 
@@ -1426,7 +1549,9 @@ async function muatDaftarDokumen() {
                     "desc"
                 ),
 
-                limit(10)
+                limit(
+                    10
+                )
 
             );
 
@@ -1482,9 +1607,16 @@ async function muatDaftarDokumen() {
                 const workflow =
                     data.statusWorkflow ||
                     (
+                        data.pdfQRURL ||
                         data.pdfURL
-                            ? WORKFLOW_STATUS.QR_TERPASANG
-                            : WORKFLOW_STATUS.DRAFT
+
+                            ?
+
+                            WORKFLOW_STATUS.QR_TERPASANG
+
+                            :
+
+                            WORKFLOW_STATUS.DRAFT
                     );
 
                 const statusAdministratif =
@@ -1495,65 +1627,49 @@ async function muatDaftarDokumen() {
                 tr.innerHTML = `
 
                     <td>
-
                         ${escapeHTML(
                             data.id ||
                             snapshotDoc.id
                         )}
-
                     </td>
 
                     <td>
-
                         ${escapeHTML(
                             data.nomorSurat ||
                             "-"
                         )}
-
                     </td>
 
                     <td>
-
                         ${escapeHTML(
 
                             DATA_JENIS[
                                 data.jenis
-                            ]?.nama
+                            ]?.nama ||
 
-                            ||
+                            data.namaJenis ||
 
-                            data.namaJenis
-
-                            ||
-
-                            data.jenis
-
-                            ||
+                            data.jenis ||
 
                             "-"
 
                         )}
-
                     </td>
 
                     <td>
-
                         ${escapeHTML(
                             workflowText(
                                 workflow
                             )
                         )}
-
                     </td>
 
                     <td>
-
                         ${escapeHTML(
                             statusText(
                                 statusAdministratif
                             )
                         )}
-
                     </td>
 
                     <td>
@@ -1561,37 +1677,35 @@ async function muatDaftarDokumen() {
                         ${
                             pdfAda
 
-                            ?
+                                ?
 
-                            `<a
-                                class="pdf-link"
-                                href="${escapeHTML(
-                                    data.pdfQRURL ||
-                                    data.pdfURL
-                                )}"
-                                target="_blank"
-                                rel="noopener">
+                                `<a
+                                    class="pdf-link"
+                                    href="${escapeHTML(
+                                        data.pdfQRURL ||
+                                        data.pdfURL
+                                    )}"
+                                    target="_blank"
+                                    rel="noopener">
 
-                                Lihat PDF
+                                    Lihat PDF
 
-                            </a>`
+                                </a>`
 
-                            :
+                                :
 
-                            "Belum ada"
+                                "Belum ada"
 
                         }
 
                     </td>
 
                     <td>
-
                         ${escapeHTML(
                             formatTanggal(
                                 data.tanggalTerbit
                             )
                         )}
-
                     </td>
 
                 `;
@@ -1605,11 +1719,11 @@ async function muatDaftarDokumen() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal memuat daftar dokumen:",
-            err
+            error
         );
 
         daftarDokumen.innerHTML = `
@@ -1673,8 +1787,7 @@ async function registrasikanDokumen() {
             "";
 
         const indeks =
-            indeksElement?.value
-                .trim() ||
+            indeksElement?.value.trim() ||
             "";
 
         const tahun =
@@ -1690,17 +1803,11 @@ async function registrasikanDokumen() {
             "";
 
         const penandatangan =
-            penandatanganElement
-                ?.value
-                .trim()
-            ||
+            penandatanganElement?.value.trim() ||
             "IDRIS";
 
         const jabatan =
-            jabatanElement
-                ?.value
-                .trim()
-            ||
+            jabatanElement?.value.trim() ||
             "Kepala Desa Guntung";
 
         // =============================================
@@ -1721,8 +1828,7 @@ async function registrasikanDokumen() {
 
             alert(
 
-                jenis ===
-                "MANUAL"
+                jenis === "MANUAL"
 
                     ?
 
@@ -1730,7 +1836,7 @@ async function registrasikanDokumen() {
 
                     :
 
-                    "Indeks dokumen belum tersedia."
+                    "Indeks otomatis belum tersedia. Silakan pilih jenis dokumen kembali."
 
             );
 
@@ -1826,7 +1932,7 @@ async function registrasikanDokumen() {
             );
 
         // =============================================
-        // DATA AUDIT AWAL
+        // AUDIT
         // =============================================
 
         const auditAwal =
@@ -1838,7 +1944,13 @@ async function registrasikanDokumen() {
                         documentId,
 
                     nomorSurat:
-                        nomorSurat
+                        nomorSurat,
+
+                    jenis:
+                        jenis,
+
+                    indeks:
+                        indeks
 
                 }
             );
@@ -1864,8 +1976,7 @@ async function registrasikanDokumen() {
             namaJenis:
                 DATA_JENIS[
                     jenis
-                ]?.nama
-                ||
+                ]?.nama ||
                 "Lainnya / Manual",
 
             indeks:
@@ -1921,9 +2032,7 @@ async function registrasikanDokumen() {
             kodeDesa:
                 DESA.kodeDesa,
 
-            // =========================================
-            // IDENTITAS ADMIN
-            // =========================================
+            // ADMIN
 
             dibuatOleh:
                 ADMIN.nama,
@@ -1937,9 +2046,7 @@ async function registrasikanDokumen() {
             dibuatOlehRole:
                 ADMIN.role,
 
-            // =========================================
             // TIMESTAMP
-            // =========================================
 
             dibuatPada:
                 serverTimestamp(),
@@ -1947,9 +2054,7 @@ async function registrasikanDokumen() {
             diperbaruiPada:
                 serverTimestamp(),
 
-            // =========================================
             // AUDIT
-            // =========================================
 
             audit:
                 [
@@ -1959,7 +2064,7 @@ async function registrasikanDokumen() {
         };
 
         // =============================================
-        // SIMPAN FIRESTORE
+        // SIMPAN
         // =============================================
 
         await setDoc(
@@ -2020,11 +2125,11 @@ async function registrasikanDokumen() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal registrasi dokumen:",
-            err
+            error
         );
 
         alert(
@@ -2032,7 +2137,7 @@ async function registrasikanDokumen() {
             "Gagal mendaftarkan dokumen:\n\n" +
 
             (
-                err?.message ||
+                error?.message ||
                 "Terjadi kesalahan."
             )
 
@@ -2053,19 +2158,7 @@ async function registrasikanDokumen() {
 }
 
 // =====================================================
-// UPLOAD PDF
-// =====================================================
-//
-// ALUR BARU:
-//
-// original.pdf
-//      ↓
-// qr.pdf
-//      ↓
-// MENUNGGU_TTE
-//
-// Untuk sekarang nama file QR adalah qr.pdf.
-// PDF hasil TTE nantinya akan menjadi signed.pdf.
+// UPLOAD PDF + QR
 // =====================================================
 
 async function uploadDokumenPDF() {
@@ -2143,7 +2236,7 @@ async function uploadDokumenPDF() {
             `${SUPABASE_FOLDER}/${documentId}`;
 
         // =============================================
-        // ORIGINAL PDF
+        // ORIGINAL
         // =============================================
 
         const originalPath =
@@ -2185,13 +2278,13 @@ async function uploadDokumenPDF() {
         }
 
         // =============================================
-        // GENERATE PDF + QR
+        // GENERATE QR
         // =============================================
 
         if (statusUpload) {
 
             statusUpload.textContent =
-                "Mencari posisi tanda tangan dan membuat QR Verifikasi...";
+                "Membuat PDF dengan QR Verifikasi...";
 
         }
 
@@ -2213,8 +2306,16 @@ async function uploadDokumenPDF() {
 
             );
 
+        if (!finalFile) {
+
+            throw new Error(
+                "PDF hasil QR tidak berhasil dibuat."
+            );
+
+        }
+
         // =============================================
-        // PDF + QR
+        // SIMPAN QR PDF
         // =============================================
 
         const qrPath =
@@ -2256,7 +2357,7 @@ async function uploadDokumenPDF() {
         }
 
         // =============================================
-        // SIGNED URL PDF + QR
+        // SIGNED URL
         // =============================================
 
         const {
@@ -2316,7 +2417,10 @@ async function uploadDokumenPDF() {
                         originalPath,
 
                     pdfQR:
-                        qrPath
+                        qrPath,
+
+                    verifyURL:
+                        verifyURL
 
                 }
             );
@@ -2374,9 +2478,7 @@ async function uploadDokumenPDF() {
                 pdfQRDibuatPada:
                     serverTimestamp(),
 
-                // =====================================
                 // TTE
-                // =====================================
 
                 tteStatus:
                     "MENUNGGU",
@@ -2399,9 +2501,7 @@ async function uploadDokumenPDF() {
                 signedPDFURL:
                     null,
 
-                // =====================================
                 // CETAK
-                // =====================================
 
                 cetakStatus:
                     "BELUM_CETAK",
@@ -2412,9 +2512,7 @@ async function uploadDokumenPDF() {
                 dicetakOleh:
                     null,
 
-                // =====================================
                 // AUDIT
-                // =====================================
 
                 audit:
                     [
@@ -2465,7 +2563,7 @@ async function uploadDokumenPDF() {
         if (statusUpload) {
 
             statusUpload.textContent =
-                "PDF + QR berhasil dibuat dan status dokumen sekarang MENUNGGU TTE.";
+                "PDF + QR berhasil dibuat. Status: MENUNGGU TTE.";
 
         }
 
@@ -2477,15 +2575,11 @@ async function uploadDokumenPDF() {
 
             "original.pdf\n\n" +
 
-            "PDF + QR:\n" +
+            "PDF dengan QR:\n" +
 
             "qr.pdf\n\n" +
 
-            "Document ID:\n" +
-
-            documentId +
-
-            "\n\n" +
+            `Document ID:\n${documentId}\n\n` +
 
             "Status:\n" +
 
@@ -2497,11 +2591,11 @@ async function uploadDokumenPDF() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal upload PDF:",
-            err
+            error
         );
 
         if (statusUpload) {
@@ -2516,7 +2610,7 @@ async function uploadDokumenPDF() {
             "Gagal memproses PDF:\n\n" +
 
             (
-                err?.message ||
+                error?.message ||
                 "Terjadi kesalahan."
             )
 
@@ -2551,8 +2645,6 @@ if (jenisElement) {
         () => {
 
             updateIndeks();
-
-            updateNomorSurat();
 
         }
     );
@@ -2599,7 +2691,7 @@ if (tahunElement) {
 }
 
 // =====================================================
-// EVENT INDEKS
+// EVENT INDEKS MANUAL
 // =====================================================
 
 if (indeksElement) {
@@ -2649,6 +2741,8 @@ async function init() {
 
         isiTahun();
 
+        // PENTING:
+        // Jalankan update indeks saat halaman pertama dibuka.
         updateIndeks();
 
         updateNomorSurat();
@@ -2657,11 +2751,11 @@ async function init() {
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Gagal menginisialisasi dashboard:",
-            err
+            error
         );
 
     }
@@ -2673,4 +2767,3 @@ async function init() {
 // =====================================================
 
 init();
-```
