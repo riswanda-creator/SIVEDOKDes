@@ -1,39 +1,96 @@
 // =====================================================
-// SUPABASE CLIENT
+// FIREBASE FIRESTORE
 // SIVEDOKDes
 // =====================================================
 
 import {
-    createClient
-} from "https://esm.sh/@supabase/supabase-js@2";
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    getDocs,
+    collection,
+    query,
+    orderBy,
+    limit,
+    serverTimestamp,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 // =====================================================
-// SUPABASE CONFIG
+// FIREBASE CONFIG
 // =====================================================
 
-const SUPABASE_URL =
-    "https://ittfhjzkejhsbowwqlrq.supabase.co";
+const firebaseConfig = {
 
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_javi5F477-dw8o3LD4YjHg_QejbW_cz";
+    apiKey:
+        "AIzaSyDQUvjOMujFz6YbwaIC048D1wtq4anHkV0",
 
+    authDomain:
+        "sivedokdes.firebaseapp.com",
+
+    projectId:
+        "sivedokdes",
+
+    storageBucket:
+        "sivedokdes.firebasestorage.app",
+
+    messagingSenderId:
+        "505099689462",
+
+    appId:
+        "1:505099689462:web:086a511ee30169a3da7bd7"
+
+};
 
 // =====================================================
-// INITIALIZE SUPABASE
+// INITIALIZE FIREBASE
 // =====================================================
 
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+const app =
+    initializeApp(
+        firebaseConfig
     );
 
+// =====================================================
+// FIRESTORE
+// =====================================================
+
+const db =
+    getFirestore(
+        app
+    );
 
 // =====================================================
 // EXPORT
 // =====================================================
 
 export {
-    supabase
+
+    db,
+
+    doc,
+
+    setDoc,
+
+    getDoc,
+
+    getDocs,
+
+    collection,
+
+    query,
+
+    orderBy,
+
+    limit,
+
+    serverTimestamp,
+
+    runTransaction
+
 };
