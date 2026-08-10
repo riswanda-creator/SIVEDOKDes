@@ -11,20 +11,15 @@ import {
     serverTimestamp,
     collection,
     getDocs,
+    getDoc,
     query,
     orderBy,
     limit
 } from "../js/firebase.js";
 
-
 import {
     supabase
 } from "../js/supabase.js";
-
-
-import {
-    generatePDFWithQR
-} from "../api/generate-pdf.js";
 
 
 // =====================================================
@@ -32,31 +27,15 @@ import {
 // =====================================================
 
 const DESA = {
-
-    kodeWilayah:
-        "1219062002",
-
-    kodeDesa:
-        "GT",
-
-    nama:
-        "Desa Guntung",
-
-    kecamatan:
-        "Tanjung Tiram",
-
-    kabupaten:
-        "Batu Bara"
-
+    kodeWilayah: "1219062002",
+    kodeDesa: "GT",
+    nama: "Desa Guntung",
+    kecamatan: "Tanjung Tiram",
+    kabupaten: "Batu Bara"
 };
 
-
-const SUPABASE_BUCKET =
-    "sivedokdes-pdf";
-
-
-const SUPABASE_FOLDER =
-    "dokumen";
+const SUPABASE_BUCKET = "sivedokdes-pdf";
+const SUPABASE_FOLDER = "dokumen";
 
 
 // =====================================================
@@ -64,147 +43,76 @@ const SUPABASE_FOLDER =
 // =====================================================
 
 const jenisElement =
-    document.getElementById(
-        "jenis"
-    );
-
+    document.getElementById("jenis");
 
 const indeksElement =
-    document.getElementById(
-        "indeks"
-    );
-
+    document.getElementById("indeks");
 
 const petunjukIndeks =
-    document.getElementById(
-        "petunjukIndeks"
-    );
-
+    document.getElementById("petunjukIndeks");
 
 const nomorUrutElement =
-    document.getElementById(
-        "nomorUrut"
-    );
-
+    document.getElementById("nomorUrut");
 
 const kodeKomponenElement =
-    document.getElementById(
-        "kodeKomponen"
-    );
-
+    document.getElementById("kodeKomponen");
 
 const bulanElement =
-    document.getElementById(
-        "bulan"
-    );
-
+    document.getElementById("bulan");
 
 const tahunElement =
-    document.getElementById(
-        "tahun"
-    );
-
+    document.getElementById("tahun");
 
 const nomorSuratElement =
-    document.getElementById(
-        "nomorSurat"
-    );
-
+    document.getElementById("nomorSurat");
 
 const tanggalElement =
-    document.getElementById(
-        "tanggal"
-    );
-
+    document.getElementById("tanggal");
 
 const penandatanganElement =
-    document.getElementById(
-        "penandatangan"
-    );
-
+    document.getElementById("penandatangan");
 
 const jabatanElement =
-    document.getElementById(
-        "jabatan"
-    );
-
+    document.getElementById("jabatan");
 
 const registrasiButton =
-    document.getElementById(
-        "registrasi"
-    );
-
+    document.getElementById("registrasi");
 
 const hasilElement =
-    document.getElementById(
-        "hasil"
-    );
-
+    document.getElementById("hasil");
 
 const uploadDocumentId =
-    document.getElementById(
-        "uploadDocumentId"
-    );
-
+    document.getElementById("uploadDocumentId");
 
 const filePDF =
-    document.getElementById(
-        "filePDF"
-    );
-
+    document.getElementById("filePDF");
 
 const uploadPDFButton =
-    document.getElementById(
-        "uploadPDF"
-    );
-
+    document.getElementById("uploadPDF");
 
 const statusUpload =
-    document.getElementById(
-        "statusUpload"
-    );
-
+    document.getElementById("statusUpload");
 
 const hasilUpload =
-    document.getElementById(
-        "hasilUpload"
-    );
-
+    document.getElementById("hasilUpload");
 
 const linkPDF =
-    document.getElementById(
-        "linkPDF"
-    );
-
+    document.getElementById("linkPDF");
 
 const totalDokumen =
-    document.getElementById(
-        "totalDokumen"
-    );
-
+    document.getElementById("totalDokumen");
 
 const dokumenValid =
-    document.getElementById(
-        "dokumenValid"
-    );
-
+    document.getElementById("dokumenValid");
 
 const dokumenDicabut =
-    document.getElementById(
-        "dokumenDicabut"
-    );
-
+    document.getElementById("dokumenDicabut");
 
 const dokumenDibatalkan =
-    document.getElementById(
-        "dokumenDibatalkan"
-    );
-
+    document.getElementById("dokumenDibatalkan");
 
 const daftarDokumen =
-    document.getElementById(
-        "daftarDokumen"
-    );
+    document.getElementById("daftarDokumen");
 
 
 // =====================================================
@@ -214,90 +122,43 @@ const daftarDokumen =
 const DATA_JENIS = {
 
     DOMISILI: {
-
-        nama:
-            "Surat Keterangan Domisili",
-
-        indeks:
-            "470"
-
+        nama: "Surat Keterangan Domisili",
+        indeks: "470"
     },
-
 
     MENIKAH: {
-
-        nama:
-            "Surat Keterangan Menikah",
-
-        indeks:
-            "472.2"
-
+        nama: "Surat Keterangan Menikah",
+        indeks: "472.2"
     },
-
 
     PINDAH: {
-
-        nama:
-            "Surat Keterangan Pindah",
-
-        indeks:
-            "471.2"
-
+        nama: "Surat Keterangan Pindah",
+        indeks: "471.2"
     },
-
 
     SKU: {
-
-        nama:
-            "Surat Keterangan Usaha",
-
-        indeks:
-            "500"
-
+        nama: "Surat Keterangan Usaha",
+        indeks: "500"
     },
-
 
     SKTM: {
-
-        nama:
-            "Surat Keterangan Tidak Mampu",
-
-        indeks:
-            "401"
-
+        nama: "Surat Keterangan Tidak Mampu",
+        indeks: "401"
     },
-
 
     PENGHASILAN: {
-
-        nama:
-            "Surat Keterangan Penghasilan",
-
-        indeks:
-            "500"
-
+        nama: "Surat Keterangan Penghasilan",
+        indeks: "500"
     },
-
 
     UNDANGAN: {
-
-        nama:
-            "Surat Undangan",
-
-        indeks:
-            "005"
-
+        nama: "Surat Undangan",
+        indeks: "005"
     },
 
-
     MANUAL: {
-
-        nama:
-            "Lainnya / Manual",
-
-        indeks:
-            ""
-
+        nama: "Lainnya / Manual",
+        indeks: ""
     }
 
 };
@@ -307,218 +168,156 @@ const DATA_JENIS = {
 // UTILITAS
 // =====================================================
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 
-function padNomor(
-    value,
-    panjang = 3
-) {
+// =====================================================
+// PAD NOMOR
+// =====================================================
 
-    return String(
-        value
-    )
-        .replace(
-            /\D/g,
-            ""
-        )
-        .padStart(
-            panjang,
-            "0"
-        );
+function padNomor(value, panjang = 3) {
 
+    return String(value)
+        .replace(/\D/g, "")
+        .padStart(panjang, "0");
 }
 
 
-function tahunDuaDigit(
-    tahun
-) {
+// =====================================================
+// TAHUN 2 DIGIT
+// =====================================================
 
-    return String(
-        tahun
-    ).slice(-2);
+function tahunDuaDigit(tahun) {
 
+    return String(tahun).slice(-2);
 }
 
 
-function namaBulanIndonesia(
-    bulan
-) {
+// =====================================================
+// BULAN INDONESIA
+// =====================================================
+
+function namaBulanIndonesia(bulan) {
 
     const nama = [
-
         "",
-
         "Januari",
-
         "Februari",
-
         "Maret",
-
         "April",
-
         "Mei",
-
         "Juni",
-
         "Juli",
-
         "Agustus",
-
         "September",
-
         "Oktober",
-
         "November",
-
         "Desember"
-
     ];
 
-    return (
-        nama[
-            Number(bulan)
-        ] ||
-        "-"
-    );
-
+    return nama[Number(bulan)] || "-";
 }
 
 
-function formatTanggal(
-    value
-) {
+// =====================================================
+// BULAN ROMAWI
+// =====================================================
+
+function bulanRomawi(bulan) {
+
+    const romawi = [
+        "",
+        "I",
+        "II",
+        "III",
+        "IV",
+        "V",
+        "VI",
+        "VII",
+        "VIII",
+        "IX",
+        "X",
+        "XI",
+        "XII"
+    ];
+
+    return romawi[Number(bulan)] || "";
+}
+
+
+// =====================================================
+// FORMAT TANGGAL
+// =====================================================
+
+function formatTanggal(value) {
 
     if (!value) {
-
         return "-";
-
     }
 
     let date;
 
     if (
-        typeof value ===
-            "object" &&
-        typeof value.toDate ===
-            "function"
+        typeof value === "object" &&
+        typeof value.toDate === "function"
     ) {
 
-        date =
-            value.toDate();
+        date = value.toDate();
+
+    } else {
+
+        date = new Date(value);
 
     }
 
-    else {
+    if (Number.isNaN(date.getTime())) {
 
-        date =
-            new Date(
-                value
-            );
-
-    }
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return String(
-            value
-        );
+        return String(value);
 
     }
 
     return date.toLocaleDateString(
         "id-ID",
         {
-
-            day:
-                "2-digit",
-
-            month:
-                "long",
-
-            year:
-                "numeric"
-
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
         }
     );
-
 }
 
 
-function statusText(
-    status
-) {
+// =====================================================
+// STATUS
+// =====================================================
+
+function statusText(status) {
 
     const value =
-        String(
-            status || ""
-        )
+        String(status || "")
             .toUpperCase();
 
-    if (
-        value ===
-        "VALID"
-    ) {
-
+    if (value === "VALID") {
         return "VALID";
-
     }
 
-    if (
-        value ===
-        "DICABUT"
-    ) {
-
+    if (value === "DICABUT") {
         return "DICABUT";
-
     }
 
-    if (
-        value ===
-        "DIBATALKAN"
-    ) {
-
+    if (value === "DIBATALKAN") {
         return "DIBATALKAN";
-
     }
 
-    return (
-        value ||
-        "-"
-    );
-
+    return value || "-";
 }
 
 
@@ -526,20 +325,12 @@ function statusText(
 // URL VERIFIKASI
 // =====================================================
 
-function buatURLVerifikasi(
-    documentId
-) {
+function buatURLVerifikasi(documentId) {
 
     return new URL(
-
-        `/verify.html?id=${encodeURIComponent(
-            documentId
-        )}`,
-
+        `/verify.html?id=${encodeURIComponent(documentId)}`,
         window.location.origin
-
     ).href;
-
 }
 
 
@@ -550,56 +341,36 @@ function buatURLVerifikasi(
 function isiTahun() {
 
     if (!tahunElement) {
-
         return;
-
     }
 
     const tahunSekarang =
-        new Date()
-            .getFullYear();
+        new Date().getFullYear();
 
-    tahunElement.innerHTML =
-        "";
+    tahunElement.innerHTML = "";
 
     for (
-        let tahun =
-            tahunSekarang - 2;
-
-        tahun <=
-            tahunSekarang + 1;
-
+        let tahun = tahunSekarang - 2;
+        tahun <= tahunSekarang + 1;
         tahun++
     ) {
 
         const option =
-            document.createElement(
-                "option"
-            );
+            document.createElement("option");
 
         option.value =
-            String(
-                tahun
-            );
+            String(tahun);
 
         option.textContent =
-            String(
-                tahun
-            );
+            String(tahun);
 
-        if (
-            tahun ===
-            tahunSekarang
-        ) {
+        if (tahun === tahunSekarang) {
 
-            option.selected =
-                true;
+            option.selected = true;
 
         }
 
-        tahunElement.appendChild(
-            option
-        );
+        tahunElement.appendChild(option);
 
     }
 
@@ -612,41 +383,33 @@ function isiTahun() {
 
 function updateIndeks() {
 
-    if (
-        !jenisElement ||
-        !indeksElement
-    ) {
-
+    if (!jenisElement || !indeksElement) {
         return;
-
     }
 
     const jenis =
         jenisElement.value;
 
     const data =
-        DATA_JENIS[
-            jenis
-        ];
+        DATA_JENIS[jenis];
 
 
-    if (
-        jenis ===
-        "MANUAL"
-    ) {
+    // =================================================
+    // MANUAL
+    // =================================================
 
-        indeksElement.readOnly =
-            false;
+    if (jenis === "MANUAL") {
 
-        indeksElement.value =
-            "";
+        indeksElement.value = "";
+
+        indeksElement.readOnly = false;
+
+        indeksElement.disabled = false;
 
         indeksElement.placeholder =
             "Masukkan indeks / kode klasifikasi";
 
-        if (
-            petunjukIndeks
-        ) {
+        if (petunjukIndeks) {
 
             petunjukIndeks.textContent =
                 "Indeks harus diisi secara manual.";
@@ -658,8 +421,13 @@ function updateIndeks() {
     }
 
 
-    indeksElement.readOnly =
-        true;
+    // =================================================
+    // JENIS OTOMATIS
+    // =================================================
+
+    indeksElement.readOnly = true;
+
+    indeksElement.disabled = false;
 
     indeksElement.placeholder =
         "Otomatis";
@@ -668,28 +436,20 @@ function updateIndeks() {
     if (data) {
 
         indeksElement.value =
-            data.indeks ||
-            "";
+            data.indeks || "";
 
-        if (
-            petunjukIndeks
-        ) {
+        if (petunjukIndeks) {
 
             petunjukIndeks.textContent =
                 "Indeks diisi otomatis berdasarkan jenis dokumen.";
 
         }
 
-    }
+    } else {
 
-    else {
+        indeksElement.value = "";
 
-        indeksElement.value =
-            "";
-
-        if (
-            petunjukIndeks
-        ) {
+        if (petunjukIndeks) {
 
             petunjukIndeks.textContent =
                 "Pilih jenis dokumen.";
@@ -702,77 +462,109 @@ function updateIndeks() {
 
 
 // =====================================================
-// NOMOR URUT TERAKHIR
+// NOMOR URUT SURAT TERAKHIR
 // =====================================================
 
-async function getNomorTerakhir() {
+async function getNomorSuratTerakhir() {
 
     const q =
         query(
-
-            collection(
-                db,
-                "dokumen"
-            ),
-
-            orderBy(
-                "nomorUrut",
-                "desc"
-            ),
-
-            limit(
-                1
-            )
-
+            collection(db, "dokumen"),
+            orderBy("nomorUrut", "desc"),
+            limit(1)
         );
-
 
     const snapshot =
-        await getDocs(
-            q
-        );
+        await getDocs(q);
 
-
-    if (
-        snapshot.empty
-    ) {
-
+    if (snapshot.empty) {
         return 1;
-
     }
-
 
     const terakhir =
         Number(
-
             snapshot.docs[0]
                 .data()
                 .nomorUrut
-
         );
 
-
-    if (
-        !Number.isFinite(
-            terakhir
-        )
-    ) {
-
+    if (!Number.isFinite(terakhir)) {
         return 1;
-
     }
 
-
-    return (
-        terakhir +
-        1
-    );
-
+    return terakhir + 1;
 }
 
 
 // =====================================================
-// NOMOR SURAT
+// NOMOR DOKUMEN INTERNAL TERAKHIR
+// =====================================================
+
+async function getNomorDokumenTerakhir() {
+
+    const q =
+        query(
+            collection(db, "dokumen"),
+            orderBy("nomorDokumenUrut", "desc"),
+            limit(1)
+        );
+
+    const snapshot =
+        await getDocs(q);
+
+    if (snapshot.empty) {
+        return 1;
+    }
+
+    const terakhir =
+        Number(
+            snapshot.docs[0]
+                .data()
+                .nomorDokumenUrut
+        );
+
+    if (!Number.isFinite(terakhir)) {
+        return 1;
+    }
+
+    return terakhir + 1;
+}
+
+
+// =====================================================
+// BUAT DOCUMENT ID
+// =====================================================
+//
+// INI SENGAJA DIPISAH DARI NOMOR SURAT.
+//
+// Contoh:
+// GT-2026-DOC-000001
+//
+// Nomor surat bisa:
+// 470/005/GT/VIII/2026
+//
+// Nomor 005 tidak memengaruhi DOC-000001.
+// =====================================================
+
+async function buatDocumentId(tahun) {
+
+    const nomorDokumenUrut =
+        await getNomorDokumenTerakhir();
+
+    const documentId =
+        `${DESA.kodeDesa}-${tahun}-DOC-${String(
+            nomorDokumenUrut
+        ).padStart(6, "0")}`;
+
+    return {
+        documentId,
+        nomorDokumenUrut
+    };
+}
+
+
+// =====================================================
+// BUAT NOMOR SURAT
 // =====================================================
 
 function buatNomorSurat() {
@@ -789,32 +581,20 @@ function buatNomorSurat() {
 
     }
 
-
     const nomorUrut =
-        nomorUrutElement
-            .value
-            .trim();
-
+        nomorUrutElement.value.trim();
 
     const jenis =
-        jenisElement
-            .value;
-
+        jenisElement.value;
 
     const bulan =
-        bulanElement
-            .value;
-
+        bulanElement.value;
 
     const tahun =
-        tahunElement
-            .value;
-
+        tahunElement.value;
 
     const indeks =
-        indeksElement
-            .value
-            .trim();
+        indeksElement.value.trim();
 
 
     if (
@@ -830,36 +610,27 @@ function buatNomorSurat() {
     }
 
 
-    return (
+    const bulanRomawiValue =
+        bulanRomawi(bulan);
 
-        `${indeks}/` +
 
-        `${padNomor(
-            nomorUrut
-        )}/` +
+    if (!bulanRomawiValue) {
+        return "";
+    }
 
-        `${DESA.kodeDesa}/` +
 
-        `${String(
-            bulan
-        ).padStart(
-            2,
-            "0"
-        )}/` +
-
-        `${tahun}`
-
-    );
-
+    return `${indeks}/${padNomor(nomorUrut)}/${DESA.kodeDesa}/${bulanRomawiValue}/${tahun}`;
 }
 
+
+// =====================================================
+// UPDATE NOMOR SURAT
+// =====================================================
 
 function updateNomorSurat() {
 
     if (!nomorSuratElement) {
-
         return;
-
     }
 
     nomorSuratElement.value =
@@ -876,26 +647,14 @@ async function ambilSemuaDokumen() {
 
     const snapshot =
         await getDocs(
-
-            collection(
-                db,
-                "dokumen"
-            )
-
+            collection(db, "dokumen")
         );
 
-
     return snapshot.docs.map(
-
         item => ({
-
-            id:
-                item.id,
-
+            id: item.id,
             ...item.data()
-
         })
-
     );
 
 }
@@ -907,110 +666,72 @@ async function ambilSemuaDokumen() {
 
 async function muatStatistik() {
 
+    if (!totalDokumen) {
+        return;
+    }
+
     try {
 
         const dokumen =
             await ambilSemuaDokumen();
 
-
-        let valid =
-            0;
-
-        let dicabut =
-            0;
-
-        let dibatalkan =
-            0;
+        let valid = 0;
+        let dicabut = 0;
+        let dibatalkan = 0;
 
 
-        dokumen.forEach(
-            item => {
+        dokumen.forEach(item => {
 
-                const status =
-                    String(
-                        item.status ||
-                        ""
-                    )
-                        .toUpperCase();
+            const status =
+                String(
+                    item.status || ""
+                ).toUpperCase();
 
 
-                if (
-                    status ===
-                    "VALID"
-                ) {
-
-                    valid++;
-
-                }
-
-
-                if (
-                    status ===
-                    "DICABUT"
-                ) {
-
-                    dicabut++;
-
-                }
-
-
-                if (
-                    status ===
-                    "DIBATALKAN"
-                ) {
-
-                    dibatalkan++;
-
-                }
-
+            if (status === "VALID") {
+                valid++;
             }
-        );
 
 
-        if (
-            totalDokumen
-        ) {
-
-            totalDokumen.textContent =
-                dokumen.length;
-
-        }
+            if (status === "DICABUT") {
+                dicabut++;
+            }
 
 
-        if (
-            dokumenValid
-        ) {
+            if (status === "DIBATALKAN") {
+                dibatalkan++;
+            }
+
+        });
+
+
+        totalDokumen.textContent =
+            String(dokumen.length);
+
+        if (dokumenValid) {
 
             dokumenValid.textContent =
-                valid;
+                String(valid);
 
         }
 
-
-        if (
-            dokumenDicabut
-        ) {
+        if (dokumenDicabut) {
 
             dokumenDicabut.textContent =
-                dicabut;
+                String(dicabut);
 
         }
 
-
-        if (
-            dokumenDibatalkan
-        ) {
+        if (dokumenDibatalkan) {
 
             dokumenDibatalkan.textContent =
-                dibatalkan;
+                String(dibatalkan);
 
         }
 
     }
 
-    catch (
-        err
-    ) {
+    catch (err) {
 
         console.error(
             "Gagal memuat statistik:",
@@ -1018,43 +739,19 @@ async function muatStatistik() {
         );
 
 
-        if (
-            totalDokumen
-        ) {
+        totalDokumen.textContent =
+            "0";
 
-            totalDokumen.textContent =
-                "0";
-
+        if (dokumenValid) {
+            dokumenValid.textContent = "0";
         }
 
-
-        if (
-            dokumenValid
-        ) {
-
-            dokumenValid.textContent =
-                "0";
-
+        if (dokumenDicabut) {
+            dokumenDicabut.textContent = "0";
         }
 
-
-        if (
-            dokumenDicabut
-        ) {
-
-            dokumenDicabut.textContent =
-                "0";
-
-        }
-
-
-        if (
-            dokumenDibatalkan
-        ) {
-
-            dokumenDibatalkan.textContent =
-                "0";
-
+        if (dokumenDibatalkan) {
+            dokumenDibatalkan.textContent = "0";
         }
 
     }
@@ -1069,62 +766,36 @@ async function muatStatistik() {
 async function muatDaftarDokumen() {
 
     if (!daftarDokumen) {
-
         return;
-
     }
-
 
     try {
 
         const q =
             query(
-
-                collection(
-                    db,
-                    "dokumen"
-                ),
-
-                orderBy(
-                    "nomorUrut",
-                    "desc"
-                ),
-
-                limit(
-                    10
-                )
-
+                collection(db, "dokumen"),
+                orderBy("nomorUrut", "desc"),
+                limit(10)
             );
 
 
         const snapshot =
-            await getDocs(
-                q
-            );
+            await getDocs(q);
 
 
-        daftarDokumen.innerHTML =
-            "";
+        daftarDokumen.innerHTML = "";
 
 
-        if (
-            snapshot.empty
-        ) {
+        if (snapshot.empty) {
 
             daftarDokumen.innerHTML = `
-
                 <tr>
-
                     <td
                         colspan="6"
                         style="text-align:center;">
-
                         Belum ada dokumen.
-
                     </td>
-
                 </tr>
-
             `;
 
             return;
@@ -1140,9 +811,7 @@ async function muatDaftarDokumen() {
 
 
                 const tr =
-                    document.createElement(
-                        "tr"
-                    );
+                    document.createElement("tr");
 
 
                 const pdfAda =
@@ -1167,23 +836,15 @@ async function muatDaftarDokumen() {
 
                     <td>
                         ${escapeHTML(
-
                             DATA_JENIS[
                                 data.jenis
                             ]?.nama
-
                             ||
-
                             data.namaJenis
-
                             ||
-
                             data.jenis
-
                             ||
-
                             "-"
-
                         )}
                     </td>
 
@@ -1196,30 +857,21 @@ async function muatDaftarDokumen() {
                     </td>
 
                     <td>
-
                         ${
                             pdfAda
-
                             ?
-
                             `<a
+                                class="pdf-link"
                                 href="${escapeHTML(
                                     data.pdfURL
                                 )}"
                                 target="_blank"
-                                rel="noopener"
-                                class="pdf-link">
-
+                                rel="noopener">
                                 Lihat PDF
-
                             </a>`
-
                             :
-
                             "Belum ada"
-
                         }
-
                     </td>
 
                     <td>
@@ -1233,18 +885,14 @@ async function muatDaftarDokumen() {
                 `;
 
 
-                daftarDokumen.appendChild(
-                    tr
-                );
+                daftarDokumen.appendChild(tr);
 
             }
         );
 
     }
 
-    catch (
-        err
-    ) {
+    catch (err) {
 
         console.error(
             "Gagal memuat daftar dokumen:",
@@ -1253,19 +901,13 @@ async function muatDaftarDokumen() {
 
 
         daftarDokumen.innerHTML = `
-
             <tr>
-
                 <td
                     colspan="6"
                     style="text-align:center;">
-
                     Gagal memuat data dokumen.
-
                 </td>
-
             </tr>
-
         `;
 
     }
@@ -1280,11 +922,8 @@ async function muatDaftarDokumen() {
 async function refreshDashboard() {
 
     await Promise.all([
-
         muatStatistik(),
-
         muatDaftarDokumen()
-
     ]);
 
 }
@@ -1297,62 +936,45 @@ async function refreshDashboard() {
 async function registrasikanDokumen() {
 
     if (!registrasiButton) {
-
         return;
-
     }
 
 
     try {
 
-        registrasiButton.disabled =
-            true;
+        registrasiButton.disabled = true;
 
         registrasiButton.textContent =
             "Memproses...";
 
 
         const jenis =
-            jenisElement?.value ||
-            "";
-
+            jenisElement?.value || "";
 
         const indeks =
-            indeksElement?.value
-                .trim() ||
-            "";
-
+            indeksElement?.value.trim() || "";
 
         const tahun =
-            tahunElement?.value ||
-            "";
-
+            tahunElement?.value || "";
 
         const bulan =
-            bulanElement?.value ||
-            "";
-
+            bulanElement?.value || "";
 
         const tanggal =
-            tanggalElement?.value ||
-            "";
-
+            tanggalElement?.value || "";
 
         const penandatangan =
-            penandatanganElement
-                ?.value
-                .trim()
-            ||
-            "IDRIS";
-
+            penandatanganElement?.value.trim()
+            || "IDRIS";
 
         const jabatan =
-            jabatanElement
-                ?.value
-                .trim()
-            ||
-            "Kepala Desa Guntung";
+            jabatanElement?.value.trim()
+            || "Kepala Desa Guntung";
 
+
+        // =============================================
+        // VALIDASI
+        // =============================================
 
         if (!jenis) {
 
@@ -1368,18 +990,9 @@ async function registrasikanDokumen() {
         if (!indeks) {
 
             alert(
-
-                jenis ===
-                "MANUAL"
-
-                    ?
-
-                "Silakan isi indeks / kode klasifikasi secara manual."
-
-                    :
-
-                "Indeks dokumen belum tersedia."
-
+                jenis === "MANUAL"
+                    ? "Silakan isi indeks / kode klasifikasi secara manual."
+                    : "Indeks dokumen belum tersedia."
             );
 
             return;
@@ -1420,6 +1033,10 @@ async function registrasikanDokumen() {
         }
 
 
+        // =============================================
+        // NOMOR URUT SURAT
+        // =============================================
+
         let nomorUrut =
             Number(
                 nomorUrutElement?.value
@@ -1427,19 +1044,15 @@ async function registrasikanDokumen() {
 
 
         if (
-            !Number.isInteger(
-                nomorUrut
-            ) ||
+            !Number.isInteger(nomorUrut) ||
             nomorUrut < 1
         ) {
 
             nomorUrut =
-                await getNomorTerakhir();
+                await getNomorSuratTerakhir();
 
 
-            if (
-                nomorUrutElement
-            ) {
+            if (nomorUrutElement) {
 
                 nomorUrutElement.value =
                     nomorUrut;
@@ -1449,29 +1062,34 @@ async function registrasikanDokumen() {
         }
 
 
+        // =============================================
+        // BULAN ROMAWI
+        // =============================================
+
+        const bulanRomawiValue =
+            bulanRomawi(bulan);
+
+
+        if (!bulanRomawiValue) {
+
+            alert(
+                "Bulan tidak valid."
+            );
+
+            return;
+
+        }
+
+
+        // =============================================
+        // NOMOR SURAT RESMI
+        // =============================================
+
         const nomorSurat =
-
-            `${indeks}/` +
-
-            `${padNomor(
-                nomorUrut
-            )}/` +
-
-            `${DESA.kodeDesa}/` +
-
-            `${String(
-                bulan
-            ).padStart(
-                2,
-                "0"
-            )}/` +
-
-            `${tahun}`;
+            `${indeks}/${padNomor(nomorUrut)}/${DESA.kodeDesa}/${bulanRomawiValue}/${tahun}`;
 
 
-        if (
-            nomorSuratElement
-        ) {
+        if (nomorSuratElement) {
 
             nomorSuratElement.value =
                 nomorSurat;
@@ -1479,59 +1097,53 @@ async function registrasikanDokumen() {
         }
 
 
-        const documentId =
+        // =============================================
+        // DOCUMENT ID TERPISAH
+        // =============================================
 
-            `${DESA.kodeWilayah}-` +
+        const {
+            documentId,
+            nomorDokumenUrut
+        } =
+            await buatDocumentId(tahun);
 
-            `${tahunDuaDigit(
-                tahun
-            )}-` +
 
-            `${String(
-                nomorUrut
-            ).padStart(
-                4,
-                "0"
-            )}`;
-
+        // =============================================
+        // DATA FIRESTORE
+        // =============================================
 
         const dataDokumen = {
 
-            id:
-                documentId,
+            id: documentId,
 
+            // Nomor urut resmi surat
             nomorUrut,
+
+            // Nomor internal SIVEDOKDes
+            nomorDokumenUrut,
 
             nomorSurat,
 
             jenis,
 
             namaJenis:
-
-                DATA_JENIS[
-                    jenis
-                ]?.nama
-
+                DATA_JENIS[jenis]?.nama
                 ||
-
                 "Lainnya / Manual",
 
             indeks,
 
             tahun:
-                Number(
-                    tahun
-                ),
+                Number(tahun),
 
             bulan:
-                Number(
-                    bulan
-                ),
+                Number(bulan),
 
             namaBulan:
-                namaBulanIndonesia(
-                    bulan
-                ),
+                namaBulanIndonesia(bulan),
+
+            bulanRomawi:
+                bulanRomawiValue,
 
             tanggalTerbit:
                 tanggal,
@@ -1561,22 +1173,25 @@ async function registrasikanDokumen() {
         };
 
 
-        await setDoc(
+        // =============================================
+        // SIMPAN
+        // =============================================
 
+        await setDoc(
             doc(
                 db,
                 "dokumen",
                 documentId
             ),
-
             dataDokumen
-
         );
 
 
-        if (
-            hasilElement
-        ) {
+        // =============================================
+        // HASIL
+        // =============================================
+
+        if (hasilElement) {
 
             hasilElement.textContent =
                 documentId;
@@ -1584,9 +1199,7 @@ async function registrasikanDokumen() {
         }
 
 
-        if (
-            uploadDocumentId
-        ) {
+        if (uploadDocumentId) {
 
             uploadDocumentId.textContent =
                 documentId;
@@ -1594,9 +1207,7 @@ async function registrasikanDokumen() {
         }
 
 
-        if (
-            uploadPDFButton
-        ) {
+        if (uploadPDFButton) {
 
             uploadPDFButton.disabled =
                 false;
@@ -1604,9 +1215,7 @@ async function registrasikanDokumen() {
         }
 
 
-        if (
-            statusUpload
-        ) {
+        if (statusUpload) {
 
             statusUpload.textContent =
                 "Dokumen berhasil diregistrasikan. Silakan pilih PDF.";
@@ -1615,11 +1224,9 @@ async function registrasikanDokumen() {
 
 
         alert(
-
             `Dokumen berhasil diregistrasikan.\n\n` +
-
-            `Document ID:\n${documentId}`
-
+            `Document ID:\n${documentId}\n\n` +
+            `Nomor Surat:\n${nomorSurat}`
         );
 
 
@@ -1627,9 +1234,7 @@ async function registrasikanDokumen() {
 
     }
 
-    catch (
-        err
-    ) {
+    catch (err) {
 
         console.error(
             "Gagal registrasi dokumen:",
@@ -1638,17 +1243,11 @@ async function registrasikanDokumen() {
 
 
         alert(
-
             "Gagal mendaftarkan dokumen:\n\n" +
-
             (
-
                 err?.message ||
-
                 "Terjadi kesalahan."
-
             )
-
         );
 
     }
@@ -1667,149 +1266,240 @@ async function registrasikanDokumen() {
 
 
 // =====================================================
-// MANUAL FALLBACK
+// LOAD QR CODE MODULE
+// =====================================================
+//
+// QR tidak di-import saat dashboard pertama dibuka.
+// Jadi kalau CDN QR bermasalah, dashboard tetap bekerja.
 // =====================================================
 
-async function mintaPosisiManual(
-    jumlahHalaman
-) {
+async function loadQRCodeModule() {
 
-    alert(
+    const module =
+        await import(
+            "https://esm.sh/qrcode@1.5.4"
+        );
 
-        "Sistem tidak menemukan posisi tanda tangan secara otomatis.\n\n" +
-
-        'Pencarian teks "Kepala Desa Guntung" dan "IDRIS" gagal.\n\n' +
-
-        "Kita masuk ke mode manual."
-
-    );
+    return module.default || module;
+}
 
 
-    const halamanInput =
-        prompt(
+// =====================================================
+// LOAD PDF-LIB MODULE
+// =====================================================
 
-            `PDF memiliki ${jumlahHalaman} halaman.\n\n` +
+async function loadPDFLib() {
 
-            "Masukkan nomor halaman tempat tanda tangan berada:",
+    const module =
+        await import(
+            "https://esm.sh/pdf-lib@1.17.1"
+        );
 
-            String(
-                jumlahHalaman
-            )
+    return module;
+}
 
+
+// =====================================================
+// BUAT QR CODE
+// =====================================================
+
+async function buatQRCode(documentId) {
+
+    const QRCode =
+        await loadQRCodeModule();
+
+
+    const url =
+        buatURLVerifikasi(
+            documentId
         );
 
 
-    if (
-        halamanInput ===
-        null
-    ) {
+    const qrDataURL =
+        await QRCode.toDataURL(
+            url,
+            {
+                errorCorrectionLevel:
+                    "H",
 
-        throw new Error(
-            "Proses dibatalkan oleh pengguna."
+                margin:
+                    1,
+
+                width:
+                    500
+            }
         );
-
-    }
-
-
-    const halaman =
-        Number(
-            halamanInput
-        );
-
-
-    if (
-        !Number.isInteger(
-            halaman
-        ) ||
-        halaman < 1 ||
-        halaman > jumlahHalaman
-    ) {
-
-        throw new Error(
-            "Nomor halaman manual tidak valid."
-        );
-
-    }
-
-
-    const posisiInput =
-        prompt(
-
-            "Pilih posisi QR:\n\n" +
-
-            "ATAS = bagian atas halaman\n" +
-
-            "KANAN = sisi kanan halaman\n" +
-
-            "KIRI = sisi kiri halaman\n" +
-
-            "BAWAH = kanan bawah halaman\n\n" +
-
-            "Masukkan pilihan:",
-
-            "ATAS"
-
-        );
-
-
-    if (
-        posisiInput ===
-        null
-    ) {
-
-        throw new Error(
-            "Proses dibatalkan oleh pengguna."
-        );
-
-    }
-
-
-    const posisi =
-        String(
-            posisiInput
-        )
-            .trim()
-            .toUpperCase();
-
-
-    const pilihanValid = [
-
-        "ATAS",
-
-        "KANAN",
-
-        "KIRI",
-
-        "BAWAH"
-
-    ];
-
-
-    if (
-        !pilihanValid.includes(
-            posisi
-        )
-    ) {
-
-        throw new Error(
-
-            "Posisi tidak valid.\n\n" +
-
-            "Gunakan ATAS, KANAN, KIRI, atau BAWAH."
-
-        );
-
-    }
 
 
     return {
+        url,
+        qrDataURL
+    };
 
-        page:
-            halaman,
+}
 
-        position:
-            posisi
 
+// =====================================================
+// TEMPEL QR KE PDF
+// =====================================================
+
+async function buatPDFFinal(
+    file,
+    documentId
+) {
+
+    const {
+        PDFDocument
+    } =
+        await loadPDFLib();
+
+
+    const {
+        url,
+        qrDataURL
+    } =
+        await buatQRCode(
+            documentId
+        );
+
+
+    // =============================================
+    // BACA PDF
+    // =============================================
+
+    const arrayBuffer =
+        await file.arrayBuffer();
+
+
+    const pdfDoc =
+        await PDFDocument.load(
+            arrayBuffer
+        );
+
+
+    const pages =
+        pdfDoc.getPages();
+
+
+    if (!pages.length) {
+
+        throw new Error(
+            "PDF tidak memiliki halaman."
+        );
+
+    }
+
+
+    // =============================================
+    // HALAMAN TERAKHIR
+    // =============================================
+
+    const page =
+        pages[pages.length - 1];
+
+
+    const {
+        width,
+        height
+    } =
+        page.getSize();
+
+
+    // =============================================
+    // QR
+    // =============================================
+
+    const qrBytes =
+        await fetch(
+            qrDataURL
+        )
+        .then(
+            response =>
+                response.arrayBuffer()
+        );
+
+
+    const qrImage =
+        await pdfDoc.embedPng(
+            qrBytes
+        );
+
+
+    // =============================================
+    // UKURAN QR
+    // =============================================
+
+    const qrSize =
+        Math.min(
+            95,
+            width * 0.16
+        );
+
+
+    const marginRight =
+        42;
+
+    const marginBottom =
+        42;
+
+
+    const qrX =
+        width -
+        qrSize -
+        marginRight;
+
+
+    const qrY =
+        marginBottom;
+
+
+    // =============================================
+    // GAMBAR QR
+    // =============================================
+
+    page.drawImage(
+        qrImage,
+        {
+            x:
+                qrX,
+
+            y:
+                qrY,
+
+            width:
+                qrSize,
+
+            height:
+                qrSize
+        }
+    );
+
+
+    // =============================================
+    // SAVE
+    // =============================================
+
+    const pdfBytes =
+        await pdfDoc.save();
+
+
+    const finalFile =
+        new File(
+            [
+                pdfBytes
+            ],
+            `${documentId}.pdf`,
+            {
+                type:
+                    "application/pdf"
+            }
+        );
+
+
+    return {
+        finalFile,
+        verifyURL:
+            url
     };
 
 }
@@ -1824,9 +1514,7 @@ async function uploadDokumenPDF() {
     try {
 
         const documentId =
-            uploadDocumentId
-                ?.textContent
-                .trim();
+            uploadDocumentId?.textContent.trim();
 
 
         if (
@@ -1845,9 +1533,7 @@ async function uploadDokumenPDF() {
 
 
         const file =
-            filePDF
-                ?.files
-                ?.[0];
+            filePDF?.files?.[0];
 
 
         if (!file) {
@@ -1875,9 +1561,7 @@ async function uploadDokumenPDF() {
         }
 
 
-        if (
-            uploadPDFButton
-        ) {
+        if (uploadPDFButton) {
 
             uploadPDFButton.disabled =
                 true;
@@ -1888,9 +1572,7 @@ async function uploadDokumenPDF() {
         }
 
 
-        if (
-            statusUpload
-        ) {
+        if (statusUpload) {
 
             statusUpload.textContent =
                 "Menyimpan PDF asli...";
@@ -1898,17 +1580,17 @@ async function uploadDokumenPDF() {
         }
 
 
-        // =================================================
-        // FOLDER DOKUMEN
-        // =================================================
+        // =============================================
+        // FOLDER
+        // =============================================
 
         const folderDokumen =
             `${SUPABASE_FOLDER}/${documentId}`;
 
 
-        // =================================================
-        // ORIGINAL PDF
-        // =================================================
+        // =============================================
+        // ORIGINAL
+        // =============================================
 
         const originalPath =
             `${folderDokumen}/original.pdf`;
@@ -1924,154 +1606,49 @@ async function uploadDokumenPDF() {
                     SUPABASE_BUCKET
                 )
                 .upload(
-
                     originalPath,
-
                     file,
-
                     {
-
                         contentType:
                             "application/pdf",
 
                         upsert:
                             true
-
                     }
-
                 );
 
 
-        if (
-            originalUploadError
-        ) {
+        if (originalUploadError) {
 
             throw originalUploadError;
 
         }
 
 
-        // =================================================
-        // BUAT PDF FINAL
-        // =================================================
+        // =============================================
+        // FINAL PDF
+        // =============================================
 
-        if (
-            statusUpload
-        ) {
+        if (statusUpload) {
 
             statusUpload.textContent =
-                "Membaca seluruh halaman PDF dan mencari tanda tangan...";
-
-        }
-
-
-        const verifyURL =
-            buatURLVerifikasi(
-                documentId
-            );
-
-
-        let hasilPDF;
-
-
-        try {
-
-            hasilPDF =
-                await generatePDFWithQR(
-
-                    file,
-
-                    documentId,
-
-                    verifyURL
-
-                );
-
-        }
-
-        catch (
-            err
-        ) {
-
-            // ---------------------------------------------
-            // AUTO DETECTION GAGAL
-            // ---------------------------------------------
-
-            if (
-                err?.code ===
-                "AUTO_DETECTION_FAILED"
-            ) {
-
-                const jumlahHalaman =
-                    Number(
-                        err.jumlahHalaman
-                    ) || 1;
-
-
-                const manualPlacement =
-                    await mintaPosisiManual(
-                        jumlahHalaman
-                    );
-
-
-                if (
-                    statusUpload
-                ) {
-
-                    statusUpload.textContent =
-                        "Menggunakan posisi QR manual...";
-
-                }
-
-
-                hasilPDF =
-                    await generatePDFWithQR(
-
-                        file,
-
-                        documentId,
-
-                        verifyURL,
-
-                        manualPlacement
-
-                    );
-
-            }
-
-            else {
-
-                throw err;
-
-            }
+                "Membuat QR Verifikasi dan PDF final...";
 
         }
 
 
         const {
             finalFile,
-            pageNumber,
-            metode
+            verifyURL
         } =
-            hasilPDF;
+            await buatPDFFinal(
+                file,
+                documentId
+            );
 
-
-        // =================================================
-        // FINAL PDF
-        // =================================================
 
         const finalPath =
             `${folderDokumen}/final.pdf`;
-
-
-        if (
-            statusUpload
-        ) {
-
-            statusUpload.textContent =
-                "Mengunggah PDF final...";
-
-        }
 
 
         const {
@@ -2084,45 +1661,35 @@ async function uploadDokumenPDF() {
                     SUPABASE_BUCKET
                 )
                 .upload(
-
                     finalPath,
-
                     finalFile,
-
                     {
-
                         contentType:
                             "application/pdf",
 
                         upsert:
                             true
-
                     }
-
                 );
 
 
-        if (
-            finalUploadError
-        ) {
+        if (finalUploadError) {
 
             throw finalUploadError;
 
         }
 
 
-        // =================================================
+        // =============================================
         // SIGNED URL
-        // =================================================
+        // =============================================
 
         const {
-
             data:
                 signedData,
 
             error:
                 signedError
-
         } =
             await supabase
                 .storage
@@ -2130,21 +1697,12 @@ async function uploadDokumenPDF() {
                     SUPABASE_BUCKET
                 )
                 .createSignedUrl(
-
                     finalPath,
-
-                    60 *
-                    60 *
-                    24 *
-                    365 *
-                    10
-
+                    60 * 60 * 24 * 365 * 10
                 );
 
 
-        if (
-            signedError
-        ) {
+        if (signedError) {
 
             throw signedError;
 
@@ -2152,8 +1710,7 @@ async function uploadDokumenPDF() {
 
 
         const pdfURL =
-            signedData
-                ?.signedUrl;
+            signedData?.signedUrl;
 
 
         if (!pdfURL) {
@@ -2165,18 +1722,16 @@ async function uploadDokumenPDF() {
         }
 
 
-        // =================================================
-        // SIMPAN DATA FIRESTORE
-        // =================================================
+        // =============================================
+        // FIRESTORE
+        // =============================================
 
         await setDoc(
-
             doc(
                 db,
                 "dokumen",
                 documentId
             ),
-
             {
 
                 pdfURL,
@@ -2202,12 +1757,6 @@ async function uploadDokumenPDF() {
                 qrDibuat:
                     true,
 
-                qrHalaman:
-                    pageNumber,
-
-                qrMetode:
-                    metode,
-
                 pdfDiunggahPada:
                     serverTimestamp(),
 
@@ -2215,24 +1764,18 @@ async function uploadDokumenPDF() {
                     serverTimestamp()
 
             },
-
             {
-
                 merge:
                     true
-
             }
-
         );
 
 
-        // =================================================
-        // TAMPILKAN HASIL
-        // =================================================
+        // =============================================
+        // HASIL
+        // =============================================
 
-        if (
-            hasilUpload
-        ) {
+        if (hasilUpload) {
 
             hasilUpload.hidden =
                 false;
@@ -2240,9 +1783,7 @@ async function uploadDokumenPDF() {
         }
 
 
-        if (
-            linkPDF
-        ) {
+        if (linkPDF) {
 
             linkPDF.href =
                 pdfURL;
@@ -2253,41 +1794,20 @@ async function uploadDokumenPDF() {
         }
 
 
-        if (
-            statusUpload
-        ) {
+        if (statusUpload) {
 
             statusUpload.textContent =
-
-                `PDF final berhasil dibuat.\n` +
-
-                `QR ditemukan pada halaman ${pageNumber}.\n` +
-
-                `Metode: ${metode}.`;
+                "PDF final berhasil dibuat dengan QR Verifikasi.";
 
         }
 
 
         alert(
-
             "BERHASIL.\n\n" +
-
-            "PDF asli:\n" +
-
-            "original.pdf\n\n" +
-
-            "PDF final:\n" +
-
-            "final.pdf\n\n" +
-
-            `QR ditemukan pada halaman: ${pageNumber}\n` +
-
-            `Metode: ${metode}\n\n` +
-
+            "PDF asli disimpan sebagai original.pdf.\n" +
+            "PDF final + QR disimpan sebagai final.pdf.\n\n" +
             "QR mengarah ke:\n" +
-
             verifyURL
-
         );
 
 
@@ -2295,9 +1815,7 @@ async function uploadDokumenPDF() {
 
     }
 
-    catch (
-        err
-    ) {
+    catch (err) {
 
         console.error(
             "Gagal upload PDF:",
@@ -2305,9 +1823,7 @@ async function uploadDokumenPDF() {
         );
 
 
-        if (
-            statusUpload
-        ) {
+        if (statusUpload) {
 
             statusUpload.textContent =
                 "Gagal memproses PDF.";
@@ -2316,26 +1832,18 @@ async function uploadDokumenPDF() {
 
 
         alert(
-
             "Gagal memproses PDF:\n\n" +
-
             (
-
                 err?.message ||
-
                 "Terjadi kesalahan."
-
             )
-
         );
 
     }
 
     finally {
 
-        if (
-            uploadPDFButton
-        ) {
+        if (uploadPDFButton) {
 
             uploadPDFButton.disabled =
                 false;
@@ -2354,41 +1862,30 @@ async function uploadDokumenPDF() {
 // EVENT JENIS
 // =====================================================
 
-if (
-    jenisElement
-) {
+if (jenisElement) {
 
     jenisElement.addEventListener(
-
         "change",
-
         () => {
 
             updateIndeks();
-
             updateNomorSurat();
 
         }
-
     );
 
 }
 
 
 // =====================================================
-// EVENT NOMOR
+// EVENT NOMOR URUT
 // =====================================================
 
-if (
-    nomorUrutElement
-) {
+if (nomorUrutElement) {
 
     nomorUrutElement.addEventListener(
-
         "input",
-
         updateNomorSurat
-
     );
 
 }
@@ -2398,16 +1895,11 @@ if (
 // EVENT BULAN
 // =====================================================
 
-if (
-    bulanElement
-) {
+if (bulanElement) {
 
     bulanElement.addEventListener(
-
         "change",
-
         updateNomorSurat
-
     );
 
 }
@@ -2417,16 +1909,11 @@ if (
 // EVENT TAHUN
 // =====================================================
 
-if (
-    tahunElement
-) {
+if (tahunElement) {
 
     tahunElement.addEventListener(
-
         "change",
-
         updateNomorSurat
-
     );
 
 }
@@ -2436,16 +1923,11 @@ if (
 // EVENT INDEKS
 // =====================================================
 
-if (
-    indeksElement
-) {
+if (indeksElement) {
 
     indeksElement.addEventListener(
-
         "input",
-
         updateNomorSurat
-
     );
 
 }
@@ -2455,16 +1937,11 @@ if (
 // EVENT REGISTRASI
 // =====================================================
 
-if (
-    registrasiButton
-) {
+if (registrasiButton) {
 
     registrasiButton.addEventListener(
-
         "click",
-
         registrasikanDokumen
-
     );
 
 }
@@ -2474,28 +1951,27 @@ if (
 // EVENT UPLOAD
 // =====================================================
 
-if (
-    uploadPDFButton
-) {
+if (uploadPDFButton) {
 
     uploadPDFButton.addEventListener(
-
         "click",
-
         uploadDokumenPDF
-
     );
 
 }
 
 
 // =====================================================
-// INISIALISASI
+// INIT
 // =====================================================
 
 async function init() {
 
     try {
+
+        // Jalankan fungsi UI terlebih dahulu.
+        // Jangan biarkan statistik/database
+        // menghalangi form tampil.
 
         isiTahun();
 
@@ -2503,20 +1979,18 @@ async function init() {
 
         updateNomorSurat();
 
+
+        // Kemudian database.
+
         await refreshDashboard();
 
     }
 
-    catch (
-        err
-    ) {
+    catch (err) {
 
         console.error(
-
             "Gagal menginisialisasi dashboard:",
-
             err
-
         );
 
     }
