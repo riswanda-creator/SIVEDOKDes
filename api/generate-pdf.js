@@ -4,13 +4,16 @@
 // =====================================================
 //
 // Fungsi:
+//
 // 1. Membaca PDF
 // 2. Scan seluruh halaman
-// 3. Mencari "Kepala Desa Guntung"
+// 3. Mencari "KEPALA DESA GUNTUNG"
 // 4. Mencari "IDRIS"
-// 5. Menentukan posisi tanda tangan
-// 6. Menempatkan QR di atas area IDRIS
-// 7. Menghasilkan PDF final
+// 5. Menentukan halaman tanda tangan
+// 6. Menentukan posisi QR otomatis
+// 7. Jika gagal, menyediakan posisi manual
+// 8. Menempelkan QR ke PDF
+// 9. Menghasilkan PDF final
 //
 // =====================================================
 
@@ -41,15 +44,20 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 const CONFIG = {
 
-    qrSize: 78,
+    qrSize:
+        78,
 
-    qrGap: 10,
+    qrGap:
+        10,
 
-    whitePadding: 5,
+    whitePadding:
+        5,
 
-    margin: 20,
+    margin:
+        20,
 
-    maxPages: 20,
+    maxPages:
+        20,
 
     searchKepalaDesa:
         "KEPALA DESA GUNTUNG",
@@ -76,7 +84,7 @@ function normalizeText(value) {
 
 
 // =====================================================
-// AMBIL DATA TEKS SATU HALAMAN
+// BACA DATA TEKS SATU HALAMAN
 // =====================================================
 
 async function bacaHalamanPDF(
@@ -193,14 +201,7 @@ async function bacaHalamanPDF(
 // CARI IDRIS
 // =====================================================
 
-function cariIDRIS(
-    items
-) {
-
-    // -------------------------------------------------
-    // Prioritas pertama:
-    // item teks yang persis / langsung mengandung IDRIS
-    // -------------------------------------------------
+function cariIDRIS(items) {
 
     const kandidat =
         items.filter(
@@ -218,22 +219,13 @@ function cariIDRIS(
 
     }
 
-    // -------------------------------------------------
-    // Jika ada beberapa IDRIS,
-    // pilih yang berada paling dekat dengan
-    // "Kepala Desa Guntung"
-    //
-    // Untuk sementara kandidat pertama.
-    // Pemilihan lebih lanjut dilakukan oleh scanner.
-    // -------------------------------------------------
-
     return kandidat[0];
 
 }
 
 
 // =====================================================
-// CARI POSISI IDRIS TERBAIK
+// PILIH IDRIS TERBAIK
 // =====================================================
 
 function pilihIDRISTerbaik(
@@ -262,11 +254,6 @@ function pilihIDRISTerbaik(
         return kandidat[0];
 
     }
-
-    // -------------------------------------------------
-    // Pilih IDRIS yang paling dekat dengan
-    // posisi "Kepala Desa Guntung"
-    // -------------------------------------------------
 
     let terbaik =
         kandidat[0];
@@ -314,7 +301,7 @@ function pilihIDRISTerbaik(
 
 
 // =====================================================
-// SCAN SELURUH PDF
+// SCAN PDF
 // =====================================================
 
 async function cariAreaTandaTangan(
@@ -363,9 +350,10 @@ async function cariAreaTandaTangan(
     let halamanKepala =
         null;
 
-    // -------------------------------------------------
-    // SCAN SETIAP HALAMAN
-    // -------------------------------------------------
+
+    // =================================================
+    // SCAN SEMUA HALAMAN
+    // =================================================
 
     for (
         let pageNumber = 1;
@@ -399,9 +387,10 @@ async function cariAreaTandaTangan(
                 pageData.items
             );
 
-        // -------------------------------------------------
-        // Jika halaman mengandung Kepala Desa Guntung
-        // -------------------------------------------------
+
+        // =============================================
+        // KEPALA DESA DITEMUKAN
+        // =============================================
 
         if (
             adaKepalaDesa
@@ -421,9 +410,10 @@ async function cariAreaTandaTangan(
 
             };
 
-            // -------------------------------------------------
-            // Jika IDRIS juga ada di halaman yang sama
-            // -------------------------------------------------
+
+            // =========================================
+            // KEPALA DESA + IDRIS DI HALAMAN SAMA
+            // =========================================
 
             if (
                 halamanKepala.idris
@@ -453,9 +443,10 @@ async function cariAreaTandaTangan(
 
         }
 
-        // -------------------------------------------------
-        // Simpan kandidat IDRIS sebagai fallback
-        // -------------------------------------------------
+
+        // =============================================
+        // FALLBACK IDRIS
+        // =============================================
 
         if (
             kandidatIDRIS &&
@@ -477,10 +468,10 @@ async function cariAreaTandaTangan(
 
     }
 
-    // -------------------------------------------------
-    // Jika Kepala Desa ditemukan tetapi IDRIS
-    // tidak terdeteksi di halaman yang sama
-    // -------------------------------------------------
+
+    // =================================================
+    // KEPALA DESA ADA + IDRIS ADA
+    // =================================================
 
     if (
         halamanKepala &&
@@ -511,9 +502,10 @@ async function cariAreaTandaTangan(
 
     }
 
-    // -------------------------------------------------
-    // Jika hanya IDRIS yang ditemukan
-    // -------------------------------------------------
+
+    // =================================================
+    // HANYA IDRIS
+    // =================================================
 
     if (
         fallbackIDRIS
@@ -543,9 +535,10 @@ async function cariAreaTandaTangan(
 
     }
 
-    // -------------------------------------------------
-    // Gagal
-    // -------------------------------------------------
+
+    // =================================================
+    // GAGAL
+    // =================================================
 
     return {
 
@@ -562,7 +555,7 @@ async function cariAreaTandaTangan(
 
 
 // =====================================================
-// POSISI QR OTOMATIS
+// HITUNG POSISI QR OTOMATIS
 // =====================================================
 
 function hitungPosisiQR(
@@ -585,15 +578,14 @@ function hitungPosisiQR(
     const margin =
         CONFIG.margin;
 
-    // -------------------------------------------------
-    // Posisi teks IDRIS menurut viewport PDF.js
+
+    // =================================================
+    // PDF.JS
+    // Origin = kiri atas
     //
-    // PDF.js:
-    // origin = kiri atas
-    //
-    // pdf-lib:
-    // origin = kiri bawah
-    // -------------------------------------------------
+    // PDF-LIB
+    // Origin = kiri bawah
+    // =================================================
 
     const idrisX =
         idris.x;
@@ -608,10 +600,10 @@ function hitungPosisiQR(
             30
         );
 
-    // -------------------------------------------------
-    // QR diletakkan DI ATAS IDRIS
-    // dan dipusatkan terhadap tulisan IDRIS.
-    // -------------------------------------------------
+
+    // =================================================
+    // QR DI ATAS IDRIS
+    // =================================================
 
     let qrX =
         idrisX +
@@ -623,9 +615,10 @@ function hitungPosisiQR(
         idrisTopY +
         gap;
 
-    // -------------------------------------------------
-    // Pastikan QR tidak keluar halaman
-    // -------------------------------------------------
+
+    // =================================================
+    // BATAS KIRI
+    // =================================================
 
     if (
         qrX < margin
@@ -635,6 +628,11 @@ function hitungPosisiQR(
             margin;
 
     }
+
+
+    // =================================================
+    // BATAS KANAN
+    // =================================================
 
     if (
         qrX +
@@ -650,18 +648,17 @@ function hitungPosisiQR(
 
     }
 
+
+    // =================================================
+    // BATAS ATAS
+    // =================================================
+
     if (
         qrY +
         qrSize >
         height -
         margin
     ) {
-
-        // ---------------------------------------------
-        // Jika terlalu tinggi,
-        // letakkan QR di atas posisi IDRIS
-        // dengan sedikit penyesuaian.
-        // ---------------------------------------------
 
         qrY =
             height -
@@ -670,6 +667,7 @@ function hitungPosisiQR(
             gap;
 
     }
+
 
     return {
 
@@ -711,10 +709,10 @@ function hitungPosisiManual(
     const margin =
         35;
 
+
     switch (
         String(
-            posisi ||
-            ""
+            posisi || ""
         ).toUpperCase()
     ) {
 
@@ -807,7 +805,7 @@ function hitungPosisiManual(
 
 
 // =====================================================
-// PASANG QR KE PDF
+// TEMPEL QR
 // =====================================================
 
 async function tempelQRCode(
@@ -831,6 +829,7 @@ async function tempelQRCode(
             qrBytes
         );
 
+
     const qrX =
         posisi.x;
 
@@ -843,10 +842,10 @@ async function tempelQRCode(
     const qrHeight =
         posisi.height;
 
-    // -------------------------------------------------
-    // Kotak putih tipis di belakang QR
-    // supaya QR tetap terbaca jika berada dekat teks.
-    // -------------------------------------------------
+
+    // =================================================
+    // LATAR PUTIH
+    // =================================================
 
     const padding =
         CONFIG.whitePadding;
@@ -863,11 +862,11 @@ async function tempelQRCode(
 
         width:
             qrWidth +
-            (padding * 2),
+            padding * 2,
 
         height:
             qrHeight +
-            (padding * 2),
+            padding * 2,
 
         color:
             rgb(
@@ -878,9 +877,10 @@ async function tempelQRCode(
 
     });
 
-    // -------------------------------------------------
+
+    // =================================================
     // QR
-    // -------------------------------------------------
+    // =================================================
 
     page.drawImage(
         qrImage,
@@ -939,9 +939,10 @@ export async function generatePDFWithQR(
 
     }
 
-    // -------------------------------------------------
-    // BACA PDF ASLI
-    // -------------------------------------------------
+
+    // =================================================
+    // BACA PDF
+    // =================================================
 
     const arrayBuffer =
         await file.arrayBuffer();
@@ -962,9 +963,10 @@ export async function generatePDFWithQR(
 
     }
 
-    // -------------------------------------------------
+
+    // =================================================
     // BUAT QR
-    // -------------------------------------------------
+    // =================================================
 
     const {
         qrDataURL
@@ -974,22 +976,25 @@ export async function generatePDFWithQR(
             verifyURL
         );
 
-    // -------------------------------------------------
-    // CARI POSISI OTOMATIS
-    // -------------------------------------------------
 
-    let lokasi =
+    // =================================================
+    // DETEKSI OTOMATIS
+    // =================================================
+
+    const lokasi =
         await cariAreaTandaTangan(
             arrayBuffer
         );
+
 
     let pageNumber;
     let posisi;
     let metode;
 
-    // -------------------------------------------------
+
+    // =================================================
     // AUTO
-    // -------------------------------------------------
+    // =================================================
 
     if (
         lokasi.ditemukan
@@ -1014,9 +1019,10 @@ export async function generatePDFWithQR(
 
     }
 
-    // -------------------------------------------------
+
+    // =================================================
     // MANUAL
-    // -------------------------------------------------
+    // =================================================
 
     else {
 
@@ -1026,16 +1032,13 @@ export async function generatePDFWithQR(
 
             const error =
                 new Error(
-                    "AUTO_DETECTION_FAILED"
+                    "Sistem tidak menemukan teks " +
+                    "\"Kepala Desa Guntung\" dan \"IDRIS\" " +
+                    "secara otomatis di dalam PDF."
                 );
 
             error.code =
                 "AUTO_DETECTION_FAILED";
-
-            error.message =
-                "Sistem tidak menemukan teks " +
-                `"Kepala Desa Guntung" dan "IDRIS" ` +
-                "secara otomatis di dalam PDF.";
 
             error.jumlahHalaman =
                 lokasi.jumlahHalaman;
@@ -1044,10 +1047,12 @@ export async function generatePDFWithQR(
 
         }
 
+
         pageNumber =
             Number(
                 manualPlacement.page
             );
+
 
         if (
             !Number.isInteger(
@@ -1062,6 +1067,7 @@ export async function generatePDFWithQR(
             );
 
         }
+
 
         const page =
             pages[
@@ -1079,18 +1085,20 @@ export async function generatePDFWithQR(
 
     }
 
-    // -------------------------------------------------
+
+    // =================================================
     // HALAMAN TARGET
-    // -------------------------------------------------
+    // =================================================
 
     const targetPage =
         pages[
             pageNumber - 1
         ];
 
-    // -------------------------------------------------
+
+    // =================================================
     // TEMPEL QR
-    // -------------------------------------------------
+    // =================================================
 
     await tempelQRCode(
         pdfDoc,
@@ -1099,12 +1107,14 @@ export async function generatePDFWithQR(
         posisi
     );
 
-    // -------------------------------------------------
+
+    // =================================================
     // SIMPAN PDF
-    // -------------------------------------------------
+    // =================================================
 
     const pdfBytes =
         await pdfDoc.save();
+
 
     const finalFile =
         new File(
@@ -1117,6 +1127,7 @@ export async function generatePDFWithQR(
                     "application/pdf"
             }
         );
+
 
     return {
 
