@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Verifikasi Dokumen - SIVEDOKDes
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="verify.css">
+
+</head>
+
+
+<body>
+
+
+    <main class="verify-container">
+
+
+        <!-- HEADER -->
+
+        <section class="verify-header">
+
+            <img
+                src="img/logo.png"
+                class="logo"
+                alt="Logo Desa Guntung">
+
+            <h1>
+                SIVEDOKDes
+            </h1>
+
+            <p>
+                Sistem Verifikasi Dokumen Elektronik Desa
+            </p>
+
+        </section>
+
+
+
+        <!-- STATUS -->
+
+        <section
+            id="loading"
+            class="card">
+
+            <div class="loader"></div>
+
+            <p>
+                Memeriksa dokumen...
+            </p>
+
+        </section>
+
+
+
+        <!-- HASIL -->
+
+        <section
+            id="hasil"
+            class="card"
+            hidden>
+
+
+            <div
+                id="statusBadge"
+                class="status-badge">
+
+                -
+
+            </div>
+
+
+            <h2>
+                Dokumen Terverifikasi
+            </h2>
+
+
+            <p class="subjudul">
+                Pemerintah Desa Guntung
+            </p>
+
+
+
+            <div class="data-dokumen">
+
+
+                <div class="data-row">
+
+                    <span>
+                        Document ID
+                    </span>
+
+                    <strong id="documentId">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Nomor Surat
+                    </span>
+
+                    <strong id="nomorSurat">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Jenis Dokumen
+                    </span>
+
+                    <strong id="jenisDokumen">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Indeks / Klasifikasi
+                    </span>
+
+                    <strong id="indeks">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Tanggal Terbit
+                    </span>
+
+                    <strong id="tanggalTerbit">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Penandatangan
+                    </span>
+
+                    <strong id="penandatangan">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>
+                        Jabatan
+                    </span>
+
+                    <strong id="jabatan">
+                        -
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- PDF -->
+
+            <div
+                id="pdfContainer"
+                class="pdf-container"
+                hidden>
+
+                <a
+                    id="pdfLink"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                    class="pdf-button">
+
+                    Lihat Dokumen PDF
+
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ERROR -->
+
+        <section
+            id="error"
+            class="card error-card"
+            hidden>
+
+
+            <div class="error-icon">
+                !
+            </div>
+
+
+            <h2>
+                Dokumen Tidak Ditemukan
+            </h2>
+
+
+            <p id="errorMessage">
+                Dokumen tidak dapat diverifikasi.
+            </p>
+
+
+        </section>
+
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            Pemerintah Desa Guntung<br>
+
+            Kecamatan Tanjung Tiram<br>
+
+            Kabupaten Batu Bara
+
+            <br><br>
+
+            © 2026 SIVEDOKDes v1.0
+
+        </footer>
+
+
+    </main>
+
+
+
+    <script
+        type="module"
+        src="js/verify.js">
+    </script>
+
+
+</body>
+
+</html>
